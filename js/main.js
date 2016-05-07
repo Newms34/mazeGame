@@ -317,17 +317,6 @@ var app = angular.module('mazeGame', []).controller('maze-con', function($scope)
         $scope.bombOn = false;
     }
     $scope.rotOn = true;
-    // window.onmousemove = function(e) {
-    //     e.x = e.x || e.clientX;
-    //     e.y = e.y || e.clientY;
-    //     if ($scope.rotOn) {
-    //         $('#maze').css('transform', 'rotateZ(' + e.x + 'deg)');
-    //         $scope.roomRot = e.x;
-    //         $scope.playerFacing = e.x%360;
-    //         console.log($scope.playerFacing)
-    //         $scope.$digest();
-    //     }
-    // }
     $scope.getWallStatus=function(dir){
       var roomWall = $scope.cells[$scope.cellNames.indexOf($scope.playerCell)][dir]?'./img/wall.jpg':'./img/door.jpg';
       return roomWall;

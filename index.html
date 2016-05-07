@@ -25,7 +25,7 @@
             <div class='playerFig' ng-if='compareCell(cl.id)' style='transform:rotateZ({{360-roomRot}}deg)'>&uparrow;</div>
         </div>
     </div>
-    <div id='room' style='transform:rotateX(85deg) translateY(230px) rotateZ({{roomRot}}deg) translateZ(-50px)'>
+    <div id='room' style='transform:rotateX(85deg) translateY(320px) translateX(250px) rotateZ({{roomRot}}deg) translateZ(-100px)'>
         <!-- the actual room in which we 'play' -->
         <div class='roomWall rwn' ng-style='{"background":"url("+getWallStatus("north")+")"}'></div>
         <div class='roomWall rwe' ng-style='{"background":"url("+getWallStatus("east")+")"}'></div>
