@@ -8,8 +8,8 @@ var app = angular.module('mazeGame', []).controller('maze-con', function($scope)
     $scope.cellsDone = 0;
     $scope.moveReady = false;
     $scope.cells = [];
-    $scope.possRoomConts = ['\uD83D\uDCB0','\uD83D\uDC05','\uD83D\uDE4B','\uD83D\uDC8D',' ','\uD83D\uDC7E','\uD83D\uDEAA',' ',' ',' '];//things that could be in a room!
-    $scope.cell = function(id,cont) {
+    $scope.possRoomConts = ['\uD83D\uDCB0', '\uD83D\uDC05', '\uD83D\uDE4B', '\uD83D\uDC8D', ' ', '\uD83D\uDC7E', '\uD83D\uDEAA', ' ', ' ', ' ']; //things that could be in a room!
+    $scope.cell = function(id, cont) {
         this.id = id;
         this.x = id.split('-')[0];
         this.y = id.split('-')[1];
@@ -17,9 +17,9 @@ var app = angular.module('mazeGame', []).controller('maze-con', function($scope)
         this.west = true;
         this.north = true;
         this.south = true;
-        this.visited = false;//this visited is used for maze construction, NOT the player!
-        this.pViz = false;//has player visited this room?
-        this.has = cont;//what this room has in it
+        this.visited = false; //this visited is used for maze construction, NOT the player!
+        this.pViz = false; //has player visited this room?
+        this.has = cont; //what this room has in it
     };
 
     //set up maze initial position
@@ -87,15 +87,15 @@ var app = angular.module('mazeGame', []).controller('maze-con', function($scope)
         console.log('Generating maze of dimensions', $scope.width, ':', $scope.height)
         for (var x = 0; x < $scope.width; x++) {
             for (var y = 0; y < $scope.height; y++) {
-                var rItem = $scope.possRoomConts[Math.floor(Math.random()*$scope.possRoomConts.length)];
-                $scope.cells.push(new $scope.cell(x + '-' + y,rItem));
+                var rItem = $scope.possRoomConts[Math.floor(Math.random() * $scope.possRoomConts.length)];
+                $scope.cells.push(new $scope.cell(x + '-' + y, rItem));
                 $scope.cellNames.push(x + '-' + y)
-                if (rItem == '\uD83D\uDEAA'){
-                  //only one exit!
-                  $scope.possRoomConts.splice(6,1);
-                }else if (rItem = '\uD83D\uDC7E'){
-                  //only one boss!
-                  $scope.possRoomConts.splice(5,1);
+                if (rItem == '\uD83D\uDEAA') {
+                    //only one exit!
+                    $scope.possRoomConts.splice(6, 1);
+                } else if (rItem = '\uD83D\uDC7E') {
+                    //only one boss!
+                    $scope.possRoomConts.splice(5, 1);
                 }
             }
         }
@@ -175,107 +175,106 @@ var app = angular.module('mazeGame', []).controller('maze-con', function($scope)
     };
     $scope.bombOn = false;
     $scope.prevDir = 0;
-    $scope.movePlayer = function(dir){
-      //this function effectively moves the player. In reality, it's actually moving everything else AROUND the player
-      $scope.prevDir = dir;
+    $scope.movePlayer = function(dir) {
+        //this function effectively moves the player. In reality, it's actually moving everything else AROUND the player
+        $scope.prevDir = dir;
     }
-    $scope.roomRot=0;
+    $scope.roomRot = 0;
     $scope.playerFacing = 0;
     window.onkeydown = function(e) {
         var currCell = $scope.cells[$scope.cellNames.indexOf($scope.playerCell)];
         var x = $scope.playerCell.split('-')[0];
         var y = $scope.playerCell.split('-')[1];
-        var dir='north';
-        if ($scope.playerFacing<45 || $scope.playerFacing>315){
-          dir='north';
-        }else if($scope.playerFacing>=45 && $scope.playerFacing<135){
-          dir='west';
-        }else if($scope.playerFacing>=225 && $scope.playerFacing<315){
-          dir='east';
-        }else{
-          dir='south';
+        var dir = 'north';
+        if ($scope.playerFacing < 45 || $scope.playerFacing > 315) {
+            dir = 'north';
+        } else if ($scope.playerFacing >= 45 && $scope.playerFacing < 135) {
+            dir = 'west';
+        } else if ($scope.playerFacing >= 225 && $scope.playerFacing < 315) {
+            dir = 'east';
+        } else {
+            dir = 'south';
         }
 
         var isMoveKey = false;
-        if (e.which==87||e.which==38){
-          isMoveKey=true;
-          var canMove = false;
-          if (!currCell[dir]){
-            canMove = true;
-          }else if($scope.bombOn){
-            canMove = true;
-            $scope.bomb(dir);
-            $scope.bombsLeft--;
-          }
-          if (canMove){
-            switch(dir){
-              case 'north':
-                y--;
-                break;
-              case 'south':
-                y++;
-                break;
-              case 'east':
-                x++;
-                break;
-              default:
-                x--;
-            }
-          }
-          console.log('Attempting to move',dir)
-        }else if(e.which == 83 || e.which == 40){
-          isMoveKey=true;
-          var revDir;
-          switch (dir){
-              case 'north':
-                revDir = 'south';
-                break;
-              case 'south':
-                revDir = 'north';
-                break;
-              case 'east':
-                revDir = 'west';
-                break;
-              default:
-                revDir = 'east';
-            }
-          var canMove = false;
-          if (!currCell[revDir]){
-            canMove = true;
-          }else if($scope.bombOn){
-            canMove = true;
-            $scope.bomb(revDir);
-            $scope.bombsLeft--;
-          }
-          if (canMove){
-            switch(revDir){
-              case 'north':
-                y--;
-                break;
-              case 'south':
-                y++;
-                break;
-              case 'east':
-                x++;
-                break;
-              default:
-                x--;
-            }
-          }
-        }else if (e.which == 68 || e.which == 39) {
-          //turn right
-            console.log($scope.playerFacing,$scope.roomRot)
+        if (e.which == 87 || e.which == 38) {
             isMoveKey = true;
-            $scope.roomRot-=5;
-            $scope.playerFacing = $scope.roomRot%360>0? $scope.roomRot%360:360+$scope.roomRot%360;
+            var canMove = false;
+            if (!currCell[dir]) {
+                canMove = true;
+            } else if ($scope.bombOn) {
+                canMove = true;
+                $scope.bomb(dir);
+                $scope.bombsLeft--;
+            }
+            if (canMove) {
+                switch (dir) {
+                    case 'north':
+                        y--;
+                        break;
+                    case 'south':
+                        y++;
+                        break;
+                    case 'east':
+                        x++;
+                        break;
+                    default:
+                        x--;
+                }
+            }
+            console.log('Attempting to move', dir)
+        } else if (e.which == 83 || e.which == 40) {
+            isMoveKey = true;
+            var revDir;
+            switch (dir) {
+                case 'north':
+                    revDir = 'south';
+                    break;
+                case 'south':
+                    revDir = 'north';
+                    break;
+                case 'east':
+                    revDir = 'west';
+                    break;
+                default:
+                    revDir = 'east';
+            }
+            var canMove = false;
+            if (!currCell[revDir]) {
+                canMove = true;
+            } else if ($scope.bombOn) {
+                canMove = true;
+                $scope.bomb(revDir);
+                $scope.bombsLeft--;
+            }
+            if (canMove) {
+                switch (revDir) {
+                    case 'north':
+                        y--;
+                        break;
+                    case 'south':
+                        y++;
+                        break;
+                    case 'east':
+                        x++;
+                        break;
+                    default:
+                        x--;
+                }
+            }
+        } else if (e.which == 68 || e.which == 39) {
+            //turn right
+            console.log($scope.playerFacing, $scope.roomRot)
+            isMoveKey = true;
+            $scope.roomRot -= 5;
+            $scope.playerFacing = $scope.roomRot % 360 > 0 ? $scope.roomRot % 360 : 360 + $scope.roomRot % 360;
         } else if (e.which == 65 || e.which == 37) {
-          //turn left
-            console.log($scope.playerFacing,$scope.roomRot)
+            //turn left
+            console.log($scope.playerFacing, $scope.roomRot)
             isMoveKey = true;
-            $scope.roomRot+=5;
-            $scope.playerFacing = $scope.roomRot%360>0? $scope.roomRot%360:360+$scope.roomRot%360;
-        } 
-        else if (e.which == 66 && $scope.bombsLeft && !$scope.bombOn) {
+            $scope.roomRot += 5;
+            $scope.playerFacing = $scope.roomRot % 360 > 0 ? $scope.roomRot % 360 : 360 + $scope.roomRot % 360;
+        } else if (e.which == 66 && $scope.bombsLeft && !$scope.bombOn) {
             $scope.bombOn = true;
         } else if (e.which == 66 && $scope.bombOn) {
             $scope.bombOn = false;
@@ -287,7 +286,7 @@ var app = angular.module('mazeGame', []).controller('maze-con', function($scope)
             e.preventDefault();
         }
         $scope.playerCell = x + '-' + y;
-        $scope.cells[$scope.cellNames.indexOf($scope.playerCell)].pViz=true;
+        $scope.cells[$scope.cellNames.indexOf($scope.playerCell)].pViz = true;
         $scope.$digest();
     }
     $scope.bomb = function(dir) {
@@ -317,9 +316,15 @@ var app = angular.module('mazeGame', []).controller('maze-con', function($scope)
         $scope.bombOn = false;
     }
     $scope.rotOn = true;
-    $scope.getWallStatus=function(dir){
-      var roomWall = $scope.cells[$scope.cellNames.indexOf($scope.playerCell)][dir]?'./img/wall.jpg':'./img/door.jpg';
-      return roomWall;
+    $scope.vertRot = 85;
+    window.onmousemove = function(e) {
+        $scope.vertRot = (70 * (e.y || e.clientY) / $(window).height()) + 55;
+        console.log($scope.vertRot)
+        $scope.$digest();
+    }
+    $scope.getWallStatus = function(dir) {
+        var roomWall = $scope.cells[$scope.cellNames.indexOf($scope.playerCell)][dir] ? './img/wall.jpg' : './img/door.jpg';
+        return roomWall;
     }
     $scope.makeMaze();
 });
