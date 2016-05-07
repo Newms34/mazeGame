@@ -1,0 +1,159 @@
+html,
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    transform-style: preserve-3d;
+    perspective: 1200px;
+}
+
+#maze {
+    position: fixed;
+    top: 150px;
+    left: 30%;
+    transform-style: preserve-3d;
+    transform-origin: 50% 50%;
+    /*background: url('http://4.bp.blogspot.com/-HBarddQ3FRk/UmpMDiNwVjI/AAAAAAAAEn8/a9Tvj9i9Ebk/s1600/Seamless+ground+dirt+texture.jpg');*/
+    background: #050;
+}
+
+.cell {
+    border-collapse: collapse;
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    transition-duration: .25s;
+    transform-style: preserve-3d;
+}
+
+.nWall {
+    border-top: 1px solid black;
+}
+
+.sWall {
+    border-bottom: 1px solid black;
+}
+
+.eWall {
+    border-right: 1px solid black;
+}
+
+.wWall {
+    border-left: 1px solid black;
+}
+
+.cell:hover {
+    background: #ccf;
+}
+
+.daBomb {
+    animation: 1s bewm linear infinite alternate;
+    -webkit-animation: 1s bewm linear infinite alternate;
+}
+
+@keyframes bewm {
+    0% {
+        box-shadow: 0 0 2px 2px #a00;
+    }
+    33% {
+        box-shadow: 0 0 5px 5px #ff0;
+    }
+    66% {
+        box-shadow: 0 0 7px 7px #fff;
+    }
+}
+
+@-webkit-keyframes bewm {
+    0% {
+        box-shadow: 0 0 2px 2px #a00;
+    }
+    33% {
+        box-shadow: 0 0 5px 5px #ff0;
+    }
+    66% {
+        box-shadow: 0 0 7px 7px #fff;
+    }
+}
+
+.outWall {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    /*background: url('http://www.insidefabric.com/images/product/micro/412-41391-bristol-brick-brick-texture-by-brewster.jpg');*/
+    background: rgba(50, 128, 50, .7);
+    border: 1px solid #090;
+}
+
+.norWall {
+    transform: rotateX(90deg) translateZ(25px) translateY(25px);
+}
+
+.easWall {
+    transform: rotateY(90deg) translateZ(25px) translateX(-25px) rotateZ(90deg);
+}
+
+.souWall {
+    transform: rotateX(90deg) translateZ(-25px) translateY(25px);
+}
+
+.wesWall {
+    transform: rotateY(90deg) translateZ(-25px) translateX(-25px) rotateZ(90deg);
+}
+
+.playerFig {
+    font-size: 26pt;
+    color: #000;
+    text-align: center;
+}
+
+
+/*room stuff*/
+
+#room {
+    background: url('http://4.bp.blogspot.com/-HBarddQ3FRk/UmpMDiNwVjI/AAAAAAAAEn8/a9Tvj9i9Ebk/s1600/Seamless+ground+dirt+texture.jpg');
+    width: 1000px;
+    height: 1000px;
+    transform-style: preserve-3d;
+}
+
+.roomWall {
+    position: absolute;
+    width: 1000px;
+    height: 800px;
+    background: url('.././img/wall.jpg');
+}
+
+.rwn {
+    transform: rotateX(90deg) translateY(400px) translateZ(400px) rotateZ(180deg);
+}
+
+.rws {
+    transform: rotateX(90deg) translateY(400px) translateZ(-600px) rotateZ(180deg);
+}
+
+.rwe {
+    transform: rotateX(90deg) rotateY(90deg) translateY(400px) translateZ(500px) translateX(100px) rotateZ(180deg);
+}
+
+.rww {
+    transform: rotateX(90deg) rotateY(90deg) translateY(400px) translateZ(-500px) translateX(100px) rotateZ(180deg);
+}
+.roomCont{
+    position:absolute;
+    text-align: center;
+    font-size:24pt;
+}
+#roomTop {
+    background: url('.././img/wall.jpg');
+    width: 1000px;
+    height: 1000px;
+    transform-style: preserve-3d;
+}
+#menu{
+    position:fixed;
+    left:5%;
+    top:5%;
+    width:30%;
+    background:#bbb;
+    transform:translateZ(40px);
+}

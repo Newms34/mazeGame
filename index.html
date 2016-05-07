@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+</head>
+
+<body ng-app='mazeGame' ng-controller='maze-con'>
+    <div id='menu'><h4>WASD/arrow keys to move. 'b' to activate bombs (blow thru a wall!).</h4> &#128163;:{{bombsLeft}}
+    <br/> Width:
+    <input type='number' min='2' max='40' ng-model='width' value='5' ng-change='cells=[]'> Height:
+    <input type='number' min='2' max='40' ng-model='height' value='5' ng-change='cells=[]'>
+    <hr/>
+    <button ng-click='makeMaze()'>Generate</button>
+    </div>
+    <div id='maze' style='width:{{width*50}}px; height:{{height*50}}px;transform:rotateZ({{roomRot}}deg) translateZ(40px);'>
+    <!-- This is the maze 'icon' that we use for navigation. 3D! -->
+        <div class='cell' ng-repeat='cl in cells' style='left:{{cl.x*50}}px;top:{{cl.y*50}}px;' ng-class='{"nWall":cl.north,"sWall":cl.south,"eWall":cl.east,"wWall":cl.west,"usr":compareCell(cl.id),"daBomb":compareCell(cl.id) && bombOn}' title='{{cl.x}}:{{cl.y}}'>
+            <div class='outWall norWall' ng-if='cl.north'></div>
+            <div class='outWall easWall' ng-if='cl.east'></div>
+            <div class='outWall souWall' ng-if='cl.south'></div>
+            <div class='outWall wesWall' ng-if='cl.west'></div>
+            <div class='roomCont' ng-show='cl.pViz'>{{cl.has}}</div>
+            <div class='playerFig' ng-if='compareCell(cl.id)' style='transform:rotateZ({{360-roomRot}}deg)'>&uparrow;</div>
+        </div>
+    </div>
+    <div id='room' style='transform:rotateX(85deg) translateY(230px) rotateZ({{roomRot}}deg) translateZ(-50px)'>
+        <!-- the actual room in which we 'play' -->
+        <div class='roomWall rwn' ng-style='{"background":"url("+getWallStatus("north")+")"}'></div>
+        <div class='roomWall rwe' ng-style='{"background":"url("+getWallStatus("east")+")"}'></div>
+        <div class='roomWall rws' ng-style='{"background":"url("+getWallStatus("south")+")"}'></div>
+        <div class='roomWall rww' ng-style='{"background":"url("+getWallStatus("west")+")"}'></div>
+        <div id='roomTop'  style='transform:translateZ(750px)'></div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.min.js"></script>
+    <script src='js/main.js'></script>
+</body>
+
+</html>
