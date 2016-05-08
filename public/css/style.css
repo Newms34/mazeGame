@@ -10,7 +10,7 @@ body {
 #maze {
     position: fixed;
     top: 150px;
-    left: 30%;
+    left: 50%;
     transform-style: preserve-3d;
     transform-origin: 50% 50%;
     /*background: url('http://4.bp.blogspot.com/-HBarddQ3FRk/UmpMDiNwVjI/AAAAAAAAEn8/a9Tvj9i9Ebk/s1600/Seamless+ground+dirt+texture.jpg');*/
@@ -156,4 +156,13 @@ body {
     width:30%;
     background:#bbb;
     transform:translateZ(40px);
+}
+#targ{
+    position:absolute;
+    background:#000;
+    width:300px;
+    height:80%;
+    left:30%;
+    top:40%;
+    color:#fff;
 }
