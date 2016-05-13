@@ -4,18 +4,37 @@
 <head>
     <title>Maze!</title>
     <link rel="stylesheet" type="text/css" href="css/style.css">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
 </head>
 
 <body ng-app='mazeGame' ng-controller='maze-con'>
-    <div id='menu'><h4>WASD/arrow keys to move. 'b' to activate bombs (blow thru a wall!).</h4> &#128163;:{{bombsLeft}}
-    <br/> Width:
-    <input type='number' min='2' max='40' ng-model='width' value='5' ng-change='cells=[]'> Height:
-    <input type='number' min='2' max='40' ng-model='height' value='5' ng-change='cells=[]'>
-    <hr/>
-    <button ng-click='makeMaze()'>Generate</button>
+    <div id='menu' class='panel panel-default' ng-show='invActive'>
+        <div class='panel-heading'>
+        Inventory
+        </div>
+        <div class='panel-body'>
+            <h4>WASD/arrow keys to move. 'b' to activate bombs (blow thru a wall!).</h4> &#128163;:{{bombsLeft}}
+            <br/> Width:
+            <input type='number' min='2' max='40' ng-model='width' value='5' ng-change='cells=[]'> Height:
+            <input type='number' min='2' max='40' ng-model='height' value='5' ng-change='cells=[]'>
+            <br/>Turn Speed:
+            <input type='range' min='1' max='10' ng-model='turnSpeed'>
+            <hr/>
+            <button ng-click='makeMaze()'>Generate</button>
+            <table class='table'>
+                <thead>
+                    <tr>
+                        <th>Slot</th><th>Item</th><th>Stats</th><th>price</th>
+                    </tr>
+                </thead>
+                <tbody><tr ng-repeat='it in playerItems'>
+                    <td>{{it.slot}}</td><td>{{it.name}}</td><td>{{it.info.desc}}</td><td>{{it.price}}</td>
+                </tr></tbody>
+            </table>
+        </div>
     </div>
     <div id='maze' style='width:{{width*50}}px; height:{{height*50}}px;transform:rotateZ({{roomRot}}deg) translateZ(180px) scale3d(.5,.5,.5);'>
-    <!-- This is the maze 'icon' that we use for navigation. 3D! -->
+        <!-- This is the maze 'icon' that we use for navigation. 3D! -->
         <div class='cell' ng-repeat='cl in cells' style='left:{{cl.x*50}}px;top:{{cl.y*50}}px;' ng-class='{"nWall":cl.north,"sWall":cl.south,"eWall":cl.east,"wWall":cl.west,"usr":compareCell(cl.id),"daBomb":compareCell(cl.id) && bombOn}' title='{{cl.x}}:{{cl.y}}'>
             <div class='outWall norWall' ng-if='cl.north'></div>
             <div class='outWall easWall' ng-if='cl.east'></div>
@@ -24,23 +43,28 @@
             <div class='playerFig' ng-if='compareCell(cl.id)' style='transform:rotateZ({{360-roomRot}}deg)'>&uparrow;</div>
         </div>
     </div>
-    <div id='room' style='transform:rotateX({{vertRot}}deg) translateY(320px) translateX(250px) rotateZ({{roomRot}}deg) translateZ(-200px)'>
+    <div id='room' style='transform:rotateX({{vertRot}}deg) translateY(320px) translateX(250px) rotateZ({{roomRot}}deg) translateZ(-320px)'>
         <!-- the actual room in which we 'play' -->
         <div class='roomWall rwn' ng-style='{"background":"url("+getWallStatus("north")+")"}'></div>
         <div class='roomWall rwe' ng-style='{"background":"url("+getWallStatus("east")+")"}'></div>
         <div class='roomWall rws' ng-style='{"background":"url("+getWallStatus("south")+")"}'></div>
         <div class='roomWall rww' ng-style='{"background":"url("+getWallStatus("west")+")"}'></div>
-        <div id='roomTop'  style='transform:translateZ(750px)'></div>
+        <div id='roomTop'></div>
     </div>
     <div id='targ' ng-show='intTarg'>
         <!-- eventually gonna replace this with something a little more interesting. -->
         A {{intTarg.name}} appears, with a min of {{intTarg.dmgL}} and a max of {{intTarg.dmgH}} damage. It does {{intTarg.dmgT}} damage!
     </div>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+    <div id='bom' ng-show='bombOn'>
+        <div id='fuse'><span>{{bombsLeft}}</span></div>
+    </div>
+    <script src="/jquery/dist/jquery.min.js"></script>
+    <script src="/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="/angular/angular.min.js"></script>
     <script src="/js/bestiary/bosses/index.js"></script>
     <script src="/js/bestiary/general/index.js"></script>
-    <script src="/js/loots/index.js"></script>
+    <script src="/js/loots/armor/index.js"></script>
+    <script src="/js/loots/weapon/index.js"></script>
     <script src="/js/npcs/index.js"></script>
     <script src="/js/quests/index.js"></script>
     <script src="/js/main.js"></script>

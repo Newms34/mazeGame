@@ -1,3 +1,14 @@
+/*info:
+Name: name of creature
+spawnChance = chance from 1-10 that this particular creature spawns in each 'mons' cell
+hp: hitpoints. Generally, more hitpoints = tougher.
+dmgL: low damage range cap.
+dmgH: high damage range cap. The damage delt per turn is a rand number btwn this and dmgL.
+dmgT: type of damage (poison, physical, fire, ice, holy, or dark)
+res: resistances. If a creature with resistance to a particular dmg type is attacked by that dmg type, they take 30-50% less damage
+maxDrop: maximum item level of dropped items. generally, higher hp creatures have higher maxDrops.
+img: url of pic of beastie.
+*/
 var generalBeasts = [{
     name: 'Rat',
     spawnChance:8,
