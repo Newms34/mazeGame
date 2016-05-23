@@ -38,85 +38,85 @@ var app = angular.module('mazeGame', []).controller('maze-con', function($scope,
             def: []
         },
         price: 0
-    },{
+    }, {
         slot: 'hand1',
         name: 'pointy stick',
         info: {
             desc: 'It\'s a stick. Just slightly better than having nothing at all',
-            dmgT:'phys',
-            dmgL:1,
-            dmgH:2,
-            iLvl:0
+            dmgT: 'phys',
+            dmgL: 1,
+            dmgH: 2,
+            iLvl: 0
         },
         price: 0
-    },{
+    }, {
         slot: 'hand2',
         name: 'Box of Matches',
         info: {
             desc: 'Your first fire weapon! Congrats!',
-            dmgT:'fire',
-            dmgL:1,
-            dmgH:2,
-            iLvl:0
+            dmgT: 'fire',
+            dmgL: 1,
+            dmgH: 2,
+            iLvl: 0
         },
         price: 0
-    },{
+    }, {
         slot: 'inv1',
         name: 'Box of Matches',
         info: {
             desc: 'Your first fire weapon! Congrats!',
-            dmgT:'fire',
-            dmgL:1,
-            dmgH:2,
-            iLvl:0
+            dmgT: 'fire',
+            dmgL: 1,
+            dmgH: 2,
+            iLvl: 0
         },
         price: 0
-    },{
+    }, {
         slot: 'inv2',
         name: 'Box of Matches',
         info: {
             desc: 'Your first fire weapon! Congrats!',
-            dmgT:'fire',
-            dmgL:1,
-            dmgH:2,
-            iLvl:0
+            dmgT: 'fire',
+            dmgL: 1,
+            dmgH: 2,
+            iLvl: 0
         },
         price: 0
-    },{
+    }, {
         slot: 'inv3',
         name: 'Box of Matches',
         info: {
             desc: 'Your first fire weapon! Congrats!',
-            dmgT:'fire',
-            dmgL:1,
-            dmgH:2,
-            iLvl:0
+            dmgT: 'fire',
+            dmgL: 1,
+            dmgH: 2,
+            iLvl: 0
         },
         price: 0
-    },{
+    }, {
         slot: 'inv4',
         name: 'Box of Matches',
         info: {
             desc: 'Your first fire weapon! Congrats!',
-            dmgT:'fire',
-            dmgL:1,
-            dmgH:2,
-            iLvl:0
+            dmgT: 'fire',
+            dmgL: 1,
+            dmgH: 2,
+            iLvl: 0
         },
         price: 0
-    },{
+    }, {
         slot: 'inv5',
         name: 'Box of Matches',
         info: {
             desc: 'Your first fire weapon! Congrats!',
-            dmgT:'fire',
-            dmgL:1,
-            dmgH:2,
-            iLvl:0
+            dmgT: 'fire',
+            dmgL: 1,
+            dmgH: 2,
+            iLvl: 0
         },
         price: 0
     }];
-    $scope.possRoomConts = ['loot', 'mons', 'npcs', 'jewl', ' ', 'boss', 'exit', ' ', ' ', ' ', 'mons']; //things that could be in a room!
+    $scope.possRoomConts = ['loot', 'mons', 'npcs', 'jewl', ' ', 'exit', ' ', ' ', 'mons', 'mons']; //things that could be in a room!
     $scope.cell = function(id, cont) {
         this.id = id;
         this.x = id.split('-')[0];
@@ -173,7 +173,6 @@ var app = angular.module('mazeGame', []).controller('maze-con', function($scope,
                 x--;
         }
         var newCellName = (x + '-' + y)
-        console.log('Moving ', dir, 'from', this.id, 'to', newCellName);
         var pos = $scope.cellNames.indexOf(newCellName)
         if (pos == -1) {
             return 'e'; //no cell in that direction
@@ -198,23 +197,10 @@ var app = angular.module('mazeGame', []).controller('maze-con', function($scope,
                 if (rItem == 'exit') {
                     console.log('room has exit')
                         //only one exit!
-                    $scope.possRoomConts.splice(6, 1);
-                } else if (rItem == 'boss') {
-                    //only one boss!
                     $scope.possRoomConts.splice(5, 1);
-                } else if (rItem == 'mons') {
-                    var anProbArr = [];
-                    for (var m = 0; m < generalBeasts.length; m++) {
-                        for (var n = 0; n < generalBeasts[m].spawnChance; n++) {
-                            anProbArr.push(m);
-                        }
-                    }
-                    console.log('Monster! prob arr is', anProbArr)
-                    rItem = generalBeasts[anProbArr[Math.floor(Math.random() * anProbArr.length)]];
-                    console.log('This room contains an enemy:', rItem.name)
                 }
                 $scope.cells.push(new $scope.cell(x + '-' + y, rItem));
-                $scope.cellNames.push(x + '-' + y)
+                $scope.cellNames.push(x + '-' + y);
             }
         }
         console.log('cells:', $scope.cells)
@@ -239,9 +225,6 @@ var app = angular.module('mazeGame', []).controller('maze-con', function($scope,
             $scope.cells[pos].visited = true; //mark this cell as visited
             if (!good) {
                 good = $scope.backTrace();
-                console.log('would go to:', good); //find us a new valid cell
-                console.log('BACKTRACE! U DUN GOOFED! Path was:', $scope.path)
-
             }
             if (!good) {
                 break;
@@ -258,6 +241,15 @@ var app = angular.module('mazeGame', []).controller('maze-con', function($scope,
         }
         $scope.moveReady = true;
         $scope.playerCell = '0-0';
+        $scope.popCells();
+    }
+    $scope.popCells = function() {
+        $scope.cells.forEach(function(cel) {
+            $http.get('/getRanMons/' + cel.id).then(function(res) {
+                console.log('This room contains an enemy:', res.data.mons)
+                $scope.cells[$scope.cellNames.indexOf(res.data.cell)].has = res.data.mons
+            });
+        })
     }
     $scope.compareCell = function(id) {
         return id == $scope.playerCell;
@@ -272,13 +264,11 @@ var app = angular.module('mazeGame', []).controller('maze-con', function($scope,
             }
             //set new cell to previous cell
             $scope.currCell = $scope.path[$scope.path.length - 1];
-            console.log('movin back to', $scope.currCell)
             var posDirs = ['n', 'e', 's', 'w'],
                 pos = $scope.cellNames.indexOf($scope.currCell),
                 targDir; //'good' is the next target cell
             while (!good && posDirs.length) {
                 targDir = Math.floor(Math.random() * posDirs.length);
-                console.log('Attempting', pos, $scope.currCell)
                 good = $scope.cells[pos].checkCell(posDirs[targDir]);
 
                 if (good == 'e' || good == 'v') {
@@ -401,6 +391,7 @@ var app = angular.module('mazeGame', []).controller('maze-con', function($scope,
             }
             $scope.playerCell = x + '-' + y;
             $scope.cells[$scope.cellNames.indexOf($scope.playerCell)].pViz = true;
+            console.log('CURRENT ROOM CONTENTS:', $scope.cells[$scope.cellNames.indexOf($scope.playerCell)].has)
             $scope.intTarg = typeof $scope.cells[$scope.cellNames.indexOf($scope.playerCell)].has == 'object' ? $scope.cells[$scope.cellNames.indexOf($scope.playerCell)].has : false;
             $scope.$digest();
             if ((e.which == 87 || e.which == 38 || e.which == 83 || e.which == 40) && canMove && !$scope.moving) {

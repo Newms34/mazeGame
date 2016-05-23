@@ -53,7 +53,7 @@
     </div>
     <div id='targ' ng-show='intTarg'>
         <!-- eventually gonna replace this with something a little more interesting. -->
-        A {{intTarg.name}} appears, with a min of {{intTarg.dmgL}} and a max of {{intTarg.dmgH}} damage. It does {{intTarg.dmgT}} damage!
+        A {{intTarg.name}} appears, with a min of {{intTarg.min}} and a max of {{intTarg.max}} damage. It does {{intTarg.type}} damage! Description: {{intTarg.desc}}
     </div>
     <div id='bom' ng-show='bombOn'>
         <div id='fuse'><span>{{bombsLeft}}</span></div>
@@ -61,12 +61,6 @@
     <script src="/jquery/dist/jquery.min.js"></script>
     <script src="/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="/angular/angular.min.js"></script>
-    <script src="/js/bestiary/bosses/index.js"></script>
-    <script src="/js/bestiary/general/index.js"></script>
-    <script src="/js/loots/armor/index.js"></script>
-    <script src="/js/loots/weapon/index.js"></script>
-    <script src="/js/npcs/index.js"></script>
-    <script src="/js/quests/index.js"></script>
     <script src="/js/main.js"></script>
 </body>
 

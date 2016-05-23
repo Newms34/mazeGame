@@ -1,0 +1,5 @@
+{
+	"undefined": "mongodb://localhost:27017/mazeGame",
+	"development": "mongodb://localhost:27017/mazeGame",
+	"prod": "err"
+}

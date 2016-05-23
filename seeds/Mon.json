@@ -1,0 +1,72 @@
+
+[{
+    "name": "Rat",
+    "desc":"These guys are everywhere! Alone, not much of an issue, but in large packs, rats can be a serious threat!",
+    "lvl":2,
+    "hp": 3,
+    "min": 2,
+    "max": 5,
+    "type":3,
+    "res": [3],
+    "imgUrl":""
+},{
+    "name": "Lesser Goblin",
+    "desc":"Tiny evil. Like, pocket evil. Fun-sized evil?",
+    "lvl":1,
+    "hp": 2,
+    "min": 2,
+    "max": 3,
+    "type":0,
+    "res": [4],
+    "imgUrl":""
+},{
+    "name": "Cave Bat",
+    "desc":"Its a bat. This is a cave. Are you really surprised?",
+    "lvl":3,
+    "hp": 5,
+    "min": 5,
+    "max": 6,
+    "type":0,
+    "res": [],
+    "imgUrl":""
+},{
+    "name": "Wendigo",
+    "desc":"Furry icebeast. From the frozen north or something. Not Vanilla Ice.",
+    "lvl":5,
+    "hp": 8,
+    "min": 8,
+    "max": 10,
+    "type":2,
+    "res": [2],
+    "imgUrl":""
+},{
+    "name": "Imp",
+    "desc":"Some mage with a lack of forethought summoned this fire imp. Hope you have some burn cream.",
+    "lvl":5,
+    "hp": 8,
+    "min": 8,
+    "max": 10,
+    "type":1,
+    "res": [1],
+    "imgUrl":""
+},{
+    "name": "Priest",
+    "desc":"Ancient priest of a forgotten cult, the priests wield holy magic in attempt to make stuff glowy. Or dead. Or one and then the other.",
+    "lvl":7,
+    "hp": 3,
+    "min": 4,
+    "max": 20,
+    "type":5,
+    "res": [0],
+    "imgUrl":""
+},{
+    "name": "Greater Goblin",
+    "desc":"Lesser Imps big brother. This guy is a lot more dangerous.",
+    "lvl":6,
+    "hp": 3,
+    "min": 8,
+    "max": 12,
+    "type":4,
+    "res": [4],
+    "imgUrl":""
+}]

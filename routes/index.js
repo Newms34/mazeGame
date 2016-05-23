@@ -5,6 +5,7 @@ var models = require('../models/');
 var https = require('https');
 var async = require('async');
 var mongoose = require('mongoose');
+console.log(models)
 
 router.get('/', function(req, res, next) {
 	/*get the homepage (the game screen)
@@ -20,5 +21,28 @@ router.get('/beastie/:id',function(req,res,next){
 	//'params' below basically means 'anything in the url with a colon (:) before it'.
 	var numberOfTheBeast = req.params.id;
 	//in here we'll grab the beast by an id number. 
+})
+router.get('/getRanMons/:cell',function(req,res,next){
+	console.log('someone wants a monster!')
+	var cell = req.params.cell;
+	mongoose.model('Mon').find({},function(err,data){
+		var maxLvl = 10;
+		//get max lvl of monster
+		for (var i=0;i<data.length;i++){
+			if(data[i].lvl>maxLvl){
+				maxLvl = data[i].lvl;
+			}
+		}
+		maxLvl++;//so we dont get any monsters with a zero percent spawn chance
+		var probArr = [];//this will be the probability array;
+		for (var j=0;j<data.length;j++){
+			for (k=0;k<(maxLvl-data[j].lvl);k++){
+				probArr.push(j);
+			}
+		}
+		var pickedMons = data[probArr[Math.floor(Math.random()*probArr.length)]];
+		console.log('picked a',pickedMons)
+		res.send({mons:pickedMons,cell:cell})
+	})
 })
 module.exports = router;
