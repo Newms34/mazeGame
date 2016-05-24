@@ -14,7 +14,7 @@
   },
   "devDependencies": {},
   "scripts": {
-    "postinstall":"bower install",
+    "postinstall":"bower install && seed",
     "start": "nodemon app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

@@ -21,7 +21,7 @@
     "imgUrl":""
 },{
     "name": "Cave Bat",
-    "desc":"Its a bat. This is a cave. Are you really surprised?",
+    "desc":"It's a bat. This is a cave. Are you really surprised?",
     "lvl":3,
     "hp": 5,
     "min": 5,
@@ -61,7 +61,7 @@
     "imgUrl":""
 },{
     "name": "Greater Goblin",
-    "desc":"Lesser Imps big brother. This guy is a lot more dangerous.",
+    "desc":"Lesser Imp's big brother. This guy is a lot more dangerous.",
     "lvl":6,
     "hp": 3,
     "min": 8,
