@@ -25,7 +25,7 @@ router.get('/beastie/:id',function(req,res,next){
 router.get('/getRanMons/:cell',function(req,res,next){
 	console.log('someone wants a monster!')
 	var cell = req.params.cell;
-	mongoose.model('Mons').find({},function(err,data){
+	mongoose.model('Mon').find({},function(err,data){
 		var maxLvl = 10;
 		//get max lvl of monster
 		for (var i=0;i<data.length;i++){
