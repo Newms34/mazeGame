@@ -245,10 +245,12 @@ var app = angular.module('mazeGame', []).controller('maze-con', function($scope,
     }
     $scope.popCells = function() {
         $scope.cells.forEach(function(cel) {
-            $http.get('/getRanMons/' + cel.id).then(function(res) {
-                console.log('This room contains an enemy:', res.data.mons)
-                $scope.cells[$scope.cellNames.indexOf(res.data.cell)].has = res.data.mons
-            });
+            if (cel.has == 'mons') {
+                $http.get('/getRanMons/' + cel.id).then(function(res) {
+                    console.log('This room contains an enemy:', res.data.mons)
+                    $scope.cells[$scope.cellNames.indexOf(res.data.cell)].has = res.data.mons
+                });
+            }
         })
     }
     $scope.compareCell = function(id) {
