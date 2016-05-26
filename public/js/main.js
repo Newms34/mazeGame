@@ -1,6 +1,6 @@
-var app = angular.module('mazeGame', []).controller('maze-con', function($scope, $http, $q, $interval) {
-    $scope.width = 5;
-    $scope.height = 5;
+var app = angular.module('mazeGame', []).controller('maze-con', function($scope, $http, $q, $interval, combatFac, UIFac) {
+    $scope.width = 6;
+    $scope.height = 6;
     $scope.path = []; //all the cells visited, in order.
     $scope.backtraceNum;
     $scope.currCell;
@@ -9,113 +9,10 @@ var app = angular.module('mazeGame', []).controller('maze-con', function($scope,
     $scope.moveReady = false;
     $scope.cells = [];
     $scope.invActive = false;
+    $scope.setActive = false;
     $scope.intTarg;
     //for now, i'm setting the default contents of the player inv as below
-    $scope.playerItems = [{
-        slot: 'head',
-        name: 'baseball cap',
-        info: {
-            desc: 'Offers no protection. But really stylish!',
-            armor: 0,
-            def: []
-        },
-        price: 0
-    }, {
-        slot: 'chest',
-        name: '\"I\'m with stupid\" t-shirt',
-        info: {
-            desc: 'Offers no protection. This one\'s pretty lame',
-            armor: 0,
-            def: []
-        },
-        price: 0
-    }, {
-        slot: 'legs',
-        name: 'cargo shorts',
-        info: {
-            desc: 'Offers no protection. Quite comfy, tho...',
-            armor: 0,
-            def: []
-        },
-        price: 0
-    }, {
-        slot: 'hand1',
-        name: 'pointy stick',
-        info: {
-            desc: 'It\'s a stick. Just slightly better than having nothing at all',
-            dmgT: 'phys',
-            dmgL: 1,
-            dmgH: 2,
-            iLvl: 0
-        },
-        price: 0
-    }, {
-        slot: 'hand2',
-        name: 'Box of Matches',
-        info: {
-            desc: 'Your first fire weapon! Congrats!',
-            dmgT: 'fire',
-            dmgL: 1,
-            dmgH: 2,
-            iLvl: 0
-        },
-        price: 0
-    }, {
-        slot: 'inv1',
-        name: 'Box of Matches',
-        info: {
-            desc: 'Your first fire weapon! Congrats!',
-            dmgT: 'fire',
-            dmgL: 1,
-            dmgH: 2,
-            iLvl: 0
-        },
-        price: 0
-    }, {
-        slot: 'inv2',
-        name: 'Box of Matches',
-        info: {
-            desc: 'Your first fire weapon! Congrats!',
-            dmgT: 'fire',
-            dmgL: 1,
-            dmgH: 2,
-            iLvl: 0
-        },
-        price: 0
-    }, {
-        slot: 'inv3',
-        name: 'Box of Matches',
-        info: {
-            desc: 'Your first fire weapon! Congrats!',
-            dmgT: 'fire',
-            dmgL: 1,
-            dmgH: 2,
-            iLvl: 0
-        },
-        price: 0
-    }, {
-        slot: 'inv4',
-        name: 'Box of Matches',
-        info: {
-            desc: 'Your first fire weapon! Congrats!',
-            dmgT: 'fire',
-            dmgL: 1,
-            dmgH: 2,
-            iLvl: 0
-        },
-        price: 0
-    }, {
-        slot: 'inv5',
-        name: 'Box of Matches',
-        info: {
-            desc: 'Your first fire weapon! Congrats!',
-            dmgT: 'fire',
-            dmgL: 1,
-            dmgH: 2,
-            iLvl: 0
-        },
-        price: 0
-    }];
+    $scope.playerItems = [];
     $scope.possRoomConts = ['loot', 'mons', 'npcs', 'jewl', ' ', 'exit', ' ', ' ', 'mons', 'mons']; //things that could be in a room!
     $scope.cell = function(id, cont) {
         this.id = id;
@@ -282,6 +179,42 @@ var app = angular.module('mazeGame', []).controller('maze-con', function($scope,
         }
         return good;
     };
+    //UI stuff
+    //user's current UI
+    $scope.Inventory=[];
+    $scope.Skills=[];
+    $scope.Bestiary=[];
+    $scope.Quests=[]
+
+    $scope.currUINum = 0;
+    $scope.UIPans = ['Inventory', 'Skills', 'Bestiary', 'Quests'];
+    $scope.currUIObjs =[];//we get these from the factory
+    $scope.currUIBg = '../img/UI/inv.jpg';
+    $scope.currUIPan = $scope.UIPans[$scope.currUINum];
+    $scope.chInv = function(dir) {
+        //UI Cycle function
+        console.log(dir, $scope.currUINum)
+        if (!dir && $scope.currUINum > 0) {
+            $scope.currUINum--;
+        } else if (!dir) {
+            $scope.currUINum = $scope.UIPans.length-1;
+        } else if ($scope.currUINum < $scope.UIPans.length - 1) {
+            $scope.currUINum++;
+        } else {
+            $scope.currUINum = 0;
+        }
+        $scope.currUIPan = $scope.UIPans[$scope.currUINum];//title of current ui panel
+        // var currUIEls = UIFac.getUIObj($scope.currUIPan,$scope[$scope.currUIPan]);
+        // console.log('UI stuff:',currUIEls)
+        // $scope.currUIBg = currUIEls.bg;
+        console.log(UIFac,UIFac.getUIObj)
+        UIFac.getUIObj($scope.currUIPan,$scope[$scope.currUIPan]).then(function(uiRes){
+            $scope.currUIObjs = uiRes.data;
+            console.log('UI OBJS:',$scope.currUIObjs)
+        });
+        $scope.currUIBg = UIFac.getUIBg($scope.currUIPan)
+    };
+    //end UI stuff
     $scope.bombOn = false;
     $scope.roomRot = 0;
     $scope.playerFacing = 0;
@@ -383,10 +316,12 @@ var app = angular.module('mazeGame', []).controller('maze-con', function($scope,
             } else if (e.which == 66 && $scope.bombOn) {
                 $scope.bombOn = false;
             } else if (e.which == 82) {
-                console.log('toggle rotation')
                 $scope.rotOn = !$scope.rotOn;
             } else if (e.which == 73) {
+                console.log('i pressed and damage type 3 is', combatFac.getDmgType(3))
                 $scope.invActive = !$scope.invActive;
+            } else if (e.which == 192) {
+                $scope.setActive = !$scope.setActive;
             }
             if (isMoveKey) {
                 e.preventDefault();
@@ -413,7 +348,9 @@ var app = angular.module('mazeGame', []).controller('maze-con', function($scope,
     }
     $scope.turnSpeed = 0;
     window.onmousemove = function(e) {
-        $scope.vertRot = (70 * (e.y || e.clientY) / $(window).height()) + 55;
+        if ($scope.rotOn) {
+            $scope.vertRot = (70 * (e.y || e.clientY) / $(window).height()) + 55;
+        }
         $scope.$digest();
         var horiz = (e.x || e.clientX) / $(window).width();
         if (Math.abs(horiz - .5) > .3) {

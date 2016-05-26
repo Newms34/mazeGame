@@ -5,8 +5,16 @@ var armorSchema = new mongoose.Schema({
     desc: String,
     res: [Number],//armor resistances (if any!)
     cost:Number,
-    lvl:Number,
+    itemLvl:Number,
+    slot:Number,
     imgUrl:String
 },{collection: 'Armor'});
-
+/*slot describes where the item goes:
+0:head,
+1:chest,
+2:legs,
+3:hands,
+4:feet
+5:ring
+*/
 mongoose.model('Armor', armorSchema);

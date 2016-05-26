@@ -8,9 +8,9 @@
 </head>
 
 <body ng-app='mazeGame' ng-controller='maze-con'>
-    <div id='menu' class='panel panel-default' ng-show='invActive'>
+    <div id='menu' class='panel panel-default' ng-show='setActive'>
         <div class='panel-heading'>
-        Inventory
+        Settings
         </div>
         <div class='panel-body'>
             <h4>WASD/arrow keys to move. 'b' to activate bombs (blow thru a wall!).</h4> &#128163;:{{bombsLeft}}
@@ -21,18 +21,9 @@
             <input type='range' min='1' max='10' ng-model='turnSpeed'>
             <hr/>
             <button ng-click='makeMaze()'>Generate</button>
-            <table class='table'>
-                <thead>
-                    <tr>
-                        <th>Slot</th><th>Item</th><th>Stats</th><th>price</th>
-                    </tr>
-                </thead>
-                <tbody><tr ng-repeat='it in playerItems'>
-                    <td>{{it.slot}}</td><td>{{it.name}}</td><td>{{it.info.desc}}</td><td>{{it.price}}</td>
-                </tr></tbody>
-            </table>
         </div>
-    </div>
+    </div>{{invActive}}
+    <div ng-include="'UI.html'" ng-show='invActive'></div>
     <div id='maze' style='width:{{width*50}}px; height:{{height*50}}px;transform:rotateZ({{roomRot}}deg) translateZ(180px) scale3d(.5,.5,.5);'>
         <!-- This is the maze 'icon' that we use for navigation. 3D! -->
         <div class='cell' ng-repeat='cl in cells' style='left:{{cl.x*50}}px;top:{{cl.y*50}}px;' ng-class='{"nWall":cl.north,"sWall":cl.south,"eWall":cl.east,"wWall":cl.west,"usr":compareCell(cl.id),"daBomb":compareCell(cl.id) && bombOn}' title='{{cl.x}}:{{cl.y}}'>
@@ -62,6 +53,9 @@
     <script src="/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="/angular/angular.min.js"></script>
     <script src="/js/main.js"></script>
+    <script src="/js/components/combatFac.js"></script>
+    <script src="/js/components/mazeFac.js"></script>
+    <script src="/js/components/UIFac.js"></script>
 </body>
 
 </html>

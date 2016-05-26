@@ -1,5 +1,5 @@
 {
 	"undefined": "mongodb://localhost:27017/mazeGame",
 	"development": "mongodb://localhost:27017/mazeGame",
-	"prod": "mongodb://mazeMaker:maze34@ds011913.mlab.com:11913/heroku_701xzs88"
+	"prod": "mongodb://heroku_701xzs88:trmrjapge1qunmnh76s0tqv2ik@ds011913.mlab.com:11913/heroku_701xzs88"
 }

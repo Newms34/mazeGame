@@ -1,0 +1,13 @@
+<div id='UI' class='panel panel-info'>
+    <div class='panel-heading'>
+        <button class='btn btn-primary' style='float:left' ng-click='chInv(0)'>&leftarrow;</button> {{currUIPan}}
+        <button class='btn btn-primary' style='float:right' ng-click='chInv(1)'>&rightarrow;</button>
+    </div>
+    <div class='panel-body' style='background:url({{currUIBg}});background-size: cover;'>
+        <div id='uiBlokCont'>
+            <div class='currUIEl' ng-repeat='UIEl in currUIObjs' title='{{UIEl.desc}}'>
+                {{UIEl.name}}
+            </div>
+        </div>
+    </div>
+</div>

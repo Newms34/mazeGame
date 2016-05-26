@@ -251,3 +251,38 @@ body {
     left:5%;
     top:5%;
 }
+#UI {
+    position: absolute;
+    left: 25%;
+    top: 9%;
+    width: 30%;
+    background: #bbb;
+    height:600px;
+    transform: translateZ(40px);
+}
+#UI div.panel-body{
+    height:100%;
+}
+#UI div.panel-heading{
+    text-align:center;
+    font-size:x-large;
+    font-weight: bold;
+}
+#uiBlokCont {
+    position: absolute;
+    border: 1px solid red;
+    width: 246px;
+    height: 577px;
+    right: 0px;
+    top:65px;
+}
+.currUIEl{
+    width:55px;
+    height:55px;
+    margin:3px;
+    background:#333;
+    display:inline-block;
+    font-size: xx-small;
+    overflow:hidden;
+    color:#fff;
+}

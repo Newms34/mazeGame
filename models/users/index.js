@@ -21,7 +21,8 @@ var usrSchema = new mongoose.Schema({
     maxHp:Number,
     currHp:Number,
     maxEn:Number,//max energy (for skills)
-    currEn:Number
+    currEn:Number,
+    isStunned:Boolean//some skills can stun!
 }, { collection: 'User' });
 //note that storing your password as a string is a VERY BAD IDEA! I'm only doin this for sake of ease, but eventually we'll wanna use something better (like google auth, passport.js, etc)
 mongoose.model('User', usrSchema);

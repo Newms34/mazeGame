@@ -1,5 +1,7 @@
 var mongoose = require('mongoose');
-//I'm really not sure about the format for quests yet. So this all is probly gonna change pretty Jurassically
+/*I'm really not sure about the format for quests yet. So this all is probly gonna change pretty Jurassically.
+So far, each quest has all of the normal attributes (name, id, desc, lvl). It also has a giver, which corresponds to to the NPC that gives it.  It also has a 'steps' array, where each step has a txt description, a step number, and either a monster goal or an item goal. Can we do NPC goals too? for example, "talk to Bob to complete this quest!"
+*/
 var qstSchema = new mongoose.Schema({
     name: String, //name of the quest
     id: Number,
