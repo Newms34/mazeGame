@@ -24,7 +24,7 @@
     "jshint": "^2.9.2"
   },
   "scripts": {
-    "postinstall": "bower install && gulp render",
+    "postinstall": "bower install",
     "start": "nodemon app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
