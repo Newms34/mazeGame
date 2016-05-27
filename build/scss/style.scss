@@ -183,24 +183,22 @@ body {
     box-shadow: -5px -5px 45px 10px #000 inset, 8px 8px 45px 5px #fff inset;
     animation: 2s wiggleBom linear infinite;
     webkit-animation: 2s wiggleBom linear infinite;
-}
-
-#bom span {
-    position: relative;
-    top: 50px;
-    font-weight: 500;
-    color: #fff;
-    font-size: 24pt;
-}
-
-#fuse {
-    position: relative;
-    left: 56px;
-    top: -30px;
-    background: #aaa;
-    width: 8px;
-    height: 30px;
-    box-shadow: 0 2px 5px #000 inset;
+    span {
+        position: relative;
+        top: 50px;
+        font-weight: 500;
+        color: #fff;
+        font-size: 24pt;
+    }
+    #fuse {
+        position: relative;
+        left: 56px;
+        top: -30px;
+        background: #aaa;
+        width: 8px;
+        height: 30px;
+        box-shadow: 0 2px 5px #000 inset;
+    }
 }
 
 @keyframes wiggleBom {
@@ -244,45 +242,11 @@ body {
         transform: translateY(0px) rotateZ(0deg) translateZ(75px);
     }
 }
-.invPan{
+
+.invPan {
     transform: translateZ(50px);
-    position:fixed!important;
-    transform-style:flat;
-    left:5%;
-    top:5%;
-}
-#UI {
-    position: absolute;
-    left: 25%;
-    top: 9%;
-    width: 30%;
-    background: #bbb;
-    height:600px;
-    transform: translateZ(40px);
-}
-#UI div.panel-body{
-    height:100%;
-}
-#UI div.panel-heading{
-    text-align:center;
-    font-size:x-large;
-    font-weight: bold;
-}
-#uiBlokCont {
-    position: absolute;
-    border: 1px solid red;
-    width: 246px;
-    height: 577px;
-    right: 0px;
-    top:65px;
-}
-.currUIEl{
-    width:55px;
-    height:55px;
-    margin:3px;
-    background:#333;
-    display:inline-block;
-    font-size: xx-small;
-    overflow:hidden;
-    color:#fff;
+    position: fixed!important;
+    transform-style: flat;
+    left: 5%;
+    top: 5%;
 }

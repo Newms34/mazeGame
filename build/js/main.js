@@ -27,6 +27,7 @@ var app = angular.module('mazeGame', []).controller('maze-con', function($scope,
         this.has = cont; //what this room has in it
     };
     //set up maze initial position
+    $scope.dmgType = combatFac.getDmgType;
     $scope.cell.prototype.dig = function(dir, newCell) {
         console.log('Digging in direction', dir, 'from old cell', this, 'to new cell', newCell);
         switch (dir) {
@@ -198,9 +199,9 @@ var app = angular.module('mazeGame', []).controller('maze-con', function($scope,
             $scope.currUINum--;
         } else if (!dir) {
             $scope.currUINum = $scope.UIPans.length-1;
-        } else if ($scope.currUINum < $scope.UIPans.length - 1) {
+        } else if (dir==1 && $scope.currUINum < $scope.UIPans.length - 1) {
             $scope.currUINum++;
-        } else {
+        } else if(dir==1) {
             $scope.currUINum = 0;
         }
         $scope.currUIPan = $scope.UIPans[$scope.currUINum];//title of current ui panel
@@ -214,6 +215,7 @@ var app = angular.module('mazeGame', []).controller('maze-con', function($scope,
         });
         $scope.currUIBg = UIFac.getUIBg($scope.currUIPan)
     };
+    $scope.chInv(-1);
     //end UI stuff
     $scope.bombOn = false;
     $scope.roomRot = 0;
@@ -349,6 +351,7 @@ var app = angular.module('mazeGame', []).controller('maze-con', function($scope,
     $scope.turnSpeed = 0;
     window.onmousemove = function(e) {
         if ($scope.rotOn) {
+            //do we wanna just remove this?
             $scope.vertRot = (70 * (e.y || e.clientY) / $(window).height()) + 55;
         }
         $scope.$digest();

@@ -1,0 +1,13 @@
+[{
+	"name":"Test Quest",
+	"id":1,
+	"steps":[{
+		"txt":"congrats! You didnt even have to do anything!",
+		"stepNum":1,
+		"monsGoal":-1,
+		"itGoal":-1
+	}],
+	"desc":"This quest is just a test. Smaller than the rest.",
+	"lvl":0,
+	"giver":0
+}]

@@ -1,0 +1,22 @@
+[{
+	"Name":"Dave the Not So Brave",
+	"lvl":1,
+	"equip":{
+        "head": -1,
+        "chest": -1,
+        "hands": -1,
+        "legs": -1,
+        "feet": -1,
+        "lHand": -1,
+        "rHand": -1,
+        "inv":[-1]
+    },
+    "pass":"pass",
+    "questDone":[],
+    "inProg":[],
+    "maxHp":40,
+    "currHp":35,
+    "maxEn":40,
+    "currEn":35,
+    "isStunned":false
+}]

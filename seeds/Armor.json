@@ -1,0 +1,55 @@
+[{
+    "name": "Tattered Hat",
+    "def": 1,
+    "desc": "Itchy and filthy, it offers almost no protection",
+    "res": [],
+    "cost": 2,
+    "itemLvl": 0,
+    "slot": 0,
+    "imgUrl": ""
+}, {
+    "name": "Tattered Shirt",
+    "def": 1,
+    "desc": "A standard-issue peasant shirt",
+    "res": [],
+    "cost": 2,
+    "itemLvl": 0,
+    "slot": 1,
+    "imgUrl": ""
+}, {
+    "name": "Tattered Pants",
+    "def": 1,
+    "desc": "Not comfy. Not protective.",
+    "res": [],
+    "cost": 2,
+    "itemLvl": 0,
+    "slot": 2,
+    "imgUrl": ""
+}, {
+    "name": "Worn Gloves",
+    "def": 1,
+    "desc": "The gloves of a worker. They offer little-to-know actual defense.",
+    "res": [],
+    "cost": 2,
+    "itemLvl": 0,
+    "slot": 3,
+    "imgUrl": ""
+}, {
+    "name": "Farmer's Boots",
+    "def": 1,
+    "desc": "Farmers don't normally fight horrific monsters, so these aren't exactly reassuring.",
+    "res": [],
+    "cost": 2,
+    "itemLvl": 0,
+    "slot": 4,
+    "imgUrl": ""
+}, {
+    "name": "Cook's Ring",
+    "def": 1,
+    "desc": "A cook's best friend, this little trinket offers defense against not checking your stovetop before you touch it.",
+    "res":[1],
+    "cost": 8,
+    "itemLvl": 2,
+    "slot":5,
+    "imgUrl": ""
+}]

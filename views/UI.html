@@ -5,7 +5,7 @@
     </div>
     <div class='panel-body' style='background:url({{currUIBg}});background-size: cover;'>
         <div id='uiBlokCont'>
-            <div class='currUIEl' ng-repeat='UIEl in currUIObjs' title='{{UIEl.desc}}'>
+            <div class='currUIEl' ng-repeat='UIEl in currUIObjs' title='{{UIEl.desc}}' style='background:{{UIEl.imgUrl||"/img/UI/none.jpg"}} contain;'>
                 {{UIEl.name}}
             </div>
         </div>

@@ -1,0 +1,37 @@
+[{
+    "name": "Dull knife",
+    "desc": "Only slightly better than no weapon at all",
+    "min": 1,
+    "max": 4,
+    "def": 0,
+    "itemLvl": 0,
+    "cost": 2,
+    "imgUrl": ""
+}, {
+    "name": "Rusted Axe",
+    "desc": "This axe has seen better days. Perhaps you should axe for a new one.",
+    "min": 4,
+    "max": 6,
+    "def": 0,
+    "itemLvl": 1,
+    "cost": 6,
+    "imgUrl": ""
+}, {
+    "name": "Battered Shield",
+    "desc": "The royal mathematicians have conclusive proven that having something between you and a monster statistically increases your chances of not dying.",
+    "min": 0,
+    "max": 0,
+    "def": 5,
+    "itemLvl": 0,
+    "cost": 5,
+    "imgUrl": ""
+}, {
+    "name": "Holy Mace",
+    "desc": "This blessed mace shields its user, providing added defense.",
+    "min": 4,
+    "max": 8,
+    "def": 4,
+    "itemLvl": 3,
+    "cost": 9,
+    "imgUrl": ""
+}]
