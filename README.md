@@ -1,4 +1,5 @@
 #Dave's Maze Game.
+![Screenie](/public/img/demo.jpg?raw=true)
 
 ##Contents:
  * [About](#About)
