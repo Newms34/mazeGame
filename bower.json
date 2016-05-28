@@ -1,20 +1,19 @@
 {
-  "name": "gw2pricealert",
-  "description": "guild wars 2 price alert emailer",
+  "name": "Dave's Maze Game",
+  "description": "A dungeon crawler written with MEAN.io and love!",
   "main": "app.js",
   "authors": [
     "David Newman"
   ],
   "license": "ISC",
   "keywords": [
-    "guild",
-    "wars",
-    "guildwars",
-    "2",
-    "price",
-    "market"
+    "maze",
+    "dungeon",
+    "rpg",
+    "MEAN",
+    "game"
   ],
-  "homepage": "https://github.com/Newms34/gw2pricealert",
+  "homepage": "https://github.com/Newms34/mazegame",
   "private": true,
   "ignore": [
     "**/.*",
@@ -26,6 +25,7 @@
   "dependencies": {
     "angular": "^1.5.5",
     "angular-recaptcha": "^3.0.3",
-    "bootstrap": "^3.3.6"
+    "bootstrap": "^3.3.6",
+    "jquery-ui": "^1.11.4"
   }
 }
