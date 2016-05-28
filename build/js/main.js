@@ -182,14 +182,14 @@ var app = angular.module('mazeGame', []).controller('maze-con', function($scope,
     };
     //UI stuff
     //user's current UI
-    $scope.Inventory=[];
-    $scope.Skills=[];
-    $scope.Bestiary=[];
-    $scope.Quests=[]
+    $scope.Inventory = [];
+    $scope.Skills = [];
+    $scope.Bestiary = [];
+    $scope.Quests = []
 
     $scope.currUINum = 0;
     $scope.UIPans = ['Inventory', 'Skills', 'Bestiary', 'Quests'];
-    $scope.currUIObjs =[];//we get these from the factory
+    $scope.currUIObjs = []; //we get these from the factory
     $scope.currUIBg = '../img/UI/inv.jpg';
     $scope.currUIPan = $scope.UIPans[$scope.currUINum];
     $scope.chInv = function(dir) {
@@ -198,20 +198,20 @@ var app = angular.module('mazeGame', []).controller('maze-con', function($scope,
         if (!dir && $scope.currUINum > 0) {
             $scope.currUINum--;
         } else if (!dir) {
-            $scope.currUINum = $scope.UIPans.length-1;
-        } else if (dir==1 && $scope.currUINum < $scope.UIPans.length - 1) {
+            $scope.currUINum = $scope.UIPans.length - 1;
+        } else if (dir == 1 && $scope.currUINum < $scope.UIPans.length - 1) {
             $scope.currUINum++;
-        } else if(dir==1) {
+        } else if (dir == 1) {
             $scope.currUINum = 0;
         }
-        $scope.currUIPan = $scope.UIPans[$scope.currUINum];//title of current ui panel
+        $scope.currUIPan = $scope.UIPans[$scope.currUINum]; //title of current ui panel
         // var currUIEls = UIFac.getUIObj($scope.currUIPan,$scope[$scope.currUIPan]);
         // console.log('UI stuff:',currUIEls)
         // $scope.currUIBg = currUIEls.bg;
-        console.log(UIFac,UIFac.getUIObj)
-        UIFac.getUIObj($scope.currUIPan,$scope[$scope.currUIPan]).then(function(uiRes){
+        console.log(UIFac, UIFac.getUIObj)
+        UIFac.getUIObj($scope.currUIPan, $scope[$scope.currUIPan]).then(function(uiRes) {
             $scope.currUIObjs = uiRes.data;
-            console.log('UI OBJS:',$scope.currUIObjs)
+            console.log('UI OBJS:', $scope.currUIObjs)
         });
         $scope.currUIBg = UIFac.getUIBg($scope.currUIPan)
     };
@@ -402,4 +402,6 @@ var app = angular.module('mazeGame', []).controller('maze-con', function($scope,
         return roomWall;
     }
     $scope.makeMaze();
+    console.log('UI',document.querySelector('#uiloader'))
+    $('#uiloader').draggable({constrain:'body'});
 });

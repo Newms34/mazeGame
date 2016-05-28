@@ -250,3 +250,15 @@ body {
     left: 5%;
     top: 5%;
 }
+#uiloader{
+     position: absolute;
+    left: 25%;
+    transform: translateZ(40px);
+    top: 9%;
+    width: 30%;
+    height: 600px;
+    &>div{
+        height:100%;
+        width:100%;
+    }
+}

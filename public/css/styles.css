@@ -198,14 +198,22 @@ body {
   left: 5%;
   top: 5%; }
 
-#UI {
+#uiloader {
   position: absolute;
   left: 25%;
+  transform: translateZ(40px);
   top: 9%;
   width: 30%;
+  height: 600px; }
+  #uiloader > div {
+    height: 100%;
+    width: 100%; }
+
+#UI {
+  position: absolute;
   background: #bbb;
-  height: 600px;
-  transform: translateZ(40px); }
+  width: 100%;
+  height: 100%; }
   #UI div.panel-body {
     height: 100%; }
   #UI div.panel-heading {

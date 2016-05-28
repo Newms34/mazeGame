@@ -23,8 +23,10 @@
             <hr/>
             <button ng-click='makeMaze()'>Generate</button>
         </div>
-    </div>{{invActive}}
-    <div ng-include="'UI.html'" ng-show='invActive'></div>
+    </div>
+    <div id='uiloader' ng-show='invActive'>
+        <div ng-include="'UI.html'" style='width:100%;height:100%;'></div>
+    </div>
     <div id='maze' style='width:{{width*50}}px; height:{{height*50}}px;transform:rotateZ({{roomRot}}deg) translateZ(180px) scale3d(.5,.5,.5);'>
         <!-- This is the maze 'icon' that we use for navigation. 3D! -->
         <div class='cell' ng-repeat='cl in cells' style='left:{{cl.x*50}}px;top:{{cl.y*50}}px;' ng-class='{"nWall":cl.north,"sWall":cl.south,"eWall":cl.east,"wWall":cl.west,"usr":compareCell(cl.id),"daBomb":compareCell(cl.id) && bombOn}' title='{{cl.x}}:{{cl.y}}'>
@@ -51,6 +53,7 @@
         <div id='fuse'><span>{{bombsLeft}}</span></div>
     </div>
     <script src="/jquery/dist/jquery.min.js"></script>
+    <script src="/jquery-ui/jquery-ui.min.js"></script>
     <script src="/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="/angular/angular.min.js"></script>
     <!-- Because of gulp, we can include just one, minified file!: -->
