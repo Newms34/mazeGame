@@ -1,5 +1,5 @@
 {
-  "name": "Dave's Maze Game",
+  "name": "Daves Maze Game",
   "description": "A dungeon crawler written with MEAN.io and love!",
   "main": "app.js",
   "authors": [
