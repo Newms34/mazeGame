@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Maze!</title>
+    <link rel="stylesheet" href="/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/styles.css">
+</head>
+
+<body ng-app='mazeGame' ng-controller='mob-con' ng-cloak id='mob'>
+    <div class='col-xs-3'></div>
+    <div class='col-xs-6' id='mainMob'>
+        <div>Your name: </div>
+        <div id='uName'>{{uName}}</div>
+        x:{{rotX}}<br/>y:{{rotY}}
+    </div>
+    <script src='/socket.io-client/socket.io.js'></script>
+    <script src="/jquery/dist/jquery.min.js"></script>
+    <script src="/jquery-ui/jquery-ui.min.js"></script>
+    <script src="/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="/angular/angular.min.js"></script>
+    <!-- Because of gulp, we can include just one, minified file!: -->
+    <script src="/js/all.min.js"></script>
+</body>
+
+</html>

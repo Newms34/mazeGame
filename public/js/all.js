@@ -1,4 +1,6 @@
-var app = angular.module('mazeGame', []).controller('maze-con', function($scope, $http, $q, $interval, combatFac, UIFac) {
+var socket = io();
+console.log('Socket', socket)
+var app = angular.module('mazeGame', []).controller('maze-con', function($scope, $http, $q, $interval, $window, combatFac, UIFac) {
     $scope.width = 6;
     $scope.height = 6;
     $scope.path = []; //all the cells visited, in order.
@@ -14,6 +16,15 @@ var app = angular.module('mazeGame', []).controller('maze-con', function($scope,
     //for now, i'm setting the default contents of the player inv as below
     $scope.playerItems = [];
     $scope.possRoomConts = ['loot', 'mons', 'npcs', 'jewl', ' ', 'exit', ' ', ' ', 'mons', 'mons']; //things that could be in a room!
+    $scope.uName = ''; //if this is blank, accept no incoming socket events from phone(s). Otherwise, accept from specified phone only!
+    ($scope.checkPhone = function() {
+        var isMobile = false; //initiate as false
+        // device detection
+        if (/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|ipad|iris|kindle|Android|Silk|lge |maemo|midp|mmp|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows (ce|phone)|xda|xiino/i.test(navigator.userAgent) || /1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(navigator.userAgent.substr(0, 4))) isMobile = true;
+        if (isMobile) {
+            $window.location.href = './mobile'
+        }
+    })();
     $scope.cell = function(id, cont) {
         this.id = id;
         this.x = id.split('-')[0];
@@ -350,10 +361,6 @@ var app = angular.module('mazeGame', []).controller('maze-con', function($scope,
     }
     $scope.turnSpeed = 0;
     window.onmousemove = function(e) {
-        if ($scope.rotOn) {
-            //do we wanna just remove this?
-            $scope.vertRot = (70 * (e.y || e.clientY) / $(window).height()) + 55;
-        }
         $scope.$digest();
         var horiz = (e.x || e.clientX) / $(window).width();
         if (Math.abs(horiz - .5) > .3) {
@@ -402,8 +409,107 @@ var app = angular.module('mazeGame', []).controller('maze-con', function($scope,
         return roomWall;
     }
     $scope.makeMaze();
-    console.log('UI',document.querySelector('#uiloader'))
-    $('#uiloader').draggable({constrain:'body'});
+    console.log('UI', document.querySelector('#uiloader'))
+    $('#uiloader').draggable({ constrain: 'body' });
+    $scope.inpPhone = function() {
+        $scope.moveReady = false;
+        bootbox.prompt("Enter a name (you get this by visiting the site on your phone)!", function(result) {
+            if (result !== null && result != ' ') {
+                //as long as its not blank
+                socket.emit('chkName', { n: result })
+            }
+            $scope.moveReady = true;
+        });
+    }
+    socket.on('chkNameRes', function(nm) {
+        if (nm.n) {
+            $scope.uName = nm.n;
+        }
+        console.log('Name:', nm.n)
+    })
+    $scope.turnPhoneTimer;
+    socket.on('movOut', function(mvOb) {
+        if (mvOb.n == $scope.uName) {
+            if (mvOb.x < -50) {
+                var e = new Event('keydown');
+                e.which = 65;
+                $scope.turnPhoneTimer = setTimeout(function() { window.onkeydown(e) }, 100);
+            }
+            if (mvOb.x > 50) {
+                var e = new Event('keydown');
+                e.which = 68;
+                $scope.turnPhoneTimer = setTimeout(function() { window.onkeydown(e) }, 100);
+            }
+        }
+    })
+});
+
+app.controller('mob-con', function($scope, $http, $q, $interval, $window) {
+    $scope.currRotX = 0;
+    $scope.currRotY = 0;
+    $scope.rotX = 0;
+    $scope.rotY = 0;
+    $scope.uName = 'retrieving...'; //username!
+    $scope.getUn = function() {
+        var nounStart = String.fromCharCode(65 + Math.floor(Math.random() * 25));
+        var adjStart = String.fromCharCode(65 + Math.floor(Math.random() * 25));
+        $.ajax({
+            dataType: 'jsonp',
+            url: 'https://simple.wiktionary.org/w/api.php?action=query&list=categorymembers&format=json&cmsort=sortkey&cmstartsortkeyprefix=' + nounStart + '&cmlimit=500&cmtitle=Category:Nouns',
+            success: function(nounRes) {
+                var noun = ' ';
+                while (noun.indexOf(' ') != -1) {
+                    noun = nounRes.query.categorymembers[Math.floor(Math.random() * nounRes.query.categorymembers.length)].title;
+                    console.log(noun, noun.indexOf(' '))
+                }
+                //got the noun. Now the adjective!
+                console.log('final noun:', noun)
+                $.ajax({
+                    dataType: 'jsonp',
+                    url: 'https://simple.wiktionary.org/w/api.php?action=query&list=categorymembers&format=json&cmsort=sortkey&cmstartsortkeyprefix=' + adjStart + '&cmlimit=500&cmtitle=Category:Adjectives',
+                    success: function(adjRes) {
+                        var adj = ' ';
+                        while (adj.indexOf(' ') != -1) {
+                            adj = adjRes.query.categorymembers[Math.floor(Math.random() * adjRes.query.categorymembers.length)].title;
+                            console.log(adj, adj.indexOf(' '))
+                        }
+                        $scope.uName = adj + ' ' + noun;
+                        $scope.$digest();
+                    }
+                })
+            }
+        })
+    }
+    $window.onmousemove = function($event) {
+        //i may eventually disable this for mobile use
+        if ($scope.uName != 'retrieving...') {
+            $scope.rotX = Math.floor(200 * (($event.x / $(window).width()) - .5));
+            $scope.rotY = Math.floor(200 * (($event.y / $(window).height()) - .5));
+            $scope.$digest();
+        }
+        var mov = {
+            x: $scope.rotX,
+            y: $scope.rotY,
+            n: $scope.uName
+        }
+        socket.emit('movData', mov)
+    }
+    $window.addEventListener('deviceorientation', function($event) {
+        //i may eventually disable this for mobile use
+        if ($scope.uName != 'retrieving...') {
+            $scope.rotX = Math.floor(($event.beta/90)*100);
+            $scope.rotY =  Math.floor(($event.gamma/90)*100);
+            $scope.$digest();
+        }
+        var mov = {
+            x: $scope.rotX,
+            y: $scope.rotY,
+            n: $scope.uName
+        }
+        socket.emit('movData', mov)
+    });
+    $scope.getUn();
+
 });
 
 app.factory('combatFac', function($http) {
@@ -420,6 +526,29 @@ app.factory('mazeFac', function($http) {
     };
 });
 
+app.factory('socketFac', function ($rootScope) {
+  var socket = io.connect();
+  return {
+    on: function (eventName, callback) {
+      socket.on(eventName, function () { 
+        var args = arguments;
+        $rootScope.$apply(function () {
+          callback.apply(socket, args);
+        });
+      });
+    },
+    emit: function (eventName, data, callback) {
+      socket.emit(eventName, data, function () {
+        var args = arguments;
+        $rootScope.$apply(function () {
+          if (callback) {
+            callback.apply(socket, args);
+          }
+        });
+      })
+    }
+  };
+});
 app.factory('UIFac', function($http, $q) {
     return {
         getUIObj: function(whichUI, UIStuff) {

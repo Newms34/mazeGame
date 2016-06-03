@@ -209,6 +209,30 @@ body {
     height: 100%;
     width: 100%; }
 
+body#mob {
+  height: 100%;
+  margin: 0;
+  width: 100%;
+  background: url("http://lorempixel.com/800/800/technics");
+  background-size: cover;
+  background-position: fixed; }
+  body#mob #mainMob {
+    font-family: 'arial';
+    font-size: 32pt;
+    background: #eee;
+    height: 100%;
+    text-align: center;
+    box-shadow: 2px 0px 25px #000; }
+    body#mob #mainMob div {
+      margin: 2px;
+      background: #D2C4B6;
+      position: relative;
+      margin-bottom: 5px;
+      box-shadow: 1px 1px 2px #555;
+      top: 2px; }
+    body#mob #mainMob #uName {
+      background: #fed; }
+
 #UI {
   position: absolute;
   background: #bbb;

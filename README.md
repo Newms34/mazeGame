@@ -10,7 +10,7 @@
 
 ##About:
 Dave's Maze Game (I'll probably change that title later) is a dungeon crawler app written in MEAN stack JavaScript. It's an exploration of 1st-person 3D in the browser, as well as (eventually!) some simple AI concepts. The technologies involved are as follows:
- - **AngularJS** 1.5 for awesome front-end stuffs
+ - **AngularJS 1.5** for awesome front-end stuffs
  - **MongoDB** for storing all your epic adventures
  - **Mongoose** for saying "hi!" to mongodb
  - **ExpressJS** for servers

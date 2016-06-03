@@ -4,6 +4,7 @@
         <button class='btn btn-primary' style='float:right' ng-click='chInv(1)'>&rightarrow;</button>
     </div>
     <div class='panel-body' style='background:url({{currUIBg}});background-size: cover;'>
+    <button class='btn btn-primary' title='connect to a phone!' ng-click='inpPhone()'>&#128241;</button>
         <div id='uiBlokCont'>
             <div class='currUIEl' ng-repeat='UIEl in currUIObjs' title='{{UIEl.desc}}' style='background:{{UIEl.imgUrl||"/img/UI/none.jpg"}} contain;'>
                 {{UIEl.name}}

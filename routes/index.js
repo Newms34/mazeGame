@@ -5,7 +5,6 @@ var models = require('../models/');
 var https = require('https');
 var async = require('async');
 var mongoose = require('mongoose');
-console.log(models)
 
 router.get('/', function(req, res, next) {
     /*get the homepage (the game screen)
@@ -16,6 +15,11 @@ router.get('/', function(req, res, next) {
     In other words, if all routes fail (if the server still can't figure out wtf you're sayin), send it all to the error handler!
     */
     res.sendFile('index.html', { root: './views' })
+});
+
+router.get('/mobile', function(req, res, next) {
+    /*get mobile!*/
+    res.sendFile('mobile.html', { root: './views' })
 });
 router.get('/beastie/:id', function(req, res, next) {
     //'params' below basically means 'anything in the url with a colon (:) before it'.

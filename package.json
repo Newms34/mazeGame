@@ -12,7 +12,9 @@
     "gulp": "^3.9.1",
     "mongoose": "^4.4.13",
     "node-sass": "^3.7.0",
-    "nodemon": "^1.9.1"
+    "nodemon": "^1.9.1",
+    "socket.io": "^1.4.6",
+    "socketio": "^1.0.0"
   },
   "devDependencies": {
     "gulp": "^3.9.1",
