@@ -427,18 +427,40 @@ var app = angular.module('mazeGame', []).controller('maze-con', function($scope,
         }
         console.log('Name:', nm.n)
     })
-    $scope.turnPhoneTimer;
+    $scope.phoneMovTimer;
     socket.on('movOut', function(mvOb) {
         if (mvOb.n == $scope.uName) {
             if (mvOb.x < -50) {
-                var e = new Event('keydown');
-                e.which = 65;
-                $scope.turnPhoneTimer = setTimeout(function() { window.onkeydown(e) }, 100);
+                $scope.phoneMovTimer = setTimeout(function() {
+                    console.log('time (L)', new Date().getTime())
+                    var e = new Event('keydown');
+                    e.which = 65;
+                    window.onkeydown(e);
+                }, 500);
             }
             if (mvOb.x > 50) {
-                var e = new Event('keydown');
-                e.which = 68;
-                $scope.turnPhoneTimer = setTimeout(function() { window.onkeydown(e) }, 100);
+                $scope.phoneMovTimer = setTimeout(function() {
+                    console.log('time (R)', new Date().getTime())
+                    var e = new Event('keydown');
+                    e.which = 68;
+                    window.onkeydown(e);
+                }, 500);
+            }
+            if (mvOb.y < -50) {
+                $scope.phoneMovTimer = setTimeout(function() {
+                    console.log('time (F)', new Date().getTime())
+                    var e = new Event('keydown');
+                    e.which = 87;
+                    window.onkeydown(e);
+                }, 500);
+            }
+            if (mvOb.y > 50) {
+                $scope.phoneMovTimer = setTimeout(function() {
+                    console.log('time (B)', new Date().getTime())
+                    var e = new Event('keydown');
+                    e.which = 83;
+                    window.onkeydown(e);
+                }, 500);
             }
         }
     })
@@ -497,8 +519,8 @@ app.controller('mob-con', function($scope, $http, $q, $interval, $window) {
     $window.addEventListener('deviceorientation', function($event) {
         //i may eventually disable this for mobile use
         if ($scope.uName != 'retrieving...') {
-            $scope.rotX = Math.floor(($event.beta/90)*100);
-            $scope.rotY =  Math.floor(($event.gamma/90)*100);
+            $scope.rotX = Math.floor(($event.gamma/90)*120);
+            $scope.rotY =  Math.floor(($event.beta/90)*120);
             $scope.$digest();
         }
         var mov = {

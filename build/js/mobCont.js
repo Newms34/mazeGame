@@ -51,8 +51,8 @@ app.controller('mob-con', function($scope, $http, $q, $interval, $window) {
     $window.addEventListener('deviceorientation', function($event) {
         //i may eventually disable this for mobile use
         if ($scope.uName != 'retrieving...') {
-            $scope.rotX = Math.floor(($event.beta/90)*100);
-            $scope.rotY =  Math.floor(($event.gamma/90)*100);
+            $scope.rotX = Math.floor(($event.gamma/90)*120);
+            $scope.rotY =  Math.floor(($event.beta/90)*120);
             $scope.$digest();
         }
         var mov = {
