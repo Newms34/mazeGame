@@ -555,10 +555,10 @@ app.controller('mob-con', function($scope, $http, $q, $interval, $window) {
             }else{
                 $scope.rotX = null;
             }
-            if (rotY < -50) {
+            if (rotY < -30) {
                 $scope.rotY = 'f';
                 $scope.isMoving = true;
-            } else if (rotY > 50) {
+            } else if (rotY > 30) {
                 $scope.rotY = 'b';
                 $scope.isMoving = true;
             }else{
