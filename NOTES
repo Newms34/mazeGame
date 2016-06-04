@@ -5,3 +5,18 @@ DMG TYPES:
 3: poison
 4: dark
 5: holy
+
+
+How do we wanna implement mobile devices?
+probly left-tilt right-tilt for left-right movement
+Other control inputs include:
+tilt forward/back: can use, but may be difficult to get it to stop on one PARTICULAR item
+dragging
+simple clicking (tapping?)
+best would be some sort of scroll interface to choose skills, a la TR4's inv ring system
+
+https://jsfiddle.net/tvdvw9aq/58/
+
+possibly implement movement pause on the client side? this needs to be designed so that tilting the phone doesnt cause continuous key-pressing.
+
+Cloud9

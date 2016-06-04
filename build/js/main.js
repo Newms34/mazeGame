@@ -1,6 +1,6 @@
 var socket = io();
 console.log('Socket', socket)
-var app = angular.module('mazeGame', []).controller('maze-con', function($scope, $http, $q, $interval, $window, combatFac, UIFac) {
+var app = angular.module('mazeGame', []).controller('maze-con', function($scope, $http, $q, $interval, $timeout, $window, combatFac, UIFac) {
     $scope.width = 6;
     $scope.height = 6;
     $scope.path = []; //all the cells visited, in order.
@@ -427,40 +427,38 @@ var app = angular.module('mazeGame', []).controller('maze-con', function($scope,
         }
         console.log('Name:', nm.n)
     })
+    $scope.travelOkay = true;
     $scope.phoneMovTimer;
     socket.on('movOut', function(mvOb) {
         if (mvOb.n == $scope.uName) {
-            if (mvOb.x < -50) {
-                $scope.phoneMovTimer = setTimeout(function() {
-                    console.log('time (L)', new Date().getTime())
-                    var e = new Event('keydown');
-                    e.which = 65;
-                    window.onkeydown(e);
-                }, 500);
+            var ex = null,
+                ey = null;
+            if (mvOb.x == 'l') {
+                ex = new Event('keydown');
+                ex.which = 65;
+                window.onkeydown(ex);
+            } else if (mvOb.x == 'r') {
+                ex = new Event('keydown');
+                ex.which = 68;
+                window.onkeydown(ex);
             }
-            if (mvOb.x > 50) {
-                $scope.phoneMovTimer = setTimeout(function() {
-                    console.log('time (R)', new Date().getTime())
-                    var e = new Event('keydown');
-                    e.which = 68;
-                    window.onkeydown(e);
-                }, 500);
-            }
-            if (mvOb.y < -50) {
-                $scope.phoneMovTimer = setTimeout(function() {
-                    console.log('time (F)', new Date().getTime())
-                    var e = new Event('keydown');
-                    e.which = 87;
-                    window.onkeydown(e);
-                }, 500);
-            }
-            if (mvOb.y > 50) {
-                $scope.phoneMovTimer = setTimeout(function() {
-                    console.log('time (B)', new Date().getTime())
-                    var e = new Event('keydown');
-                    e.which = 83;
-                    window.onkeydown(e);
-                }, 500);
+            //for moving forward and back, we only move every 1.0 seconds.
+            if (mvOb.y == 'f' && $scope.travelOkay) {
+                ey = new Event('keydown');
+                ey.which = 87;
+                window.onkeydown(ey);
+                $scope.travelOkay = false;
+                $scope.phoneMovTimer = $timeout(function(){
+                    $scope.travelOkay = true;
+                },1000);
+            } else if (mvOb.y == 'b' && $scope.travelOkay) {
+                ey = new Event('keydown');
+                ey.which = 83;
+                window.onkeydown(ey);
+                $scope.travelOkay = false;
+                $scope.phoneMovTimer = $timeout(function(){
+                    $scope.travelOkay = true;
+                },1000);
             }
         }
     })

@@ -34,33 +34,72 @@ app.controller('mob-con', function($scope, $http, $q, $interval, $window) {
             }
         })
     }
+    $scope.sendMove = $interval(function() {
+        if ($scope.uName != 'retrieving...' && $scope.isMoving) {
+            //if we've registered a username and there is a movement to be submitted
+            socket.emit('movData', $scope.movObj)
+        }
+    }, 75);
+    $scope.isMoving = false;
+    $scope.movObj = {};
     $window.onmousemove = function($event) {
         //i may eventually disable this for mobile use
         if ($scope.uName != 'retrieving...') {
-            $scope.rotX = Math.floor(200 * (($event.x / $(window).width()) - .5));
-            $scope.rotY = Math.floor(200 * (($event.y / $(window).height()) - .5));
-            $scope.$digest();
+            var rotX = Math.floor(200 * (($event.x / $(window).width()) - .5));
+            var rotY = Math.floor(200 * (($event.y / $(window).height()) - .5));
+            $scope.isMoving = false;
+            //detect movement in x and y directions.
+            if (rotX > 50) {
+                $scope.rotX = 'r';
+                $scope.isMoving = true;
+            } else if (rotX < -50) {
+                $scope.rotX = 'l'
+                $scope.isMoving = true;
+            }else{
+                $scope.rotX = null;
+            }
+            if (rotY < -50) {
+                $scope.rotY = 'f';
+                $scope.isMoving = true;
+            } else if (rotY > 50) {
+                $scope.rotY = 'b';
+                $scope.isMoving = true;
+            }else{
+                $scope.rotY = null;
+            }
+            $scope.movObj = {
+                x: $scope.rotX,
+                y: $scope.rotY,
+                n: $scope.uName
+            }
         }
-        var mov = {
-            x: $scope.rotX,
-            y: $scope.rotY,
-            n: $scope.uName
-        }
-        socket.emit('movData', mov)
     }
     $window.addEventListener('deviceorientation', function($event) {
         //i may eventually disable this for mobile use
         if ($scope.uName != 'retrieving...') {
-            $scope.rotX = Math.floor(($event.gamma/90)*120);
-            $scope.rotY =  Math.floor(($event.beta/90)*120);
-            $scope.$digest();
+            var rotX = Math.floor(($event.gamma / 90) * 120);
+            var rotY = Math.floor(($event.beta / 90) * 120);
+            $scope.isMoving = false;
+            if (rotX > 50) {
+                $scope.rotX = 'r';
+                $scope.isMoving = true;
+            } else if (rotX < -50) {
+                $scope.rotX = 'l'
+                $scope.isMoving = true;
+            }
+            if (rotY < -50) {
+                $scope.rotY = 'f';
+                $scope.isMoving = true;
+            } else if (rotY > 50) {
+                $scope.rotY = 'b';
+                $scope.isMoving = true;
+            }
+            $scope.movObj = {
+                x: $scope.rotX,
+                y: $scope.rotY,
+                n: $scope.uName
+            }
         }
-        var mov = {
-            x: $scope.rotX,
-            y: $scope.rotY,
-            n: $scope.uName
-        }
-        socket.emit('movData', mov)
     });
     $scope.getUn();
 
