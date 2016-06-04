@@ -552,6 +552,8 @@ app.controller('mob-con', function($scope, $http, $q, $interval, $window) {
             } else if (rotX < -50) {
                 $scope.rotX = 'l'
                 $scope.isMoving = true;
+            }else{
+                $scope.rotX = null;
             }
             if (rotY < -50) {
                 $scope.rotY = 'f';
@@ -559,6 +561,8 @@ app.controller('mob-con', function($scope, $http, $q, $interval, $window) {
             } else if (rotY > 50) {
                 $scope.rotY = 'b';
                 $scope.isMoving = true;
+            }else{
+                $scope.rotY = null;
             }
             $scope.movObj = {
                 x: $scope.rotX,
