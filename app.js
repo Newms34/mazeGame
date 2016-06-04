@@ -26,7 +26,7 @@ io.on('connection', function(socket) {
         io.emit('movOut', movObj);
     });
     socket.on('chkName',function(name){
-        console.log(name.n)
+        console.log('name',name.n,names)
         if(names.indexOf(name.n)!=-1){
             io.emit('chkNameRes',{n:name.n})
         }
