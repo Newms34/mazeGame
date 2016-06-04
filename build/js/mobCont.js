@@ -1,8 +1,8 @@
 app.controller('mob-con', function($scope, $http, $q, $interval, $window) {
     $scope.currRotX = 0;
     $scope.currRotY = 0;
-    $scope.rotX = 0;
-    $scope.rotY = 0;
+    $scope.rotX = null;
+    $scope.rotY = null;
     $scope.uName = 'retrieving...'; //username!
     $scope.getUn = function() {
         var nounStart = String.fromCharCode(65 + Math.floor(Math.random() * 25));
@@ -28,6 +28,9 @@ app.controller('mob-con', function($scope, $http, $q, $interval, $window) {
                             console.log(adj, adj.indexOf(' '))
                         }
                         $scope.uName = adj + ' ' + noun;
+                        $scope.movObj.n = $scope.uName;
+                        //basically just to register name
+                        socket.emit('movData', $scope.movObj);
                         $scope.$digest();
                     }
                 })
@@ -41,7 +44,11 @@ app.controller('mob-con', function($scope, $http, $q, $interval, $window) {
         }
     }, 75);
     $scope.isMoving = false;
-    $scope.movObj = {};
+    $scope.movObj = {
+        x:$scope.rotX,
+        y:$scope.rotY,
+        n:null
+    };
     $window.onmousemove = function($event) {
         //i may eventually disable this for mobile use
         if ($scope.uName != 'retrieving...') {
