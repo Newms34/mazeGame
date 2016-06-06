@@ -448,18 +448,43 @@ var app = angular.module('mazeGame', []).controller('maze-con', function($scope,
                 ey.which = 87;
                 window.onkeydown(ey);
                 $scope.travelOkay = false;
-                $scope.phoneMovTimer = $timeout(function(){
+                $scope.phoneMovTimer = $timeout(function() {
                     $scope.travelOkay = true;
-                },1000);
+                }, 1000);
             } else if (mvOb.y == 'b' && $scope.travelOkay) {
                 ey = new Event('keydown');
                 ey.which = 83;
                 window.onkeydown(ey);
                 $scope.travelOkay = false;
-                $scope.phoneMovTimer = $timeout(function(){
+                $scope.phoneMovTimer = $timeout(function() {
                     $scope.travelOkay = true;
-                },1000);
+                }, 1000);
             }
         }
     })
+    $scope.getUIInfo = function(el) {
+        bootbox.dialog({
+            title: '<h3>' + el.name + '</h3>',
+            message: '<p>' + el.desc + '</p><p id="moreInf" style="display:none;"></p>',
+            buttons: {
+                success: {
+                    label: "Close",
+                    className: "btn-primary"
+                },
+                info: {
+                    label: "More info",
+                    className: "btn-info",
+                    callback: function() {
+                        if ($('#moreInf').css('display')=='none') {
+                            UIFac.moreInfo(el);
+                        } else {
+                            UIFac.lessInf();
+                        }
+                        return false;
+                    }
+                }
+            }
+        })
+    }
+
 });

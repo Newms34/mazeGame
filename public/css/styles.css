@@ -213,9 +213,7 @@ body#mob {
   height: 100%;
   margin: 0;
   width: 100%;
-  background: url("http://lorempixel.com/800/800/technics");
-  background-size: cover;
-  background-position: fixed; }
+  background: #008; }
   body#mob #mainMob {
     font-family: 'arial';
     font-size: 32pt;
@@ -258,4 +256,11 @@ body#mob {
     display: inline-block;
     font-size: xx-small;
     overflow: hidden;
-    color: #fff; }
+    color: #fff;
+    transition-duration: 0.5s;
+    cursor: pointer; }
+    #UI .currUIEl:hover {
+      box-shadow: 0 0 4px #fff; }
+
+.moreInfList {
+  list-style: none; }

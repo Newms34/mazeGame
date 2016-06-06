@@ -27,5 +27,13 @@
         font-size: xx-small;
         overflow: hidden;
         color: #fff;
+        transition-duration:0.5s;
+        cursor:pointer;
+        &:hover{
+            box-shadow:0 0 4px #fff;
+        }
     }
+}
+.moreInfList{
+    list-style:none;
 }

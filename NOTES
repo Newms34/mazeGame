@@ -20,3 +20,5 @@ https://jsfiddle.net/tvdvw9aq/58/
 possibly implement movement pause on the client side? this needs to be designed so that tilting the phone doesnt cause continuous key-pressing.
 
 Cloud9
+
+IMPLEMENT BROWSER CHECKING (seems to only work in chrome!)
