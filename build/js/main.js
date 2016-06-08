@@ -350,12 +350,14 @@ var app = angular.module('mazeGame', []).controller('maze-con', function($scope,
         }
     }
     $scope.moving = false;
-    $scope.moveAni = function() {
+    $scope.moveAni = function(ex) {
         $scope.moving = true;
         $('body').fadeOut(500, function() {
             $('body').fadeIn(500, function() {
-
                 $scope.moving = false;
+                if(ex && ex!=0){
+                    $window.location.reload();
+                }
             })
         })
     }
@@ -407,6 +409,16 @@ var app = angular.module('mazeGame', []).controller('maze-con', function($scope,
     $scope.getWallStatus = function(dir) {
         var roomWall = $scope.cells[$scope.cellNames.indexOf($scope.playerCell)][dir] ? './img/wall.jpg' : './img/door.jpg';
         return roomWall;
+    };
+    $scope.isExit = function(){
+        var tex = $scope.cells[$scope.cellNames.indexOf($scope.playerCell)].has=='exit'?'./img/exit.png':'./img/ground.jpg';
+        return tex;
+    };
+    $scope.noMove=function($event){
+        $event.stopPropagation();
+    }
+    $scope.floorCursor = function(){
+       return $scope.cells[$scope.cellNames.indexOf($scope.playerCell)].has=='exit'? 'pointer':'auto';
     }
     $scope.makeMaze();
     console.log('UI', document.querySelector('#uiloader'))
@@ -486,5 +498,12 @@ var app = angular.module('mazeGame', []).controller('maze-con', function($scope,
             }
         })
     }
-
+    $scope.levelDown = function(){
+        //TO DO: this needs to be dependent on quest statuses (i.e., certain quests block it). it also needs to send data back to Mongo to update what level the player's on.
+        bootbox.confirm('Ready to go to the next level?',function(res){
+            if(res && res!=null){
+                $scope.moveAni(1);
+            }
+        })
+    };
 });

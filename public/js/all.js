@@ -350,12 +350,14 @@ var app = angular.module('mazeGame', []).controller('maze-con', function($scope,
         }
     }
     $scope.moving = false;
-    $scope.moveAni = function() {
+    $scope.moveAni = function(ex) {
         $scope.moving = true;
         $('body').fadeOut(500, function() {
             $('body').fadeIn(500, function() {
-
                 $scope.moving = false;
+                if(ex && ex!=0){
+                    $window.location.reload();
+                }
             })
         })
     }
@@ -407,6 +409,16 @@ var app = angular.module('mazeGame', []).controller('maze-con', function($scope,
     $scope.getWallStatus = function(dir) {
         var roomWall = $scope.cells[$scope.cellNames.indexOf($scope.playerCell)][dir] ? './img/wall.jpg' : './img/door.jpg';
         return roomWall;
+    };
+    $scope.isExit = function(){
+        var tex = $scope.cells[$scope.cellNames.indexOf($scope.playerCell)].has=='exit'?'./img/exit.png':'./img/ground.jpg';
+        return tex;
+    };
+    $scope.noMove=function($event){
+        $event.stopPropagation();
+    }
+    $scope.floorCursor = function(){
+       return $scope.cells[$scope.cellNames.indexOf($scope.playerCell)].has=='exit'? 'pointer':'auto';
     }
     $scope.makeMaze();
     console.log('UI', document.querySelector('#uiloader'))
@@ -486,7 +498,14 @@ var app = angular.module('mazeGame', []).controller('maze-con', function($scope,
             }
         })
     }
-
+    $scope.levelDown = function(){
+        //TO DO: this needs to be dependent on quest statuses (i.e., certain quests block it). it also needs to send data back to Mongo to update what level the player's on.
+        bootbox.confirm('Ready to go to the next level?',function(res){
+            if(res && res!=null){
+                $scope.moveAni(1);
+            }
+        })
+    };
 });
 
 app.controller('mob-con', function($scope, $http, $q, $interval, $window) {
@@ -604,7 +623,6 @@ app.controller('mob-con', function($scope, $http, $q, $interval, $window) {
         }
     });
     $scope.getUn();
-
 });
 
 app.factory('combatFac', function($http) {
@@ -644,7 +662,7 @@ app.factory('socketFac', function ($rootScope) {
     }
   };
 });
-app.factory('UIFac', function($http, $q,combatFac) {
+app.factory('UIFac', function($http, $q, combatFac) {
     return {
         getUIObj: function(whichUI, UIStuff) {
             //get all the data
@@ -700,58 +718,68 @@ app.factory('UIFac', function($http, $q,combatFac) {
                 addStuff += '<li>Cost:' + el.cost + ' coins</li>';
                 addStuff += '<li>Level:' + el.itemLvl + '</li>';
                 addStuff += '<li>Resistance:';
-                if(el.res && el.res.length){
-                    addStuff+='<ul>'
-                    for(var i = 0;i<el.res.length;i++){
-                        addStuff+='<li> '+combatFac.getDmgType(el.res[i])+' </li>'
+                if (el.res && el.res.length) {
+                    addStuff += '<ul>'
+                    for (var i = 0; i < el.res.length; i++) {
+                        addStuff += '<li> ' + combatFac.getDmgType(el.res[i]) + ' </li>'
                     }
-                    addStuff+='</ul>'
-                }else{
-                    addStuff+='<span> none </span></li>'
+                    addStuff += '</ul>'
+                } else {
+                    addStuff += '<span> none </span></li>'
                 }
             } else if (el.giver || el.giver == 0) {
                 //quest
-                addStuff+='<li>still gotta do this! Sorry</li>'
+                $http.get('/getGiver/' + el.giver).then(function(res) {
+                    console.log('results from quest-giver search', res.data[0]);
+                    addStuff += '<li>Level:' + el.lvl + '</li>';
+                    addStuff += '<li>Given by:' + res.data[0].Name + '</li>';
+                    addStuff += '</ul>';
+                    $('#moreInf').html(addStuff);
+                    $('#moreInf').show(200);
+                    $('div.modal-footer > button.btn.btn-info').html('Less info');
+                })
             } else if (el.energy || el.energy == 0) {
                 //skill
                 addStuff += '<li>Damage Type:' + combatFac.getDmgType(el.type) + '</li>';
                 addStuff += '<li>Energy:' + el.energy + '</li>';
-                addStuff += el.heal?'<li>Heal (burst):' + el.heal + ' hp</li>':'';
-                addStuff += el.regen?'<li>Heal (regeneration):' + el.regen + ' hp/turn</li>':'';
-                addStuff += el.burst?'<li>Damage:' + el.burst + ' hp</li>':'';
-                addStuff += el.degen?'<li>Degeneration:' + el.degen + ' hp/turn</li>':'';
-                addStuff += el.stuns?'<li>Stuns</li>':'';
+                addStuff += el.heal ? '<li>Heal (burst):' + el.heal + ' hp</li>' : '';
+                addStuff += el.regen ? '<li>Heal (regeneration):' + el.regen + ' hp/turn</li>' : '';
+                addStuff += el.burst ? '<li>Damage:' + el.burst + ' hp</li>' : '';
+                addStuff += el.degen ? '<li>Degeneration:' + el.degen + ' hp/turn</li>' : '';
+                addStuff += el.stuns ? '<li>Stuns</li>' : '';
             } else if (el.maxHp) {
                 //user. Shouldn't be this one!
-                addStuff+='What are you doing? You broke the game!'
+                addStuff += 'What are you doing? You broke the game!'
             } else if (el.itemLvl || el.itemLvl == 0) {
                 //weapon
-                addStuff += el.max?'<li>Damage:' + el.min + '-'+el.max+' hp</li>':'';
-                addStuff += el.def?'<li>Defense:' + el.def + '</li>':'';
-                addStuff += '<li>Level:'+el.itemLvl+'</li>';
-                addStuff += '<li>Cost:'+el.cost+' coins</li>';
+                addStuff += el.max ? '<li>Damage:' + el.min + '-' + el.max + ' hp</li>' : '';
+                addStuff += el.def ? '<li>Defense:' + el.def + '</li>' : '';
+                addStuff += '<li>Level:' + el.itemLvl + '</li>';
+                addStuff += '<li>Cost:' + el.cost + ' coins</li>';
             } else {
                 //monster
-                addStuff += '<li>Level:'+el.lvl+'</li>';
-                addStuff += '<li>Hp:'+el.hp+' hp</li>';
-                addStuff += '<li>Dmg:' + el.min + '-'+el.max+' hp</li>';
-                addStuff += '<li>Damage Type:' +combatFac.getDmgType(el.type)+ '</li>';
+                addStuff += '<li>Level:' + el.lvl + '</li>';
+                addStuff += '<li>Hp:' + el.hp + ' hp</li>';
+                addStuff += '<li>Dmg:' + el.min + '-' + el.max + ' hp</li>';
+                addStuff += '<li>Damage Type:' + combatFac.getDmgType(el.type) + '</li>';
                 addStuff += '<li>Resistance:';
-                if(el.res && el.res.length){
-                    addStuff+='<ul>'
-                    for(var i = 0;i<el.res.length;i++){
-                        addStuff+='<li> '+combatFac.getDmgType(el.res[i])+' </li>'
+                if (el.res && el.res.length) {
+                    addStuff += '<ul>'
+                    for (var i = 0; i < el.res.length; i++) {
+                        addStuff += '<li> ' + combatFac.getDmgType(el.res[i]) + ' </li>'
                     }
-                    addStuff+='</ul>'
-                }else{
-                    addStuff+='<span> none </span></li>'
+                    addStuff += '</ul>'
+                } else {
+                    addStuff += '<span> none </span></li>'
                 }
             }
-            addStuff += '</ul>';
-            console.log(addStuff)
-            $('#moreInf').html(addStuff);
-            $('#moreInf').show(200);
-            $('div.modal-footer > button.btn.btn-info').html('Less info');
+            if (!el.giver && el.giver != 0) {
+                addStuff += '</ul>';
+                $('#moreInf').html(addStuff);
+                $('#moreInf').show(200);
+                $('div.modal-footer > button.btn.btn-info').html('Less info');
+            }
+
         },
         lessInf: function() {
             $('#moreInf').hide(200);

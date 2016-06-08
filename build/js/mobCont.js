@@ -113,5 +113,4 @@ app.controller('mob-con', function($scope, $http, $q, $interval, $window) {
         }
     });
     $scope.getUn();
-
 });

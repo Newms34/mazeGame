@@ -110,10 +110,41 @@ body {
 /*room stuff*/
 
 #room {
-    background: url('http://4.bp.blogspot.com/-HBarddQ3FRk/UmpMDiNwVjI/AAAAAAAAEn8/a9Tvj9i9Ebk/s1600/Seamless+ground+dirt+texture.jpg');
+    background: url('.././img/ground.jpg');
     width: 1000px;
     height: 1000px;
     transform-style: preserve-3d;
+    #rampBase {
+        background: url('.././img/exitDoor.jpg');
+        background-size:100%;
+        position: absolute;
+        width: 626.25px;
+        height: 400px;
+        transform: translateX(181.25px) rotateX(90deg) translateZ(1008px) translateY(-200px);
+        transform-style: preserve-3d;
+    }
+    #rampLeft {
+        background: url('.././img/wall.jpg');
+        width: 626.25px;
+        height: 400px;
+        transform: rotateY(90deg) translateZ(-313.125px) translateX(313.125px);
+    }
+    #rampRight {
+        background: url('.././img/wall.jpg');
+        width: 626.25px;
+        height: 400px;
+        transform: rotateY(90deg) translateZ(313.125px) translateX(313.125px);
+    }
+    .rampPiece {
+        background: url('.././img/ground.jpg');
+        position: absolute;
+    }
+    #ramp {
+        height: 717px;
+        width: 626.25px;
+        transform-origin: 50% 0%;
+        transform: rotateX(-56deg)
+    }
 }
 
 .roomWall {
@@ -250,15 +281,16 @@ body {
     left: 5%;
     top: 5%;
 }
-#uiloader{
-     position: absolute;
+
+#uiloader {
+    position: absolute;
     left: 25%;
     transform: translateZ(40px);
     top: 9%;
     width: 30%;
     height: 600px;
-    &>div{
-        height:100%;
-        width:100%;
+    &>div {
+        height: 100%;
+        width: 100%;
     }
 }

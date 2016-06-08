@@ -80,8 +80,13 @@ router.get('/Skills', function(req, res, next) {
 router.get('/user/:uiEl', function(req, res, next) {
     //get all inv items
     mongoose.model('Skill').find({}, function(err, data) {
-    	console.log('user data',data)
         res.send(data);
     })
 });
+router.get('/getGiver/:npcNum',function(req,res,next){
+    mongoose.model('Npc').find({num:req.params.npcNum}, function(err, data) {
+        console.log('lookin for',req.params.npcNum,'gives us',data)
+        res.send(data);
+    })
+})
 module.exports = router;

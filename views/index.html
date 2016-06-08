@@ -10,7 +10,7 @@
 <body ng-app='mazeGame' ng-controller='maze-con' ng-cloak>
     <div id='menu' class='panel panel-default' ng-show='setActive'>
         <div class='panel-heading'>
-        Settings
+            Settings
         </div>
         <div class='panel-body'>
             <!-- I'm eventually going to remove this panel, since it is basically dev features -->
@@ -35,19 +35,26 @@
             <div class='outWall souWall' ng-if='cl.south'></div>
             <div class='outWall wesWall' ng-if='cl.west'></div>
             <div class='playerFig' ng-if='compareCell(cl.id)' style='transform:rotateZ({{360-roomRot}}deg)'>&uparrow;</div>
+            <div ng-if='cl.has=="exit"'>E</div>
         </div>
     </div>
-    <div id='room' style='transform:rotateX({{vertRot}}deg) translateY(320px) translateX(250px) rotateZ({{roomRot}}deg) translateZ(-320px)'>
+    <div id='room' style='transform:rotateX({{vertRot}}deg) translateY(320px) translateX(250px) rotateZ({{roomRot}}deg) translateZ(-320px); background:url({{isExit()}});background-size:contain;'>
         <!-- the actual room in which we 'play' -->
-        <div class='roomWall rwn' ng-style='{"background":"url("+getWallStatus("north")+")"}'></div>
-        <div class='roomWall rwe' ng-style='{"background":"url("+getWallStatus("east")+")"}'></div>
-        <div class='roomWall rws' ng-style='{"background":"url("+getWallStatus("south")+")"}'></div>
-        <div class='roomWall rww' ng-style='{"background":"url("+getWallStatus("west")+")"}'></div>
+        <div class='roomWall rwn' ng-style='{"background":"url("+getWallStatus("north")+")"}' ng-click='noMove($event)'></div>
+        <div class='roomWall rwe' ng-style='{"background":"url("+getWallStatus("east")+")"}' ng-click='noMove($event)'></div>
+        <div class='roomWall rws' ng-style='{"background":"url("+getWallStatus("south")+")"}' ng-click='noMove($event)'></div>
+        <div class='roomWall rww' ng-style='{"background":"url("+getWallStatus("west")+")"}' ng-click='noMove($event)'></div>
         <div id='roomTop'></div>
+        <div id='rampBase' ng-if="isExit()=='./img/exit.png'" ng-click='levelDown();'>
+            <div id='rampLeft' class='rampPiece'></div>
+            <div id='rampRight' class='rampPiece'></div>
+            <div id='ramp' class='rampPiece'></div>
+        </div>
     </div>
     <div id='targ' ng-show='intTarg'>
         <!-- eventually gonna replace this with something a little more interesting. -->
-        A {{intTarg.name}} appears, with a min of {{intTarg.min}} and a max of {{intTarg.max}} damage. It does {{dmgType(intTarg.type)}} damage! It has resistance to <span ng-repeat='r in intTarg.res'>{{dmgType(r)}}</span><hr/>Description: {{intTarg.desc}}
+        A {{intTarg.name}} appears, with a min of {{intTarg.min}} and a max of {{intTarg.max}} damage. It does {{dmgType(intTarg.type)}} damage! It has resistance to <span ng-repeat='r in intTarg.res'>{{dmgType(r)}}</span>
+        <hr/>Description: {{intTarg.desc}}
     </div>
     <div id='bom' ng-show='bombOn'>
         <div id='fuse'><span>{{bombsLeft}}</span></div>

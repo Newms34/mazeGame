@@ -85,10 +85,36 @@ body {
 
 /*room stuff*/
 #room {
-  background: url("http://4.bp.blogspot.com/-HBarddQ3FRk/UmpMDiNwVjI/AAAAAAAAEn8/a9Tvj9i9Ebk/s1600/Seamless+ground+dirt+texture.jpg");
+  background: url(".././img/ground.jpg");
   width: 1000px;
   height: 1000px;
   transform-style: preserve-3d; }
+  #room #rampBase {
+    background: url(".././img/exitDoor.jpg");
+    background-size: 100%;
+    position: absolute;
+    width: 626.25px;
+    height: 400px;
+    transform: translateX(181.25px) rotateX(90deg) translateZ(1008px) translateY(-200px);
+    transform-style: preserve-3d; }
+  #room #rampLeft {
+    background: url(".././img/wall.jpg");
+    width: 626.25px;
+    height: 400px;
+    transform: rotateY(90deg) translateZ(-313.125px) translateX(313.125px); }
+  #room #rampRight {
+    background: url(".././img/wall.jpg");
+    width: 626.25px;
+    height: 400px;
+    transform: rotateY(90deg) translateZ(313.125px) translateX(313.125px); }
+  #room .rampPiece {
+    background: url(".././img/ground.jpg");
+    position: absolute; }
+  #room #ramp {
+    height: 717px;
+    width: 626.25px;
+    transform-origin: 50% 0%;
+    transform: rotateX(-56deg); }
 
 .roomWall {
   position: absolute;
