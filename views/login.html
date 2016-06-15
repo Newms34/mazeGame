@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Maze! Login</title>
+    <link rel="stylesheet" href="/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/styles.css">
+</head>
+
+<body ng-app='mazeGame' ng-controller='log-con' ng-cloak>
+    <div class='col-md-5 panel panel-info cent'>
+        <div class='panel-heading'>
+            <h3>Sign up!</h3></div>
+        <div class='panel-body'>Ready to play? Pick a username and password below!
+            <hr/>
+            <form name='regForm' ng-submit='newUsr()'>
+                <div class="form-group">
+                    <label class="control-label col-sm-4">Pick a name:</label>
+                    <div class="col-md-4 ">
+                        <input type='text' name='username' ng-model='user.username' ng-blur='nameCheck()'>
+                    </div>
+                    <div class='col-md-4'>
+                        <div class='regErr' ng-show='dupName'>Uh oh, looks like this name's already taken!</div>
+                    </div>
+                </div>
+                <br/>
+                <br/>
+                <div class="form-group">
+                    <label class="control-label col-sm-4">Enter a password:</label>
+                    <div class="col-md-4 ">
+                        <input type="password" name='pwd' ng-model='user.pwd' ng-change='checkPwds()' ng-keyup='checkPwdStr()'>
+                    </div>
+                    <div class='col-md-4'>
+                        <div ng-show='user.pwd' id='passStrCont' title='Password strength: {{parseInt(100*(passStr/10))}}%'>
+                            <div id='passStrChan'>
+                                <div id='passStrBar' style='width:{{100*(passStr/10)}}%;background:hsl({{120*(passStr/10)}},100%,60%)'></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br/>
+                <div class="form-group">
+                    <label class="control-label col-sm-4">Enter your password again:</label>
+                    <div class="col-md-4 ">
+                        <input type="password" name='pwdTwo' ng-model='user.pwdTwo' ng-change='checkPwds()'>
+                        <br/>
+                    </div>
+                    <div class='col-md-4' ng-class="{'regErr':passMatch ==false}">
+                        <span ng-show='passMatch ==false'>Passwords don't match!</span>
+                    </div>
+                </div>
+                <br/>
+                <button type='submit' class='btn btn-primary'>Register</button>
+            </form>
+        </div>
+    </div>
+    <div class='col-md-5 panel panel-info cent'>
+        <div class='panel-heading'>
+            <h3>Log in!</h3></div>
+        <div class='panel-body'>
+            <hr/>
+            <form name='logForm' ng-submit='login()'>
+                <div class="form-group">
+                    <label class="control-label col-sm-5">Username:</label>
+                    <div class="col-md-7 ">
+                        <input type='text' name='username' ng-model='oldUser.username'>
+                    </div>
+                </div>
+                <br/>
+                <br/>
+                <div class="form-group">
+                    <label class="control-label col-sm-5">Password:</label>
+                    <div class="col-md-7">
+                        <input type="password" name='pwd' ng-model='oldUser.pwd'>
+                    </div>
+                </div>
+                <br/>
+                <button type='submit' class='btn btn-primary'>Login</button>
+            </form>
+        </div>
+    </div>
+    <script src='/socket.io-client/socket.io.js'></script>
+    <script src="/jquery/dist/jquery.min.js"></script>
+    <script src="/jquery-ui/jquery-ui.min.js"></script>
+    <script src="/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="/angular/angular.min.js"></script>
+    <script src="/bootbox.js/bootbox.js"></script>
+    <!-- Because of gulp, we can include just one, minified file!: -->
+    <script src="/js/all.min.js"></script>
+</body>
+
+</html>
