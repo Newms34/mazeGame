@@ -6,6 +6,12 @@ body {
   perspective: 1200px;
   transform-style: preserve-3d; }
 
+.cent {
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+  position: relative; }
+
 #maze {
   position: fixed;
   top: 150px;
@@ -234,6 +240,30 @@ body {
   #uiloader > div {
     height: 100%;
     width: 100%; }
+
+.regErr {
+  position: relative;
+  background: #fcc;
+  padding: 2px; }
+
+#passStrCont {
+  width: 100%;
+  height: 25px;
+  background: #333;
+  border: 3px outset #555;
+  border-radius: 3px; }
+  #passStrCont #passStrChan {
+    position: relative;
+    width: 98%;
+    height: 80%;
+    left: 1%;
+    top: 10%;
+    border: 2px inset #555; }
+    #passStrCont #passStrChan #passStrBar {
+      position: relative;
+      height: 100%;
+      width: 50%;
+      background: #cfc; }
 
 body#mob {
   height: 100%;

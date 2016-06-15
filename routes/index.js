@@ -5,6 +5,7 @@ var models = require('../models/');
 var https = require('https');
 var async = require('async');
 var mongoose = require('mongoose');
+var session = require('client-sessions');
 
 router.get('/', function(req, res, next) {
     /*get the homepage (the game screen)
@@ -83,10 +84,103 @@ router.get('/user/:uiEl', function(req, res, next) {
         res.send(data);
     })
 });
-router.get('/getGiver/:npcNum',function(req,res,next){
-    mongoose.model('Npc').find({num:req.params.npcNum}, function(err, data) {
-        console.log('lookin for',req.params.npcNum,'gives us',data)
+router.get('/getGiver/:npcNum', function(req, res, next) {
+    mongoose.model('Npc').find({ num: req.params.npcNum }, function(err, data) {
+        console.log('lookin for', req.params.npcNum, 'gives us', data)
         res.send(data);
     })
 })
+router.get('/login', function(req, res, next) {
+    //send user to login page. This also gets called below if the user fails @ login.
+    //This page will include BOTH a login AND signup option!
+    res.sendFile('login.html', { root: './views' })
+})
+router.post('/auth', function(req, res, next) {
+    var un = req.body.user,
+        pwd = req.body.password;
+    mongoose.model('User').findOne({ name: un }, function(err, user) {
+        if (!user) {
+            res.redirect('/login');
+        } else {
+            if (user.correctPwd(pwd)) {
+                // sets a cookie with the user's info
+                req.session.user = user;
+                res.redirect('/dashboard');
+            } else {
+                res.redirect('/login');
+            }
+        }
+    })
+})
+router.post('/new', function(req, res, next) {
+    //record new user
+    var un = req.body.user,
+        pwd = req.body.password;
+    mongoose.model('User').findOne({ name: un }, function(err, user) {
+        if (!user) {
+            //this user does not exist yet, so 
+            //go ahead and record their un and pwd
+            var salt = mongoose.model('User').generateSalt();
+            var newUser = {
+                name: un,
+                lvl: 1,
+                equip: {
+                    head: 0,
+                    chest: 0,
+                    hands: 0,
+                    legs: 0,
+                    feet: 0,
+                    lHand: 0,
+                    rHand: 0,
+                    inv: []
+                },
+                salt: salt,
+                pass: mongoose.model('User').encryptPassword(pwd, salt),
+                questDone: [],
+                inProf: [],
+                maxHp: 50,
+                currHp: 50,
+                maxEn: 30,
+                currEn: 30,
+                isStunned: false
+            }
+            console.log(newUser);
+            mongoose.model('User').create(newUser);
+            res.send('saved! sorta...')
+        } else {
+            res.send('DUPLICATE')
+        }
+    })
+})
+router.get('/nameOkay/:name', function(req, res, next) {
+    mongoose.model('User').find({ 'name': req.params.name }, function(err, user) {
+        if (!user.length) {
+            //this user does not exist yet, so 
+            //go ahead and record their un and pwd
+            res.send('okay');
+        } else {
+            res.send('bad');
+        }
+    });
+});
+router.post('/login', function(req, res, next) {
+    mongoose.model('User').findOne({ 'name': req.body.name }, function(err, usr) {
+        if (usr.correctPassword(req.body.pwd)) {
+            res.send('yes');
+            //woohoo! correct user!
+            console.log(req.mazeSesh);
+            req.mazeSesh.user = usr;
+        } else {
+            res.send('no');
+        }
+    })
+});
+router.get('/chkLog', function(req, res, next) {
+    console.log(req.mazeSesh);
+    if (req.mazeSesh){
+        res.send(true);
+    }else{
+        res.send(false);
+    }
+});
 module.exports = router;
