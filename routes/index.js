@@ -1,11 +1,11 @@
 var express = require('express');
-var router = express.Router();
-var path = require('path');
-var models = require('../models/');
-var https = require('https');
-var async = require('async');
-var mongoose = require('mongoose');
-var session = require('client-sessions');
+var router = express.Router(),
+    path = require('path'),
+    models = require('../models/'),
+    https = require('https'),
+    async = require('async'),
+    mongoose = require('mongoose'),
+    session = require('client-sessions');
 
 router.get('/', function(req, res, next) {
     /*get the homepage (the game screen)
@@ -59,13 +59,13 @@ router.get('/Inventory', function(req, res, next) {
     })
 });
 router.get('/Quests', function(req, res, next) {
-    //get all inv items
+    //get all quests
     mongoose.model('Quest').find({}, function(err, data) {
         res.send(data);
     })
 });
 router.get('/Bestiary', function(req, res, next) {
-    //get all inv items
+    //get all monsters
     mongoose.model('Mon').find({}, function(err, dataA) {
         mongoose.model('Boss').find({}, function(err, dataW) {
             res.send(dataA.concat(dataW));
@@ -73,13 +73,13 @@ router.get('/Bestiary', function(req, res, next) {
     })
 });
 router.get('/Skills', function(req, res, next) {
-    //get all inv items
+    //get all skills
     mongoose.model('Skill').find({}, function(err, data) {
         res.send(data);
     })
 });
 router.get('/user/:uiEl', function(req, res, next) {
-    //get all inv items
+    //not sure what this route was for?
     mongoose.model('Skill').find({}, function(err, data) {
         res.send(data);
     })
@@ -95,31 +95,79 @@ router.get('/login', function(req, res, next) {
     //This page will include BOTH a login AND signup option!
     res.sendFile('login.html', { root: './views' })
 })
-router.post('/auth', function(req, res, next) {
-    var un = req.body.user,
-        pwd = req.body.password;
-    mongoose.model('User').findOne({ name: un }, function(err, user) {
-        if (!user) {
-            res.redirect('/login');
+router.post('/reset', function(req, res, next) {
+    var un = req.body.name,
+        pwd = req.body.pass;
+    mongoose.model('User').findOne({ 'name': un }, function(err, usr) {
+        console.log('usr', usr)
+        if (!usr) {
+            console.log('no user!')
+            res.send('no')
         } else {
-            if (user.correctPwd(pwd)) {
-                // sets a cookie with the user's info
-                req.session.user = user;
-                res.redirect('/dashboard');
+            if (usr.correctPassword(pwd)) {
+                var salt = mongoose.model('User').generateSalt();
+                var resUsr = {
+                    lvl: 1,
+                    equip: {
+                        head: 0,
+                        chest: 0,
+                        hands: 0,
+                        legs: 0,
+                        feet: 0,
+                        lHand: 0,
+                        rHand: 0,
+                        inv: []
+                    },
+                    salt: salt,
+                    pass: mongoose.model('User').encryptPassword(pwd, salt),
+                    questDone: [],
+                    inProg: [],
+                    maxHp: 50,
+                    currHp: 50,
+                    maxEn: 30,
+                    currEn: 30,
+                    isStunned: false
+                }
+                mongoose.model('User').update({ 'name': un }, resUsr, function(r) {
+
+                    console.log('reset!')
+                    res.send('yes')
+                })
             } else {
-                res.redirect('/login');
+                console.log('wrong pwd!')
+                res.send('no')
             }
         }
+    })
+})
+router.post('/save', function(req, res, next) {
+    var newData = req.body,
+        un= req.body.name;
+    console.log('body', req.body, 'sesh', un)
+    mongoose.model('User').update({ 'name': un }, newData, function(err, usr) {
+        mongoose.model('User').findOne({ 'name': un }, function(err, usr) {
+            console.log('tried to find user we just saved. Result is', usr, 'err is', err)
+            req.session.user = usr;
+            res.send(true);
+        })
+    })
+})
+router.get('/currUsrData', function(req, res, next) {
+    //get current user data so we can update the front-end fields
+    mongoose.model('User').findOne({ 'name': req.session.user.name }, function(err, usr) {
+        res.send(usr);
     })
 })
 router.post('/new', function(req, res, next) {
     //record new user
     var un = req.body.user,
         pwd = req.body.password;
-    mongoose.model('User').findOne({ name: un }, function(err, user) {
+    mongoose.model('User').findOne({ 'name': un }, function(err, user) {
+
         if (!user) {
             //this user does not exist yet, so 
             //go ahead and record their un and pwd
+            //then make a new user!
             var salt = mongoose.model('User').generateSalt();
             var newUser = {
                 name: un,
@@ -137,7 +185,7 @@ router.post('/new', function(req, res, next) {
                 salt: salt,
                 pass: mongoose.model('User').encryptPassword(pwd, salt),
                 questDone: [],
-                inProf: [],
+                inProg: [],
                 maxHp: 50,
                 currHp: 50,
                 maxEn: 30,
@@ -146,7 +194,7 @@ router.post('/new', function(req, res, next) {
             }
             console.log(newUser);
             mongoose.model('User').create(newUser);
-            res.send('saved! sorta...')
+            res.send('saved!')
         } else {
             res.send('DUPLICATE')
         }
@@ -164,23 +212,35 @@ router.get('/nameOkay/:name', function(req, res, next) {
     });
 });
 router.post('/login', function(req, res, next) {
+    //notice how there are TWO routes that go to /login. This is OKAY, as long as they're different request types (the other one's GET, this is POST)
     mongoose.model('User').findOne({ 'name': req.body.name }, function(err, usr) {
         if (usr.correctPassword(req.body.pwd)) {
-            res.send('yes');
             //woohoo! correct user!
-            console.log(req.mazeSesh);
-            req.mazeSesh.user = usr;
+            //important note here: we must set all this session stuff, etc BEFORE
+            //we send the response. As soon as we send the response, the server considers us "done"!
+            req.session.user = usr;
+            res.send('yes');
         } else {
             res.send('no');
         }
     })
 });
 router.get('/chkLog', function(req, res, next) {
-    console.log(req.mazeSesh);
-    if (req.mazeSesh){
+    console.log('checking login', req.session)
+    if (req.session.user) {
         res.send(true);
-    }else{
+    } else {
         res.send(false);
     }
 });
+router.get('/logout', function(req, res, next) {
+    /*this function logs out the user. It has no confirmation stuff because
+    1) this is on the backend
+    2) this assumes the user has ALREADY said "yes", and
+    3) logging out doesn't actually really require any credentials (it's logging IN that needs em!)
+    */
+    console.log('usr sez bai');
+    req.session.reset();
+    res.send('logged')
+})
 module.exports = router;

@@ -14,15 +14,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'bower_components')));
 app.use(express.static(path.join(__dirname, 'views')));
 app.use(session({
-  cookieName: 'mazeSesh', // cookie name dictates the key name added to the request object
-  secret: 'Anakin Skywalker was actually kinda right', // should be a large unguessable string
-  duration: 24 * 60 * 60 * 1000, // how long the session will stay valid in ms
-  cookie: {
-    maxAge: 60000, // duration of the cookie in milliseconds, defaults to duration above
+    cookieName: 'session', // cookie name dictates the key name added to the request object
+    secret: 'Anakin Skywalker was actually kinda right', // should be a large unguessable string
+    duration: 24 * 60 * 60 * 1000, // how long the session will stay valid in ms
     ephemeral: false, // when true, cookie expires when the browser closes
     httpOnly: true, // when true, cookie is not accessible from javascript
     secure: false // when true, cookie will only be sent over SSL. use key 'secureProxy' instead if you handle SSL not in your node process
-  }
 }));
 app.use('/', routes);
 var server = http.Server(app);
@@ -31,23 +28,22 @@ var names = [];
 io.on('connection', function(socket) {
     socket.on('movData', function(movObj) {
         //first, if we dont have this name already, reg it
-        if(names.indexOf(movObj.n)==-1){
+        if (names.indexOf(movObj.n) == -1) {
             names.push(movObj.n);
         }
-        console.log('movement!',movObj);//update time
+        console.log('movement!', movObj); //update time
         io.emit('movOut', movObj);
     });
-    socket.on('chkName',function(name){
-        console.log('name',name.n,names)
-        if(names.indexOf(name.n)!=-1){
-            io.emit('chkNameRes',{n:name.n})
-        }
-        else{
-            io.emit('chkNameRes',{n:false})
+    socket.on('chkName', function(name) {
+        console.log('name', name.n, names)
+        if (names.indexOf(name.n) != -1) {
+            io.emit('chkNameRes', { n: name.n })
+        } else {
+            io.emit('chkNameRes', { n: false })
         }
     })
 });
-server.listen(process.env.PORT||8080);
+server.listen(process.env.PORT || 8080);
 server.on('error', function(err) {
     console.log('Oh no! Err:', err)
 });

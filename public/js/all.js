@@ -1,8 +1,10 @@
 var app = angular.module('mazeGame', []).controller('log-con', function($scope, $http, $q, $timeout, $window, userFact) {
+    $scope.hazLogd = false;
+    console.log($scope, $scope.hazLogd)
     $scope.newUsr = function() {
         //eventually we need to CHECK to see if this user is already taken!
         //for now, we assume not
-        if ($scope.pwd != $scope.pwdTwo) {
+        if ($scope.regForm.pwd.$viewValue != $scope.regForm.pwdTwo.$viewValue) {
             bootbox.alert('Your passwords don&rsquo;t match!', function() {
 
             })
@@ -11,8 +13,11 @@ var app = angular.module('mazeGame', []).controller('log-con', function($scope, 
                 user: $scope.regForm.username.$viewValue,
                 password: $scope.regForm.pwd.$viewValue
             };
-            $http.post('/new', userInf).then(function(err, res) {
-                console.log('logged in!', err, res)
+            $http.post('/new', userInf).then(function(res) {
+                console.log('new user created!',res)
+                if (res.data == 'saved!') {
+                    $scope.login(true)
+                }
             })
         }
     }
@@ -36,19 +41,38 @@ var app = angular.module('mazeGame', []).controller('log-con', function($scope, 
             $scope.dupName = resp;
         })
     }
-    $scope.login = function(){
-    	console.log('User',$scope.logForm.username,'wants to login with password',$scope.logForm.pwd);
-    	userFact.login({
-    		name:$scope.logForm.username.$viewValue,
-    		pwd:$scope.logForm.pwd.$viewValue
-    	}).then(function(lRes){
-    		//response back from factory (and thus backend)
-    		//Did login succeed?
-    		if (lRes) {
-    			//login succeeded!
-    		}
-    	})
+    $scope.login = function(n) {
+        if (n) {
+            //new user. logging them in after we've registered
+            userFact.login({
+                name: $scope.regForm.username.$viewValue,
+                pwd: $scope.regForm.pwd.$viewValue
+            }).then(function(lRes) {
+                //response back from factory (and thus backend)
+                //Did login succeed?
+                if (lRes) {
+                    $scope.hazLogd = true;
+                }
+            })
+        } else {
+            userFact.login({
+                name: $scope.logForm.username.$viewValue,
+                pwd: $scope.logForm.pwd.$viewValue
+            }).then(function(lRes) {
+                //response back from factory (and thus backend)
+                //Did login succeed?
+                if (lRes) {
+                    $scope.hazLogd = true;
+                }
+            })
+        }
     }
+    $scope.play = function() {
+        $window.location.href = ('./')
+    };
+    $scope.passInf = function() {
+        bootbox.alert('<h3>Password Strength</h3><hr/>Here are a few things to include for a stronger password:<ul><li>A lowercase letter</li><li>An uppercase letter</li><li>A number</li><li>A non alpha-numeric symbol (something like "@" or "$")</li></ul>Longer passwords are also generally better!')
+    };
     $scope.parseInt = parseInt;
 });
 
@@ -67,10 +91,34 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
     $scope.invActive = false;
     $scope.setActive = false;
     $scope.intTarg;
-    //for now, i'm setting the default contents of the player inv as below
+    $scope.lvl = 1;
     $scope.playerItems = [];
+    $scope.questList = [];
+    $scope.doneQuest = [];
+    $scope.maxHp = 0;
+    $scope.currHp = 0;
+    $scope.maxEn = 0;
+    $scope.currEn = 0;
+    $scope.isStunned = false;
     $scope.possRoomConts = ['loot', 'mons', 'npcs', 'jewl', ' ', 'exit', ' ', ' ', 'mons', 'mons']; //things that could be in a room!
-    $scope.uName = ''; //if this is blank, accept no incoming socket events from phone(s). Otherwise, accept from specified phone only!
+    $scope.name = ''; //actual name. 
+    $scope.getUsrData = function() {
+        $http.get('/currUsrData').then(function(d) {
+            console.log('CURR USR DATA', typeof d, d)
+            $scope.playerItems = d.data.equip;
+            $scope.lvl = d.data.lvl;
+            $scope.questList = d.data.inProg;
+            $scope.doneQuest = d.data.questDone;
+            $scope.maxHp = d.data.maxHp;
+            $scope.currHp = d.data.currHp;
+            $scope.maxEn = d.data.maxEn;
+            $scope.currEn = d.data.currEn;
+            $scope.isStunned = d.data.isStunned;
+            $scope.name = d.data.name;
+        })
+    };
+    $scope.getUsrData();
+    $scope.uName = ''; //if this is blank, accept no incoming socket events from phone(s). Otherwise, accept from specified phone only! This is NOT the username of the player!
     ($scope.checkPhone = function() {
         var isMobile = false; //initiate as false
         // device detection
@@ -80,6 +128,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
         } else {
             //if we're NOT mobile, check to see if we're logged in
             userFact.checkLogin().then(function(resp) {
+                console.log('RESPONSE FROM CHECK LOGIN:', resp)
                 if (!resp) {
                     $window.location.href = './login'
                 }
@@ -260,13 +309,12 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
     $scope.Quests = []
 
     $scope.currUINum = 0;
-    $scope.UIPans = ['Inventory', 'Skills', 'Bestiary', 'Quests'];
+    $scope.UIPans = ['Inventory', 'Skills', 'Bestiary', 'Quests', 'Menu'];
     $scope.currUIObjs = []; //we get these from the factory
     $scope.currUIBg = '../img/UI/inv.jpg';
     $scope.currUIPan = $scope.UIPans[$scope.currUINum];
     $scope.chInv = function(dir) {
         //UI Cycle function
-        console.log(dir, $scope.currUINum)
         if (!dir && $scope.currUINum > 0) {
             $scope.currUINum--;
         } else if (!dir) {
@@ -277,14 +325,12 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
             $scope.currUINum = 0;
         }
         $scope.currUIPan = $scope.UIPans[$scope.currUINum]; //title of current ui panel
-        // var currUIEls = UIFac.getUIObj($scope.currUIPan,$scope[$scope.currUIPan]);
-        // console.log('UI stuff:',currUIEls)
-        // $scope.currUIBg = currUIEls.bg;
-        console.log(UIFac, UIFac.getUIObj)
-        UIFac.getUIObj($scope.currUIPan, $scope[$scope.currUIPan]).then(function(uiRes) {
-            $scope.currUIObjs = uiRes.data;
-            console.log('UI OBJS:', $scope.currUIObjs)
-        });
+        if ($scope.currUIPan !== 'Menu') {
+            UIFac.getUIObj($scope.currUIPan, $scope[$scope.currUIPan]).then(function(uiRes) {
+                $scope.currUIObjs = uiRes.data;
+                console.log('UI OBJS:', $scope.currUIObjs)
+            });
+        }
         $scope.currUIBg = UIFac.getUIBg($scope.currUIPan)
     };
     $scope.chInv(-1);
@@ -293,7 +339,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
     $scope.roomRot = 0;
     $scope.playerFacing = 0;
     window.onkeydown = function(e) {
-        if ($scope.moveReady) {
+        if ($scope.moveReady && e.which !== 73) {
             var currCell = $scope.cells[$scope.cellNames.indexOf($scope.playerCell)];
             var x = $scope.playerCell.split('-')[0];
             var y = $scope.playerCell.split('-')[1];
@@ -391,9 +437,6 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
                 $scope.bombOn = false;
             } else if (e.which == 82) {
                 $scope.rotOn = !$scope.rotOn;
-            } else if (e.which == 73) {
-                console.log('i pressed and damage type 3 is', combatFac.getDmgType(3))
-                $scope.invActive = !$scope.invActive;
             } else if (e.which == 192) {
                 $scope.setActive = !$scope.setActive;
             }
@@ -408,6 +451,16 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
             if ((e.which == 87 || e.which == 38 || e.which == 83 || e.which == 40) && canMove && !$scope.moving) {
                 $scope.moveAni(); //do Move animation
             }
+        } else if (e.which == 73) {
+            console.log('key i was pressed')
+            $scope.invActive = !$scope.invActive;
+            if ($scope.invActive) {
+                //disable keyboard movement while inv is open
+                $scope.moveReady = false;
+            } else {
+                $scope.moveReady = true;
+            }
+            $scope.$digest();
         }
     }
     $scope.moving = false;
@@ -417,7 +470,9 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
             $('body').fadeIn(500, function() {
                 $scope.moving = false;
                 if (ex && ex != 0) {
-                    $window.location.reload();
+                    $scope.lvl++;
+                    console.log('new lvl!:',$scope.lvl)
+                    $scope.saveGame(true);
                 }
             })
         })
@@ -567,6 +622,38 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
             }
         })
     };
+    $scope.saveGame = function(reload) {
+        var data = {
+            name: $scope.name,
+            lvl: $scope.lvl,
+            equip: $scope.playerItems,
+            questDone: $scope.questList || [],
+            inProf: $scope.doneQuest,
+            maxHp: $scope.maxHp,
+            currHp: $scope.currHp,
+            maxEn: $scope.maxEn,
+            currEn: $scope.currEn,
+            isStunned: $scope.isStunned
+        }
+        UIFac.saveGame(data, false, reload); //save the game with the updated data. optional reset and reload
+    };
+    $scope.saveAndLogout = function() {
+        var data = {
+            name: $scope.name,
+            lvl: $scope.lvl,
+            equip: $scope.playerItems,
+            questDone: $scope.questList || [],
+            inProf: $scope.doneQuest,
+            maxHp: $scope.maxHp,
+            currHp: $scope.currHp,
+            maxEn: $scope.maxEn,
+            currEn: $scope.currEn,
+            isStunned: $scope.isStunned
+        }
+        UIFac.saveGame(data, true, false);
+    };
+    $scope.logout = UIFac.logout;
+    $scope.reset = UIFac.reset;
 });
 
 app.controller('mob-con', function($scope, $http, $q, $interval, $window) {
@@ -723,7 +810,7 @@ app.factory('socketFac', function ($rootScope) {
     }
   };
 });
-app.factory('UIFac', function($http, $q, combatFac) {
+app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
     return {
         getUIObj: function(whichUI, UIStuff) {
             //get all the data
@@ -845,6 +932,73 @@ app.factory('UIFac', function($http, $q, combatFac) {
         lessInf: function() {
             $('#moreInf').hide(200);
             $('div.modal-footer > button.btn.btn-info').html('More info');
+        },
+        saveGame: function(data,lo,rel) {
+            //save game, w/ optional logout
+            $http.post('/save',data).then(function(res){
+                if (lo && res){
+                    $http.get('/logout').then(function(r){
+                        window.location.href = './login'
+                    });
+                }else if(rel && res){
+                    $window.location.reload();
+                }
+            })
+        },
+        logout: function(usr) {
+            //log out, but dont save game (this effectively wipes all progress from last save)
+            bootbox.confirm("<span id='resetWarn'>WARNING:</span> You will lose all progress since your last save! Are you sure you wanna stop playing and log out?", function(r) {
+                if (r && r!=null){
+                    $http.get('/logout').then(function(lo){
+                        window.location.href = './login'
+                    });
+                }
+            })
+        },
+        reset: function() {
+            //this fn is gonna be somewhat dangerous, so let's make absolutely sure
+            var addendOne = Math.floor(Math.random() * 50),
+                addendTwo = Math.floor(Math.random() * 50);
+            bootbox.dialog({
+                message: "<span id='resetWarn'>WARNING:</span> Resetting your account is a <i>permanent</i> move. <br/>If you still wish to reset your game account, enter your username and password below, and solve the math question below and click the appropriate button. Be aware that this decision <i>cannot</i> be reversed!<hr/>Username:<input type='text' id='rmun'><br/>Password:<input type='password' id='rmpw'><hr/>Math Check:<br/>" + addendOne + " + " + addendTwo + " = <input type='number' id='mathChk'> ",
+                title: "Reset Account",
+                buttons: {
+                    danger: {
+                        label: "YES, I would like to reset my account.",
+                        className: "btn-danger",
+                        callback: function() {
+
+                            if (parseInt($('#mathChk').val()) == (addendOne + addendTwo)) {
+                                //math check is okay, so let's check the creds
+                                credObj = {
+                                        name: $('#rmun').val(),
+                                        pass: $('#rmpw').val()
+                                    }
+                                    //the following DOES work (i.e., redirects)
+                                    // console.log('Window:',window.location.href)
+                                    // window.location.href='./login';
+                                $http.post('/reset', credObj).then(function(resp) {
+                                    if (resp) {
+                                        window.location.replace('./login');
+                                        return true;
+                                    } else {
+                                        return false;
+                                    }
+                                })
+                            } else {
+                                return false;
+                            }
+                        }
+                    },
+                    main: {
+                        label: "NO, I do not wish to reset my account.",
+                        className: "btn-primary",
+                        callback: function() {
+                            return true;
+                        }
+                    }
+                }
+            });
         }
     };
 });
@@ -913,7 +1067,7 @@ app.factory('userFact', function($http) {
         },
         checkLogin: function(){
         	return $http.get('/chkLog').then(function(chkLog){
-        		console.log(chkLog)
+        		console.log('CHECKLOG RESULTS',chkLog)
         		return chkLog.data;
         	})
         }

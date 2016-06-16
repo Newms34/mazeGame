@@ -62,7 +62,7 @@ app.factory('userFact', function($http) {
         },
         checkLogin: function(){
         	return $http.get('/chkLog').then(function(chkLog){
-        		console.log(chkLog)
+        		console.log('CHECKLOG RESULTS',chkLog)
         		return chkLog.data;
         	})
         }

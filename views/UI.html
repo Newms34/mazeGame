@@ -3,11 +3,25 @@
         <button class='btn btn-primary' style='float:left' ng-click='chInv(0)'>&leftarrow;</button> {{currUIPan}}
         <button class='btn btn-primary' style='float:right' ng-click='chInv(1)'>&rightarrow;</button>
     </div>
-    <div class='panel-body' style='background:url({{currUIBg}});background-size: cover;'>
-    <button class='btn btn-primary' title='connect to a phone!' ng-click='inpPhone()'>&#128241;</button>
+    <div class='panel-body' style='background:url({{currUIBg}});background-size: cover;' ng-show='currUIPan!="Menu"'>
+        <button class='btn btn-primary' title='connect to a phone!' ng-click='inpPhone()'>&#128241;</button>
         <div id='uiBlokCont'>
             <div class='currUIEl' ng-repeat='UIEl in currUIObjs' ng-click='getUIInfo(UIEl)' style='background:{{UIEl.imgUrl||"/img/UI/none.jpg"}} contain;'>
                 {{UIEl.name}}
+            </div>
+        </div>
+    </div>
+    <div class='panel-body' style='' ng-show='currUIPan=="Menu"'>
+        <div class="form-group">
+            <div class="menuGrp">
+            Save:<br/>
+               <button ng-click='saveGame();' class='btn btn-success bigButt'>Save</button><br/>
+               <button ng-click='saveAndLogout();' class='btn btn-success bigButt'>Save and Logout</button>
+            </div>
+            <div class="menuGrp">
+            Logout:<br/>
+               <button ng-click='logout();' class='btn btn-success bigButt'>Logout without saving</button><br/>
+               <button ng-click='reset();' class='btn btn-success bigButt'>Reset Game</button>
             </div>
         </div>
     </div>

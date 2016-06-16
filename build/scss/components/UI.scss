@@ -37,3 +37,20 @@
 .moreInfList{
     list-style:none;
 }
+.menuGrp{
+    width:100%;
+    padding:10px;
+    border-bottom:2px solid #000;
+    .bigButt{
+        //we like them
+        //and we cannot lie
+        width:50%;
+    }
+}
+#resetWarn{
+    font-weight:bold;
+    font-style: italic;
+    background:#000;
+    color:#fc0;
+    padding:2px;
+}

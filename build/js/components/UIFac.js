@@ -1,4 +1,4 @@
-app.factory('UIFac', function($http, $q, combatFac) {
+app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
     return {
         getUIObj: function(whichUI, UIStuff) {
             //get all the data
@@ -120,6 +120,73 @@ app.factory('UIFac', function($http, $q, combatFac) {
         lessInf: function() {
             $('#moreInf').hide(200);
             $('div.modal-footer > button.btn.btn-info').html('More info');
+        },
+        saveGame: function(data,lo,rel) {
+            //save game, w/ optional logout
+            $http.post('/save',data).then(function(res){
+                if (lo && res){
+                    $http.get('/logout').then(function(r){
+                        window.location.href = './login'
+                    });
+                }else if(rel && res){
+                    $window.location.reload();
+                }
+            })
+        },
+        logout: function(usr) {
+            //log out, but dont save game (this effectively wipes all progress from last save)
+            bootbox.confirm("<span id='resetWarn'>WARNING:</span> You will lose all progress since your last save! Are you sure you wanna stop playing and log out?", function(r) {
+                if (r && r!=null){
+                    $http.get('/logout').then(function(lo){
+                        window.location.href = './login'
+                    });
+                }
+            })
+        },
+        reset: function() {
+            //this fn is gonna be somewhat dangerous, so let's make absolutely sure
+            var addendOne = Math.floor(Math.random() * 50),
+                addendTwo = Math.floor(Math.random() * 50);
+            bootbox.dialog({
+                message: "<span id='resetWarn'>WARNING:</span> Resetting your account is a <i>permanent</i> move. <br/>If you still wish to reset your game account, enter your username and password below, and solve the math question below and click the appropriate button. Be aware that this decision <i>cannot</i> be reversed!<hr/>Username:<input type='text' id='rmun'><br/>Password:<input type='password' id='rmpw'><hr/>Math Check:<br/>" + addendOne + " + " + addendTwo + " = <input type='number' id='mathChk'> ",
+                title: "Reset Account",
+                buttons: {
+                    danger: {
+                        label: "YES, I would like to reset my account.",
+                        className: "btn-danger",
+                        callback: function() {
+
+                            if (parseInt($('#mathChk').val()) == (addendOne + addendTwo)) {
+                                //math check is okay, so let's check the creds
+                                credObj = {
+                                        name: $('#rmun').val(),
+                                        pass: $('#rmpw').val()
+                                    }
+                                    //the following DOES work (i.e., redirects)
+                                    // console.log('Window:',window.location.href)
+                                    // window.location.href='./login';
+                                $http.post('/reset', credObj).then(function(resp) {
+                                    if (resp) {
+                                        window.location.replace('./login');
+                                        return true;
+                                    } else {
+                                        return false;
+                                    }
+                                })
+                            } else {
+                                return false;
+                            }
+                        }
+                    },
+                    main: {
+                        label: "NO, I do not wish to reset my account.",
+                        className: "btn-primary",
+                        callback: function() {
+                            return true;
+                        }
+                    }
+                }
+            });
         }
     };
 });

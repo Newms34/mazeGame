@@ -13,10 +13,34 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
     $scope.invActive = false;
     $scope.setActive = false;
     $scope.intTarg;
-    //for now, i'm setting the default contents of the player inv as below
+    $scope.lvl = 1;
     $scope.playerItems = [];
+    $scope.questList = [];
+    $scope.doneQuest = [];
+    $scope.maxHp = 0;
+    $scope.currHp = 0;
+    $scope.maxEn = 0;
+    $scope.currEn = 0;
+    $scope.isStunned = false;
     $scope.possRoomConts = ['loot', 'mons', 'npcs', 'jewl', ' ', 'exit', ' ', ' ', 'mons', 'mons']; //things that could be in a room!
-    $scope.uName = ''; //if this is blank, accept no incoming socket events from phone(s). Otherwise, accept from specified phone only!
+    $scope.name = ''; //actual name. 
+    $scope.getUsrData = function() {
+        $http.get('/currUsrData').then(function(d) {
+            console.log('CURR USR DATA', typeof d, d)
+            $scope.playerItems = d.data.equip;
+            $scope.lvl = d.data.lvl;
+            $scope.questList = d.data.inProg;
+            $scope.doneQuest = d.data.questDone;
+            $scope.maxHp = d.data.maxHp;
+            $scope.currHp = d.data.currHp;
+            $scope.maxEn = d.data.maxEn;
+            $scope.currEn = d.data.currEn;
+            $scope.isStunned = d.data.isStunned;
+            $scope.name = d.data.name;
+        })
+    };
+    $scope.getUsrData();
+    $scope.uName = ''; //if this is blank, accept no incoming socket events from phone(s). Otherwise, accept from specified phone only! This is NOT the username of the player!
     ($scope.checkPhone = function() {
         var isMobile = false; //initiate as false
         // device detection
@@ -26,6 +50,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
         } else {
             //if we're NOT mobile, check to see if we're logged in
             userFact.checkLogin().then(function(resp) {
+                console.log('RESPONSE FROM CHECK LOGIN:', resp)
                 if (!resp) {
                     $window.location.href = './login'
                 }
@@ -206,13 +231,12 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
     $scope.Quests = []
 
     $scope.currUINum = 0;
-    $scope.UIPans = ['Inventory', 'Skills', 'Bestiary', 'Quests'];
+    $scope.UIPans = ['Inventory', 'Skills', 'Bestiary', 'Quests', 'Menu'];
     $scope.currUIObjs = []; //we get these from the factory
     $scope.currUIBg = '../img/UI/inv.jpg';
     $scope.currUIPan = $scope.UIPans[$scope.currUINum];
     $scope.chInv = function(dir) {
         //UI Cycle function
-        console.log(dir, $scope.currUINum)
         if (!dir && $scope.currUINum > 0) {
             $scope.currUINum--;
         } else if (!dir) {
@@ -223,14 +247,12 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
             $scope.currUINum = 0;
         }
         $scope.currUIPan = $scope.UIPans[$scope.currUINum]; //title of current ui panel
-        // var currUIEls = UIFac.getUIObj($scope.currUIPan,$scope[$scope.currUIPan]);
-        // console.log('UI stuff:',currUIEls)
-        // $scope.currUIBg = currUIEls.bg;
-        console.log(UIFac, UIFac.getUIObj)
-        UIFac.getUIObj($scope.currUIPan, $scope[$scope.currUIPan]).then(function(uiRes) {
-            $scope.currUIObjs = uiRes.data;
-            console.log('UI OBJS:', $scope.currUIObjs)
-        });
+        if ($scope.currUIPan !== 'Menu') {
+            UIFac.getUIObj($scope.currUIPan, $scope[$scope.currUIPan]).then(function(uiRes) {
+                $scope.currUIObjs = uiRes.data;
+                console.log('UI OBJS:', $scope.currUIObjs)
+            });
+        }
         $scope.currUIBg = UIFac.getUIBg($scope.currUIPan)
     };
     $scope.chInv(-1);
@@ -239,7 +261,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
     $scope.roomRot = 0;
     $scope.playerFacing = 0;
     window.onkeydown = function(e) {
-        if ($scope.moveReady) {
+        if ($scope.moveReady && e.which !== 73) {
             var currCell = $scope.cells[$scope.cellNames.indexOf($scope.playerCell)];
             var x = $scope.playerCell.split('-')[0];
             var y = $scope.playerCell.split('-')[1];
@@ -337,9 +359,6 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
                 $scope.bombOn = false;
             } else if (e.which == 82) {
                 $scope.rotOn = !$scope.rotOn;
-            } else if (e.which == 73) {
-                console.log('i pressed and damage type 3 is', combatFac.getDmgType(3))
-                $scope.invActive = !$scope.invActive;
             } else if (e.which == 192) {
                 $scope.setActive = !$scope.setActive;
             }
@@ -354,6 +373,16 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
             if ((e.which == 87 || e.which == 38 || e.which == 83 || e.which == 40) && canMove && !$scope.moving) {
                 $scope.moveAni(); //do Move animation
             }
+        } else if (e.which == 73) {
+            console.log('key i was pressed')
+            $scope.invActive = !$scope.invActive;
+            if ($scope.invActive) {
+                //disable keyboard movement while inv is open
+                $scope.moveReady = false;
+            } else {
+                $scope.moveReady = true;
+            }
+            $scope.$digest();
         }
     }
     $scope.moving = false;
@@ -363,7 +392,9 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
             $('body').fadeIn(500, function() {
                 $scope.moving = false;
                 if (ex && ex != 0) {
-                    $window.location.reload();
+                    $scope.lvl++;
+                    console.log('new lvl!:',$scope.lvl)
+                    $scope.saveGame(true);
                 }
             })
         })
@@ -513,4 +544,36 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
             }
         })
     };
+    $scope.saveGame = function(reload) {
+        var data = {
+            name: $scope.name,
+            lvl: $scope.lvl,
+            equip: $scope.playerItems,
+            questDone: $scope.questList || [],
+            inProf: $scope.doneQuest,
+            maxHp: $scope.maxHp,
+            currHp: $scope.currHp,
+            maxEn: $scope.maxEn,
+            currEn: $scope.currEn,
+            isStunned: $scope.isStunned
+        }
+        UIFac.saveGame(data, false, reload); //save the game with the updated data. optional reset and reload
+    };
+    $scope.saveAndLogout = function() {
+        var data = {
+            name: $scope.name,
+            lvl: $scope.lvl,
+            equip: $scope.playerItems,
+            questDone: $scope.questList || [],
+            inProf: $scope.doneQuest,
+            maxHp: $scope.maxHp,
+            currHp: $scope.currHp,
+            maxEn: $scope.maxEn,
+            currEn: $scope.currEn,
+            isStunned: $scope.isStunned
+        }
+        UIFac.saveGame(data, true, false);
+    };
+    $scope.logout = UIFac.logout;
+    $scope.reset = UIFac.reset;
 });
