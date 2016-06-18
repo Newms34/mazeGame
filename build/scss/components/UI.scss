@@ -54,3 +54,10 @@
     color:#fc0;
     padding:2px;
 }
+.frontMenu{
+    z-index:99;
+    transform:translateZ(50px);
+}
+.dropdown{
+    transform:translateZ(50px);
+}

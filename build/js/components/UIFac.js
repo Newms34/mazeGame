@@ -55,15 +55,15 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
                 addStuff += '<li>Level:' + el.itemLvl + '</li>';
                 addStuff += '<li>Resistance:';
                 if (el.res && el.res.length) {
-                    addStuff += '<ul>'
+                    addStuff += '<ul>';
                     for (var i = 0; i < el.res.length; i++) {
-                        addStuff += '<li> ' + combatFac.getDmgType(el.res[i]) + ' </li>'
+                        addStuff += '<li> ' + combatFac.getDmgType(el.res[i]) + ' </li>';
                     }
-                    addStuff += '</ul>'
+                    addStuff += '</ul>';
                 } else {
-                    addStuff += '<span> none </span></li>'
+                    addStuff += '<span> none </span></li>';
                 }
-            } else if (el.giver || el.giver == 0) {
+            } else if (el.giver || el.giver === 0) {
                 //quest
                 $http.get('/getGiver/' + el.giver).then(function(res) {
                     console.log('results from quest-giver search', res.data[0]);
@@ -74,7 +74,7 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
                     $('#moreInf').show(200);
                     $('div.modal-footer > button.btn.btn-info').html('Less info');
                 })
-            } else if (el.energy || el.energy == 0) {
+            } else if (el.energy || el.energy === 0) {
                 //skill
                 addStuff += '<li>Damage Type:' + combatFac.getDmgType(el.type) + '</li>';
                 addStuff += '<li>Energy:' + el.energy + '</li>';
@@ -85,8 +85,8 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
                 addStuff += el.stuns ? '<li>Stuns</li>' : '';
             } else if (el.maxHp) {
                 //user. Shouldn't be this one!
-                addStuff += 'What are you doing? You broke the game!'
-            } else if (el.itemLvl || el.itemLvl == 0) {
+                addStuff += 'What are you doing? You broke the game!';
+            } else if (el.itemLvl || el.itemLvl === 0) {
                 //weapon
                 addStuff += el.max ? '<li>Damage:' + el.min + '-' + el.max + ' hp</li>' : '';
                 addStuff += el.def ? '<li>Defense:' + el.def + '</li>' : '';
@@ -100,13 +100,13 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
                 addStuff += '<li>Damage Type:' + combatFac.getDmgType(el.type) + '</li>';
                 addStuff += '<li>Resistance:';
                 if (el.res && el.res.length) {
-                    addStuff += '<ul>'
+                    addStuff += '<ul>';
                     for (var i = 0; i < el.res.length; i++) {
-                        addStuff += '<li> ' + combatFac.getDmgType(el.res[i]) + ' </li>'
+                        addStuff += '<li> ' + combatFac.getDmgType(el.res[i]) + ' </li>';
                     }
-                    addStuff += '</ul>'
+                    addStuff += '</ul>';
                 } else {
-                    addStuff += '<span> none </span></li>'
+                    addStuff += '<span> none </span></li>';
                 }
             }
             if (!el.giver && el.giver != 0) {
@@ -121,27 +121,27 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
             $('#moreInf').hide(200);
             $('div.modal-footer > button.btn.btn-info').html('More info');
         },
-        saveGame: function(data,lo,rel) {
+        saveGame: function(data, lo, rel) {
             //save game, w/ optional logout
-            $http.post('/save',data).then(function(res){
-                if (lo && res){
-                    $http.get('/logout').then(function(r){
-                        window.location.href = './login'
+            $http.post('/save', data).then(function(res) {
+                if (lo && res) {
+                    $http.get('/logout').then(function(r) {
+                        window.location.href = './login';
                     });
-                }else if(rel && res){
+                } else if (rel && res) {
                     $window.location.reload();
                 }
-            })
+            });
         },
         logout: function(usr) {
             //log out, but dont save game (this effectively wipes all progress from last save)
             bootbox.confirm("<span id='resetWarn'>WARNING:</span> You will lose all progress since your last save! Are you sure you wanna stop playing and log out?", function(r) {
-                if (r && r!=null){
-                    $http.get('/logout').then(function(lo){
-                        window.location.href = './login'
+                if (r && r !== null) {
+                    $http.get('/logout').then(function(lo) {
+                        window.location.href = './login';
                     });
                 }
-            })
+            });
         },
         reset: function() {
             //this fn is gonna be somewhat dangerous, so let's make absolutely sure
@@ -159,12 +159,9 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
                             if (parseInt($('#mathChk').val()) == (addendOne + addendTwo)) {
                                 //math check is okay, so let's check the creds
                                 credObj = {
-                                        name: $('#rmun').val(),
-                                        pass: $('#rmpw').val()
-                                    }
-                                    //the following DOES work (i.e., redirects)
-                                    // console.log('Window:',window.location.href)
-                                    // window.location.href='./login';
+                                    name: $('#rmun').val(),
+                                    pass: $('#rmpw').val()
+                                };
                                 $http.post('/reset', credObj).then(function(resp) {
                                     if (resp) {
                                         window.location.replace('./login');
@@ -172,7 +169,7 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
                                     } else {
                                         return false;
                                     }
-                                })
+                                });
                             } else {
                                 return false;
                             }
