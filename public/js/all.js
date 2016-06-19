@@ -534,6 +534,8 @@ app.controller('mob-con', function($scope, $http, $q, $interval, $window) {
     $scope.rotX = null;
     $scope.rotY = null;
     $scope.uName = 'retrieving...'; //username!
+    $scope.uiOpts = ['Inventory', 'Skills', 'Bestiary', 'Quests', 'Menu'];
+    $scope.currUI = 'Menu';
     $scope.getUn = function() {
         var nounStart = String.fromCharCode(65 + Math.floor(Math.random() * 25));
         var adjStart = String.fromCharCode(65 + Math.floor(Math.random() * 25));
