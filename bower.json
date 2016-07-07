@@ -23,7 +23,7 @@
     "tests"
   ],
   "dependencies": {
-    "angular": "^1.5.7",
+    "angular": "~1.5.x",
     "angular-recaptcha": "^3.0.3",
     "bootstrap": "^3.3.6",
     "jquery-ui": "^1.11.4",
