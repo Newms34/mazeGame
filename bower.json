@@ -1,35 +1,38 @@
 {
-  "name": "Daves Maze Game",
-  "description": "A dungeon crawler written with MEAN.io and love!",
-  "main": "app.js",
-  "authors": [
-    "David Newman"
-  ],
-  "license": "ISC",
-  "keywords": [
-    "maze",
-    "dungeon",
-    "rpg",
-    "MEAN",
-    "game"
-  ],
-  "homepage": "https://github.com/Newms34/mazegame",
-  "private": true,
-  "ignore": [
-    "**/.*",
-    "node_modules",
-    "bower_components",
-    "test",
-    "tests"
-  ],
-  "dependencies": {
-    "angular": "~1.5.x",
-    "angular-recaptcha": "^3.0.3",
-    "bootstrap": "^3.3.6",
-    "jquery-ui": "^1.11.4",
-    "socket.io-client": "^1.4.6",
-    "ng-dialog": "^0.6.1",
-    "bootbox.js": "bootbox#^4.4.0",
-    "angular-swipe": "^0.1.0"
-  }
+    "name": "Daves Maze Game",
+    "description": "A dungeon crawler written with MEAN.io and love!",
+    "main": "app.js",
+    "authors": [
+        "David Newman"
+    ],
+    "license": "ISC",
+    "keywords": [
+        "maze",
+        "dungeon",
+        "rpg",
+        "MEAN",
+        "game"
+    ],
+    "homepage": "https://github.com/Newms34/mazegame",
+    "private": true,
+    "ignore": [
+        "**/.*",
+        "node_modules",
+        "bower_components",
+        "test",
+        "tests"
+    ],
+    "dependencies": {
+        "angular": "~1.5.x",
+        "angular-recaptcha": "^3.0.3",
+        "bootstrap": "^3.3.6",
+        "jquery-ui": "^1.11.4",
+        "socket.io-client": "^1.4.6",
+        "ng-dialog": "^0.6.1",
+        "bootbox.js": "bootbox#^4.4.0",
+        "angular-swipe": "^0.1.0"
+    },
+    "resolutions": {
+        "angular": "1.3.0"
+    }
 }
