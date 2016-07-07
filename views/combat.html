@@ -1,0 +1,62 @@
+<div id='combat-box' ng-controller='comb-con'>
+    <div id='enemy' class='char-box' ng-class='{"char-turn":comb.playersTurn==false}'>
+        <div class='charPort'></div>
+        <div class='charStats'>
+            <div class='col-md-12 health-bar'>
+                <div class='stat-bar-bg'>
+                    <div class='stat-bar-inner'>
+                        <div class='stat-bar-stat'></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class='charChoice'>
+           
+        </div>
+    </div>
+    <div id='player' class='char-box' ng-class='{"char-turn":comb.playersTurn}'>
+        <div class='charPort'></div>
+        <div class='charStats'>
+            <div class='col-md-12 health-bar'>
+                <div class='stat-bar-bg'>
+                    <div class='stat-bar-inner'>
+                        <div class='stat-bar-stat'></div>
+                    </div>
+                </div>
+            </div>
+            <div class='col-md-12 energy-bar'>
+                <div class='stat-bar-bg'>
+                    <div class='stat-bar-inner'>
+                        <div class='stat-bar-stat'></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class='charChoice'>
+            <div class='col-md-11'>
+                <div class='col-md-3'>
+                    <button ng-disabled='comb.playersTurn==false' class='btn btn-success choiceBut change-dwn-butt' ng-click='comb.skillCh(0)'>&leftarrow;</button>
+                </div>
+                <div class='col-md-6 the-skill' ng-click='comb.showSkillInf();'>
+                    <h4>{{comb.skills[currSkillNum].name}}</h4><img src='{{skills[currSkillNum].imgUrl || "./img/const.jpg"}}'>
+                </div>
+                <div class='col-md-3'>
+                    <button ng-disabled='comb.playersTurn==false' class='btn btn-success choiceBut change-up-butt' ng-click='comb.skillCh(1)'>&rightarrow;</button>
+                </div>
+            </div>
+            <div class='col-md-11'>
+                <button ng-disabled='comb.playersTurn==false' class='btn btn-success choiceBut attack-butt' ng-click='comb.attack();'>Attack!</button>
+            </div>
+            <div class='col-md-11'>
+                <button ng-disabled='comb.playersTurn==false' class='btn btn-success choiceBut wait-butt' ng-click='comb.wait();'>Wait!</button>
+            </div>
+            <div class='col-md-11'>
+                <button ng-disabled='comb.playersTurn==false' class='btn btn-success choiceBut run-away-butt' ng-click='comb.attemptFlee();'>Flee!</button>
+            </div>
+        </div>
+    </div>
+    <div class='pre-battle'>
+    	<h2>Oh no! It's a {{intTarg.name}}</h2>
+    	<button class='btn btn-danger' ng-click='comb.prepComb()'>Fight!</button>
+    </div>
+</div>

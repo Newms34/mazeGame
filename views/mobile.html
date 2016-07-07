@@ -12,14 +12,24 @@
     <div class='col-xs-6' id='mainMob'>
         <div>Your name: </div>
         <div id='uName'>{{uName}}</div>
-        
+        <div id='menuContainer'>
+            <div id='prevMen'>{{prevUI}}</div>
+            <div id='ringCont' style='transform:rotateY({{currRingRot}}deg);'>
+                <div ng-repeat='rue in uiObjs' class='RingUIEl' style='background: #fff, url("{{rue.imgUrl}}");background-size:cover;transform:rotateY(-{{$index*rotPer}}deg) translateZ({{ringSize}}px)' ng-click='rue.fn'>
+                    {{rue.name}}
+                </div>
+            </div>
+            <div id='nextMen'>{{nextUI}}</div>
+        </div>
     </div>
     <script src='/socket.io-client/socket.io.js'></script>
     <script src="/jquery/dist/jquery.min.js"></script>
     <script src="/jquery-ui/jquery-ui.min.js"></script>
     <script src="/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="/angular/angular.min.js"></script>
+    <script src="/angular-touch/angular-touch.min.js"></script>
     <script src="/angular-bootstrap-contextmenu/contextMenu.js"></script>
+
     <!-- Because of gulp, we can include just one, minified file!: -->
     <script src="/js/all.min.js"></script>
 </body>

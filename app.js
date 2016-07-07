@@ -35,6 +35,8 @@ io.on('connection', function(socket) {
         io.emit('movOut', movObj);
     });
     socket.on('chkName', function(name) {
+        //this is the user on the front end-desktop attempting to claim a phone 'username'. 
+        //If we've got it in the database, go ahead and send that name to desktop. Otherwise, send false
         console.log('name', name.n, names)
         if (names.indexOf(name.n) != -1) {
             io.emit('chkNameRes', { n: name.n })

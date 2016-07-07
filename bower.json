@@ -29,6 +29,7 @@
     "jquery-ui": "^1.11.4",
     "socket.io-client": "^1.4.6",
     "ng-dialog": "^0.6.1",
-    "bootbox.js": "bootbox#^4.4.0"
+    "bootbox.js": "bootbox#^4.4.0",
+    "angular-swipe": "^0.1.0"
   }
 }

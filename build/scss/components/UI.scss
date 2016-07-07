@@ -1,8 +1,8 @@
 #UI {
-    position:absolute;
+    position: absolute;
     background: #bbb;
-    width:100%;
-    height:100%;
+    width: 100%;
+    height: 100%;
     div.panel-body {
         height: 100%;
     }
@@ -27,37 +27,77 @@
         font-size: xx-small;
         overflow: hidden;
         color: #fff;
-        transition-duration:0.5s;
-        cursor:pointer;
-        &:hover{
-            box-shadow:0 0 4px #fff;
+        transition-duration: 0.5s;
+        cursor: pointer;
+        &:hover {
+            box-shadow: 0 0 4px #fff;
         }
     }
 }
-.moreInfList{
-    list-style:none;
+
+.moreInfList {
+    list-style: none;
 }
-.menuGrp{
-    width:100%;
-    padding:10px;
-    border-bottom:2px solid #000;
-    .bigButt{
+
+.menuGrp {
+    width: 100%;
+    padding: 10px;
+    border-bottom: 2px solid #000;
+    .bigButt {
         //we like them
         //and we cannot lie
-        width:50%;
+        width: 50%;
     }
 }
-#resetWarn{
-    font-weight:bold;
+
+#resetWarn {
+    font-weight: bold;
     font-style: italic;
-    background:#000;
-    color:#fc0;
-    padding:2px;
+    background: #000;
+    color: #fc0;
+    padding: 2px;
 }
-.frontMenu{
-    z-index:99;
-    transform:translateZ(50px);
+
+.frontMenu {
+    z-index: 99;
+    transform: translateZ(50px);
 }
-.dropdown{
-    transform:translateZ(50px);
+
+.dropdown {
+    transform: translateZ(50px);
+}
+
+body#mob {
+    transform-style: preserve-3d;
+    div {
+        transform-style: preserve-3d;
+        #menuContainer {
+            transform-style: preserve-3d;
+            width: 100%;
+            height: 90%;
+            #prevMen {
+                position: relative;
+                height: 5%;
+            }
+            #ringCont {
+                transform-style: preserve-3d;
+                position: relative;
+                top: 40%;
+                left: 0%;
+                transform-origin:65% 50% -56px;
+                .RingUIEl {
+                    left: 40%;
+                    top: 10%;
+                    position: absolute;
+                    padding: 35px;
+                    background: #fff;
+                }
+            }
+            #nextMen {
+                height: 5%;
+                position: relative;
+                bottom: 0%;
+            }
+        }
+    }
 }
