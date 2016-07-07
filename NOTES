@@ -22,3 +22,12 @@ possibly implement movement pause on the client side? this needs to be designed 
 Cloud9
 
 IMPLEMENT BROWSER CHECKING (seems to only work in chrome!)
+
+When should we save?:
+ - When user clicks save
+ - when user clicks save+exit
+ - on leveling
+ - before each boss?
+ - others?
+
+Should user heal outside of combat?

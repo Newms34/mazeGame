@@ -40,6 +40,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
             $scope.name = d.data.name;
         });
     };
+    $scope.currSkillNum = 0;
     $scope.getUsrData();
     $scope.uName = ''; //if this is blank, accept no incoming socket events from phone(s). Otherwise, accept from specified phone only! This is NOT the username of the player!
     ($scope.checkPhone = function() {
@@ -212,11 +213,16 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
             if (isMoveKey) {
                 e.preventDefault();
             }
-            $scope.playerCell = x + '-' + y;
-            $scope.cells[$scope.cellNames.indexOf($scope.playerCell)].pViz = true;
-            $scope.intTarg = typeof $scope.cells[$scope.cellNames.indexOf($scope.playerCell)].has == 'object' ? $scope.cells[$scope.cellNames.indexOf($scope.playerCell)].has : false;
-            $scope.$digest();
             if ((e.which == 87 || e.which == 38 || e.which == 83 || e.which == 40) && canMove && !$scope.moving) {
+                $scope.playerCell = x + '-' + y;
+                $scope.cells[$scope.cellNames.indexOf($scope.playerCell)].pViz = true;
+                $scope.intTarg = typeof $scope.cells[$scope.cellNames.indexOf($scope.playerCell)].has == 'object' ? $scope.cells[$scope.cellNames.indexOf($scope.playerCell)].has : false;
+                if ($scope.intTarg) {
+                    console.log('cell cons (probly mons):', $scope.intTarg);
+                    $scope.moveReady = false; //set to false since we're in combat!
+                    combatFac.combatReady(); //set up the board
+                }
+                $scope.$digest();
                 $scope.moveAni(); //do Move animation
             }
         } else if (e.which == 73) {
@@ -420,33 +426,31 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
     };
     $scope.logout = UIFac.logout;
     $scope.reset = UIFac.reset;
-    $scope.isNearMerch = false;//only active if we're in a room with a merchant
+    $scope.isNearMerch = false; //only active if we're in a room with a merchant
     $scope.invMenu = [
         ['Equip', function($itemScope) {
             console.log('RIGHT CLICK', $itemScope.UIEl);
-        }],null,
-        ['Destroy', function($itemScope) {
+        }], null, ['Destroy', function($itemScope) {
             console.log('RIGHT CLICK', $itemScope.UIEl);
-            bootbox.confirm('Are you sure you wish to destroy this '+$itemScope.UIEl.name+'?',function(res){
-                    console.log('RES',res,$itemScope.UIEl.name);
-                if (res && res !==null){
+            bootbox.confirm('Are you sure you wish to destroy this ' + $itemScope.UIEl.name + '?', function(res) {
+                console.log('RES', res, $itemScope.UIEl.name);
+                if (res && res !== null) {
                     var itToDest = -1;
-                    for (var i=0;i<$scope.currUIObjs.length;i++){
-                        if ($scope.currUIObjs[i].name==$itemScope.UIEl.name){
-                            itToDest=i;
+                    for (var i = 0; i < $scope.currUIObjs.length; i++) {
+                        if ($scope.currUIObjs[i].name == $itemScope.UIEl.name) {
+                            itToDest = i;
                         }
                     }
-                    if (itToDest!=-1){
+                    if (itToDest != -1) {
                         console.log($scope.currUIObjs[itToDest])
-                        $scope.currUIObjs.splice(itToDest,1);
+                        $scope.currUIObjs.splice(itToDest, 1);
                         $scope.$digest();
                     }
                 }
             });
-        }],null, 
-        ['Sell', function($itemScope) {
+        }], null, ['Sell', function($itemScope) {
             console.log('SELL', $itemScope)
-        },function($itemScope){
+        }, function($itemScope) {
             return $scope.isNearMerch;
         }]
     ]

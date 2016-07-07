@@ -1,0 +1,85 @@
+#combat-box{
+	position:absolute;
+	width:100%; 
+	height:100%;
+	color:#000;
+	background:url('.././img/wood.jpg');
+	.char-box{
+		background:url('.././img/paper.jpg');
+		width:45%;
+		height:45%;
+		position:absolute;
+		text-align:center;
+		box-shadow:4px 4px 15px #000;
+		opacity:.7;
+		transition-duration: 1.5s;
+	}
+	#enemy{
+		z-index:0;
+		top:0px;
+		right:0px;
+	}
+	#player{
+		z-index:0;
+		bottom:60px;
+		left:0px;
+	}
+	.stat-bar-bg{
+		width:85%;
+		position:relative;
+		height:25px;
+		background:#555;
+		margin-bottom: 3px;
+		border:3px outset #555;
+		border-radius:3px;
+		.stat-bar-inner{
+			position:absolute;
+			width:95%;
+			left:2.5%;
+			background:#222;
+			border: 2px inset #555;
+			height:90%;
+			border-radius:3px;
+		}
+	}
+	.health-bar{
+		.stat-bar-stat{
+			position:absolute;
+			background:#900;
+			width:100%;
+			height:100%;
+		}
+	}
+	.energy-bar{
+		.stat-bar-stat{
+			position:absolute;
+			background:#009;
+			width:100%;
+			height:100%;
+		}
+	}
+	.the-skill{
+		cursor:pointer;
+	}
+	.char-turn{
+		box-shadow:8px 8px 25px #000;
+		opacity:1;
+		z-index:99;
+	}
+	.pre-battle{
+		background:rgba(0,0,0,.8);
+		color:#fff;
+		font-style: italic;
+		font-size:24pt;
+		font-weight:bold;
+		text-align:center;
+		width:100%;
+		height:100%;
+		vertical-align: middle;
+		position:absolute;
+		z-index:120;
+	}
+}
+.bootbox{
+	transform:translateZ(210px) translateY(20%) translateX(-10%);
+}

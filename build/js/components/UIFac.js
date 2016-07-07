@@ -184,6 +184,208 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
                     }
                 }
             });
+        },
+        getRingObjs: function(rNum) {
+            var objs;
+            switch (rNum) {
+                case 0:
+                    //Inventory
+                    objs = [{
+                        name: 'head',
+                        imgUrl: '',
+                        fn: function() {
+                            console.log('clicked this!');
+                        }
+                    }, {
+                        name: 'chest',
+                        imgUrl: '',
+                        fn: function() {
+                            console.log('clicked this!');
+                        }
+                    }, {
+                        name: 'hands',
+                        imgUrl: '',
+                        fn: function() {
+                            console.log('clicked this!');
+                        }
+                    }, {
+                        name: 'legs',
+                        imgUrl: '',
+                        fn: function() {
+                            console.log('clicked this!');
+                        }
+                    }, {
+                        name: 'feet',
+                        imgUrl: '',
+                        fn: function() {
+                            console.log('clicked this!');
+                        }
+                    }, {
+                        name: 'ring',
+                        imgUrl: '',
+                        fn: function() {
+                            console.log('clicked this!');
+                        }
+                    }];
+                    break;
+                case 1:
+                    //Skills (& combat?)
+                    objs = [{
+                        name: 'Change Skill',
+                        imgUrl: '',
+                        fn: function() {
+                            console.log('clicked this!');
+                        }
+                    }, {
+                        name: 'Skill Info',
+                        imgUrl: '',
+                        fn: function() {
+                            console.log('clicked this!');
+                        }
+                    }, {
+                        name: 'Attack',
+                        imgUrl: '',
+                        fn: function() {
+                            console.log('clicked this!');
+                        }
+                    }, {
+                        name: 'Retreat',
+                        imgUrl: '',
+                        fn: function() {
+                            console.log('clicked this!');
+                        }
+                    }, {
+                        name: 'Wait',
+                        imgUrl: '',
+                        fn: function() {
+                            console.log('clicked this!');
+                        }
+                    }, {
+                        name: 'Player Status',
+                        imgUrl: '',
+                        fn: function() {
+                            console.log('clicked this!');
+                        }
+                    }];
+                    break;
+                case 2:
+                    //Bestiary
+                    objs = [{
+                        name: 'Current Creature Info',
+                        imgUrl: '',
+                        fn: function() {
+                            console.log('clicked this!');
+                        }
+                    }, {
+                        name: 'All Creatures Info',
+                        imgUrl: '',
+                        fn: function() {
+                            console.log('clicked this!');
+                        }
+                    }, {
+                        name: 'Search Creatures',
+                        imgUrl: '',
+                        fn: function() {
+                            console.log('clicked this!');
+                        }
+                    }, {
+                        name: 'Vanquished Creatures',
+                        imgUrl: '',
+                        fn: function() {
+                            console.log('clicked this!');
+                        }
+                    }, {
+                        name: 'Quest Creatures',
+                        imgUrl: '',
+                        fn: function() {
+                            console.log('clicked this!');
+                        }
+                    }];
+                    break;
+                case 3:
+                    //Quests
+                    objs = [{
+                        name: 'Current Side Quests',
+                        imgUrl: '',
+                        fn: function() {
+                            console.log('clicked this!');
+                        }
+                    }, {
+                        name: 'Legendary Quests',
+                        imgUrl: '',
+                        fn: function() {
+                            console.log('clicked this!');
+                        }
+                    }, {
+                        name: 'Old Quests',
+                        imgUrl: '',
+                        fn: function() {
+                            console.log('clicked this!');
+                        }
+                    }, {
+                        name: 'Main Quests',
+                        imgUrl: '',
+                        fn: function() {
+                            console.log('clicked this!');
+                        }
+                    }, {
+                        name: 'Quest Stats',
+                        imgUrl: '',
+                        fn: function() {
+                            console.log('clicked this!');
+                        }
+                    }];
+                    break;
+                default:
+                    //Main Menu
+                    objs = [{
+                        name: 'Save',
+                        imgUrl: '',
+                        fn: function() {
+                            console.log('clicked this!');
+                        }
+                    }, {
+                        name: 'Save and Logout',
+                        imgUrl: '',
+                        fn: function() {
+                            console.log('clicked this!');
+                        }
+                    }, {
+                        name: 'Logout without saving',
+                        imgUrl: '',
+                        fn: function() {
+                            console.log('clicked this!');
+                        }
+                    }, {
+                        name: 'Reset Account',
+                        imgUrl: '',
+                        fn: function() {
+                            console.log('clicked this!');
+                        }
+                    }, {
+                        name: 'Stats',
+                        imgUrl: '',
+                        fn: function() {
+                            console.log('clicked this!');
+                        }
+                    }, {
+                        name: 'About',
+                        imgUrl: '',
+                        fn: function() {
+                            console.log('clicked this!');
+                        }
+                    }]
+
+            }
+            var ringData = {
+                objs: objs,
+                rot : 360/objs.length 
+            }
+            console.log('ring data',ringData)
+            return ringData;
+        },
+        PlatinumSpinningRings: function(curr, inc) {
+            return curr + inc;
         }
     };
 });

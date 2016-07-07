@@ -301,6 +301,18 @@ body {
         width: 100%;
     }
 }
+#combatloader {
+    position: absolute;
+    left: 20%;
+    transform: translateZ(80px);
+    top: 9%;
+    width: 40%;
+    height: 900px;
+    &>div {
+        height: 100%;
+        width: 100%;
+    }
+}
 
 .regErr {
     position: relative;
