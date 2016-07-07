@@ -31,7 +31,8 @@
     "ng-dialog": "^0.6.1",
     "bootbox.js": "bootbox#^4.4.0",
     "angular-swipe": "^0.1.0",
-    "angular-bootstrap-contextmenu": "^0.9.7"
+    "angular-bootstrap-contextmenu": "^0.9.7",
+    "angular-touch": "^1.5.7"
   },
   "resolutions": {
     "angular": "1.5.7"
