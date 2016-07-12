@@ -40,7 +40,7 @@ app.factory('userFact', function($http) {
         	//note that below we're returning the ENTIRE http.get (the
         	//asynchronous call). This allows us to use promisey things
         	//like '.then()' on it in the controller.
-        	return $http.get('/nameOkay/'+name).then(function(nameRes){
+        	return $http.get('/user/nameOkay/'+name).then(function(nameRes){
         		console.log('NAME RESPONSE:',nameRes.data)
         		if (nameRes.data=='okay'){
         			return false
@@ -51,7 +51,7 @@ app.factory('userFact', function($http) {
         },
         login:function(creds){
         	console.log('credentials in factory',creds);
-        	return $http.post('/login',creds).then(function(logRes){
+        	return $http.post('/user/login',creds).then(function(logRes){
         		console.log('response from backend:',logRes)
         		if (logRes.data=='yes'){
         			return true;
@@ -61,7 +61,7 @@ app.factory('userFact', function($http) {
         	})
         },
         checkLogin: function(){
-        	return $http.get('/chkLog').then(function(chkLog){
+        	return $http.get('/user/chkLog').then(function(chkLog){
         		console.log('CHECKLOG RESULTS',chkLog)
         		return chkLog.data;
         	})

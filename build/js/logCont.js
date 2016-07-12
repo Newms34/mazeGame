@@ -12,7 +12,7 @@ var app = angular.module('mazeGame', ['ui.bootstrap.contextMenu','ngTouch']).con
                 user: $scope.regForm.username.$viewValue,
                 password: $scope.regForm.pwd.$viewValue
             };
-            $http.post('/new', userInf).then(function(res) {
+            $http.post('/user/new', userInf).then(function(res) {
                 if (res.data == 'saved!') {
                     $scope.login(true);
                 }

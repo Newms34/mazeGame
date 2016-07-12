@@ -26,7 +26,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
     $scope.possRoomConts = ['loot', 'mons', 'npcs', 'jewl', ' ', 'exit', ' ', ' ', 'mons', 'mons']; //things that could be in a room!
     $scope.name = ''; //actual name. 
     $scope.getUsrData = function() {
-        $http.get('/currUsrData').then(function(d) {
+        $http.get('/user/currUsrData').then(function(d) {
             console.log('CURR USR DATA', typeof d, d);
             $scope.playerItems = d.data.equip;
             $scope.lvl = d.data.lvl;

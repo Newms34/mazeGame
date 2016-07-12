@@ -12,7 +12,7 @@ var app = angular.module('mazeGame', ['ui.bootstrap.contextMenu','ngTouch']).con
                 user: $scope.regForm.username.$viewValue,
                 password: $scope.regForm.pwd.$viewValue
             };
-            $http.post('/new', userInf).then(function(res) {
+            $http.post('/user/new', userInf).then(function(res) {
                 if (res.data == 'saved!') {
                     $scope.login(true);
                 }
@@ -102,7 +102,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
     $scope.possRoomConts = ['loot', 'mons', 'npcs', 'jewl', ' ', 'exit', ' ', ' ', 'mons', 'mons']; //things that could be in a room!
     $scope.name = ''; //actual name. 
     $scope.getUsrData = function() {
-        $http.get('/currUsrData').then(function(d) {
+        $http.get('/user/currUsrData').then(function(d) {
             console.log('CURR USR DATA', typeof d, d);
             $scope.playerItems = d.data.equip;
             $scope.lvl = d.data.lvl;
@@ -801,6 +801,7 @@ app.factory('combatFac', function($http) {
 });
 
 app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combatFac) {
+    //this is only in the subfolder because it's a subcomponent of the main controller (main.js)
     $scope.comb = {};
     $scope.comb.skills;
     $scope.comb.playersTurn = false; //monster goes first!
@@ -826,7 +827,7 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
         }
     }
     $scope.comb.getAllSkills = function() {
-        $http.get('/Skills').then(function(s) {
+        $http.get('/item/Skills').then(function(s) {
             console.log(s.data)
             $scope.comb.skills = s.data;
         });
@@ -1156,7 +1157,7 @@ app.factory('mazeFac', function($http) {
         popCells = function() {
             cells.forEach(function(cel) {
                 if (cel.has == 'mons') {
-                    $http.get('/getRanMons/' + cel.id).then(function(res) {
+                    $http.get('/item/getRanMons/' + cel.id).then(function(res) {
                         cells[cellNames.indexOf(res.data.cell)].has = res.data.mons;
                     });
                 }
@@ -1313,7 +1314,7 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
     return {
         getUIObj: function(whichUI, UIStuff) {
             //get all the data
-            var p = $http.get('/' + whichUI).success(function(res) {
+            var p = $http.get('/item/' + whichUI).success(function(res) {
                 return res;
             });
             return p;
@@ -1327,13 +1328,13 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
             };
             return UIBgs[which];
         },
-        sendUserUI: function(which) {
-            //note that we're actually returning a PROMISE here!
-            var p = $http.get('/user/' + whichUI).success(function(res) {
-                return res;
-            });
-            return p;
-        },
+        // sendUserUI: function(which) {
+        //     //note that we're actually returning a PROMISE here!
+        //     var p = $http.get('/user/' + whichUI).success(function(res) {
+        //         return res;
+        //     });
+        //     return p;
+        // },
         moreInfo: function(el) {
             var addStuff = '<ul class="moreInfList">';
             //first, determine which type of item it is. Each inv el type has certain fields unique to that type
@@ -1376,7 +1377,7 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
                 }
             } else if (el.giver || el.giver === 0) {
                 //quest
-                $http.get('/getGiver/' + el.giver).then(function(res) {
+                $http.get('/item/getGiver/' + el.giver).then(function(res) {
                     console.log('results from quest-giver search', res.data[0]);
                     addStuff += '<li>Level:' + el.lvl + '</li>';
                     addStuff += '<li>Given by:' + res.data[0].Name + '</li>';
@@ -1434,7 +1435,7 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
         },
         saveGame: function(data, lo, rel) {
             //save game, w/ optional logout
-            $http.post('/save', data).then(function(res) {
+            $http.post('/user/save', data).then(function(res) {
                 if (lo && res) {
                     $http.get('/logout').then(function(r) {
                         window.location.href = './login';
@@ -1448,7 +1449,7 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
             //log out, but dont save game (this effectively wipes all progress from last save)
             bootbox.confirm("<span id='resetWarn'>WARNING:</span> You will lose all progress since your last save! Are you sure you wanna stop playing and log out?", function(r) {
                 if (r && r !== null) {
-                    $http.get('/logout').then(function(lo) {
+                    $http.get('/user/logout').then(function(lo) {
                         window.location.href = './login';
                     });
                 }
@@ -1473,7 +1474,7 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
                                     name: $('#rmun').val(),
                                     pass: $('#rmpw').val()
                                 };
-                                $http.post('/reset', credObj).then(function(resp) {
+                                $http.post('/user/reset', credObj).then(function(resp) {
                                     if (resp) {
                                         window.location.replace('./login');
                                         return true;
@@ -1743,7 +1744,7 @@ app.factory('userFact', function($http) {
         	//note that below we're returning the ENTIRE http.get (the
         	//asynchronous call). This allows us to use promisey things
         	//like '.then()' on it in the controller.
-        	return $http.get('/nameOkay/'+name).then(function(nameRes){
+        	return $http.get('/user/nameOkay/'+name).then(function(nameRes){
         		console.log('NAME RESPONSE:',nameRes.data)
         		if (nameRes.data=='okay'){
         			return false
@@ -1754,7 +1755,7 @@ app.factory('userFact', function($http) {
         },
         login:function(creds){
         	console.log('credentials in factory',creds);
-        	return $http.post('/login',creds).then(function(logRes){
+        	return $http.post('/user/login',creds).then(function(logRes){
         		console.log('response from backend:',logRes)
         		if (logRes.data=='yes'){
         			return true;
@@ -1764,7 +1765,7 @@ app.factory('userFact', function($http) {
         	})
         },
         checkLogin: function(){
-        	return $http.get('/chkLog').then(function(chkLog){
+        	return $http.get('/user/chkLog').then(function(chkLog){
         		console.log('CHECKLOG RESULTS',chkLog)
         		return chkLog.data;
         	})

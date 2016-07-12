@@ -45,7 +45,7 @@ app.factory('mazeFac', function($http) {
         popCells = function() {
             cells.forEach(function(cel) {
                 if (cel.has == 'mons') {
-                    $http.get('/getRanMons/' + cel.id).then(function(res) {
+                    $http.get('/item/getRanMons/' + cel.id).then(function(res) {
                         cells[cellNames.indexOf(res.data.cell)].has = res.data.mons;
                     });
                 }

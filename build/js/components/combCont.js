@@ -1,4 +1,5 @@
 app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combatFac) {
+    //this is only in the subfolder because it's a subcomponent of the main controller (main.js)
     $scope.comb = {};
     $scope.comb.skills;
     $scope.comb.playersTurn = false; //monster goes first!
@@ -24,7 +25,7 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
         }
     }
     $scope.comb.getAllSkills = function() {
-        $http.get('/Skills').then(function(s) {
+        $http.get('/item/Skills').then(function(s) {
             console.log(s.data)
             $scope.comb.skills = s.data;
         });

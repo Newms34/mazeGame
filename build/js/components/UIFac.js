@@ -2,7 +2,7 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
     return {
         getUIObj: function(whichUI, UIStuff) {
             //get all the data
-            var p = $http.get('/' + whichUI).success(function(res) {
+            var p = $http.get('/item/' + whichUI).success(function(res) {
                 return res;
             });
             return p;
@@ -16,13 +16,13 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
             };
             return UIBgs[which];
         },
-        sendUserUI: function(which) {
-            //note that we're actually returning a PROMISE here!
-            var p = $http.get('/user/' + whichUI).success(function(res) {
-                return res;
-            });
-            return p;
-        },
+        // sendUserUI: function(which) {
+        //     //note that we're actually returning a PROMISE here!
+        //     var p = $http.get('/user/' + whichUI).success(function(res) {
+        //         return res;
+        //     });
+        //     return p;
+        // },
         moreInfo: function(el) {
             var addStuff = '<ul class="moreInfList">';
             //first, determine which type of item it is. Each inv el type has certain fields unique to that type
@@ -65,7 +65,7 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
                 }
             } else if (el.giver || el.giver === 0) {
                 //quest
-                $http.get('/getGiver/' + el.giver).then(function(res) {
+                $http.get('/item/getGiver/' + el.giver).then(function(res) {
                     console.log('results from quest-giver search', res.data[0]);
                     addStuff += '<li>Level:' + el.lvl + '</li>';
                     addStuff += '<li>Given by:' + res.data[0].Name + '</li>';
@@ -123,7 +123,7 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
         },
         saveGame: function(data, lo, rel) {
             //save game, w/ optional logout
-            $http.post('/save', data).then(function(res) {
+            $http.post('/user/save', data).then(function(res) {
                 if (lo && res) {
                     $http.get('/logout').then(function(r) {
                         window.location.href = './login';
@@ -137,7 +137,7 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
             //log out, but dont save game (this effectively wipes all progress from last save)
             bootbox.confirm("<span id='resetWarn'>WARNING:</span> You will lose all progress since your last save! Are you sure you wanna stop playing and log out?", function(r) {
                 if (r && r !== null) {
-                    $http.get('/logout').then(function(lo) {
+                    $http.get('/user/logout').then(function(lo) {
                         window.location.href = './login';
                     });
                 }
@@ -162,7 +162,7 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
                                     name: $('#rmun').val(),
                                     pass: $('#rmpw').val()
                                 };
-                                $http.post('/reset', credObj).then(function(resp) {
+                                $http.post('/user/reset', credObj).then(function(resp) {
                                     if (resp) {
                                         window.location.replace('./login');
                                         return true;
