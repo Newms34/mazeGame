@@ -1,0 +1,6 @@
+Beginnings of an inventory system (WIP)!
+Turn - based Combat
+3D Maze generation
+Works on the MEAN (Mongo, Express, Angular, Node) stack!
+Phone navigation support (WIP)!
+Yes, it's pretty much pure JavaScript!

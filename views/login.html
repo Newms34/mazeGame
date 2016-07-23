@@ -7,12 +7,32 @@
     <link rel="stylesheet" type="text/css" href="/css/styles.css">
 </head>
 
-<body ng-app='mazeGame' ng-controller='log-con' ng-cloak>
-    <div id='goPlay' ng-show='hazLogd'>
-        <button class='btn btn-success' ng-click='play();'>Go play!</button>
+<body ng-app='mazeGame' ng-controller='log-con' ng-cloak id='logPage'>
+<br/><br/><br/>
+    <div id='goPlay' ng-show='hazLogd' class='col-md-offset-2 col-md-5 panel panel-success cent'>
+        <div class='panel-heading'>
+            <h3>Go Play!</h3>
+        </div>
+        <div class='panel-body paperTable'>
+            <table class='table '>
+            <thead>
+                <tr>
+                    <th><h4>Latest News</h4></th>
+                </tr>
+            </thead>
+                <tbody>
+                    <tr style='font-style:italic;' ng-repeat='nws in upd track by $index' ng-if='nws.length>0'>
+                        <td>{{nws}}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <button class='btn btn-success btn-lg' ng-click='play();'>Go play!</button>
+        </div>
+        <!-- This div shows when you HAVE logged in. All it has is basically a "Go play!" button.-->
     </div>
     <div id='logBoxes' ng-show='hazLogd==false'>
-        <div class='col-md-5 panel panel-info cent'>
+        <!-- This div shows when you have NOT logged in, and contains all the login/register UI -->
+        <div class='col-md-offset-2 col-md-5 panel panel-info cent' ng-show='isNew'>
             <div class='panel-heading'>
                 <h3>Sign up!</h3></div>
             <div class='panel-body'>Ready to play? Pick a username and password below!
@@ -57,11 +77,12 @@
                         </div>
                     </div>
                     <br/>
-                    <button type='submit' class='btn btn-primary'>Register</button>
+                    <button type='submit' class='btn btn-primary btn-lg'>Register</button>
+                    <button type='button' ng-click='isNew=false' class='btn btn-info btn-sm pull-right'>I already have an account!</div>
                 </form>
             </div>
         </div>
-        <div class='col-md-5 panel panel-info cent'>
+        <div class='col-md-offset-2 col-md-5 panel panel-info cent' ng-show='isNew==false && hazLogd==false'>
             <div class='panel-heading'>
                 <h3>Log in!</h3></div>
             <div class='panel-body'>
@@ -82,7 +103,8 @@
                         </div>
                     </div>
                     <br/>
-                    <button type='submit' class='btn btn-primary'>Login</button>
+                    <button type='submit' class='btn btn-primary btn-lg'>Login</button>
+                    <button type='button' ng-click='isNew=true' class='btn btn-info btn-sm pull-right'>I don't have an account!</div>
                 </form>
             </div>
         </div>
