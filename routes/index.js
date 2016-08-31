@@ -11,6 +11,7 @@ var router = express.Router(),
 //our stuff. Modularization!
 router.use('/item', require('./subroutes/items'));
 router.use('/user', require('./subroutes/users'));
+router.use('/other', require('./subroutes/other'));
 router.get('/', function(req, res, next) {
     /*get the homepage (the game screen)
     Remember: the above args are:

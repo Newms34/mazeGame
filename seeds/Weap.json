@@ -34,4 +34,31 @@
     "itemLvl": 3,
     "cost": 9,
     "imgUrl": ""
+}, {
+    "name": "Rusted Greatsword",
+    "desc": "The battles that this once great weapon took part in have been lost to history. It's still intimidating, though.",
+    "min": 9,
+    "max": 15,
+    "def": 0,
+    "itemLvl": 6,
+    "cost": 15,
+    "imgUrl": ""
+}, {
+    "name": "Jeweled Staff",
+    "desc": "Basically a stick with a pretty rock in it. Some [citation needed] think it makes your magic better.",
+    "min": 6,
+    "max": 12,
+    "def": 0,
+    "itemLvl": 5,
+    "cost": 12,
+    "imgUrl": ""
+}, {
+    "name": "Rusted Warhammer",
+    "desc": "While certainly not as fast or elegant as a sword, a warhammer in the hands of a skilled warrior can be a fearsome sight.",
+    "min": 5,
+    "max": 16,
+    "def": 0,
+    "itemLvl": 6,
+    "cost": 13,
+    "imgUrl": ""
 }]

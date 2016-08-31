@@ -19,7 +19,7 @@ Dave's Maze Game (I'll probably change that title later) is a dungeon crawler ap
  - **A Heck of a Lot of NPM/Bower Modules** Because if someone else has already done it, why rewrite it?
 
 ##Stuff To Be Added:
- - Monsters!
+ - More monsters!
  - Loot!
  - Annoying NPCs!
  - Quests!

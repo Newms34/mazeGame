@@ -3,6 +3,7 @@ var mongoose = require('mongoose');
 var http = require('https');
 require('./loot/weaps/');
 require('./loot/armor/');
+require('./loot/affixes/');
 require('./bestiary/general/');
 require('./bestiary/boss/');
 require('./npcs/');
@@ -17,8 +18,6 @@ if (!process.env.NODE_ENV || process.env.NODE_ENV != 'prod') {
     mongoose.connect(process.env.MONGODB_URI);
 }
 var db = mongoose.connection;
-
-//current items: cores/lodestones, t5/t6 fine, ascended mats
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function(e) {
     console.log('Database connected!')

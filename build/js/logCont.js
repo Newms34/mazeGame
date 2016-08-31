@@ -21,6 +21,7 @@ var app = angular.module('mazeGame', ['ui.bootstrap.contextMenu','ngTouch']).con
     };
     $scope.passMatch = true;
     $scope.passStr = 0;
+    $scope.isNew = false;
     $scope.checkPwdStr = function() {
         if ($scope.regForm.pwd.$viewValue) {
 
@@ -50,6 +51,7 @@ var app = angular.module('mazeGame', ['ui.bootstrap.contextMenu','ngTouch']).con
                 //Did login succeed?
                 if (lRes) {
                     $scope.hazLogd = true;
+                    $scope.getNews();
                 }
             });
         } else {
@@ -61,6 +63,7 @@ var app = angular.module('mazeGame', ['ui.bootstrap.contextMenu','ngTouch']).con
                 //Did login succeed?
                 if (lRes) {
                     $scope.hazLogd = true;
+                    $scope.getNews();
                 }
             });
         }
@@ -71,5 +74,12 @@ var app = angular.module('mazeGame', ['ui.bootstrap.contextMenu','ngTouch']).con
     $scope.passInf = function() {
         bootbox.alert('<h3>Password Strength</h3><hr/>Here are a few things to include for a stronger password:<ul><li>A lowercase letter</li><li>An uppercase letter</li><li>A number</li><li>A non alpha-numeric symbol (something like "@" or "$")</li></ul>Longer passwords are also generally better!');
     };
-    $scope.parseInt = parseInt;
+    $scope.upd = [];
+    $scope.getNews=function(){
+        $http.get('/other/news').then(function(res){
+            $scope.upd = res.data.split(/[\n\r]/)
+        })
+    };
+    $scope.getNews(); //REMOVE ME!
+    $scope.parseInt = parseInt;//we're exposing this on the front end so that we can do stuff like <div>{{parseInt(someNum)}}</div>
 });

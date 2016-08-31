@@ -9,9 +9,6 @@ body {
 
 .cent {
     text-align: center;
-    margin-left: auto;
-    margin-right: auto;
-    position: relative;
 }
 
 #maze {
@@ -365,4 +362,15 @@ body {
             border:2px inset #900;
         }
     }
+}
+.paperTable{
+    background:#fffaee;
+    font-family: Cursive;
+}
+.panel{
+    padding:0px;
+}
+#logPage {
+    background:url('../img/bg.jpg');
+    background-size:cover;
 }

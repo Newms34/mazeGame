@@ -8,6 +8,7 @@ var skillSchema = new mongoose.Schema({
     burst: Number,//burst (single turn) damage
     degen: Number,//DoT damage (per turn)
     type:Number, //damage type.
+    stuns:Boolean,
     imgUrl:String
 },{collection: 'Skill'});
 

@@ -1,0 +1,28 @@
+possible effects:
+stunning
+dmg type change (name: 'fire','ice',etc.)
+nova (+novaType):
+	phys: impact
+	fire:exploding
+	ice:blizzard
+	poison:putrescence,putrid
+	holy:light
+	dark:corrup
+confusing/confusion: if proc, monst dmgs self
+vampiric/the vampire: heal for 10% of dmg
+cruel/cruelty: degen increased 50%
+brutal/brutality: burst dmg increased 20%
+benedictory/benediction: burst heal increased 20%
+rejuvenating/rejuvenation: regen increased 50%
+
+
+A bunch of dmg-specific reductions. Each also has a COST, 
+which is dmg types it REDUCES armor towards
+
+shielded/shielding: incoming phys dmg (0) only 90%, Fire(1) and Ice(2) 120%  
+glacial/glacier: incoming ice dmg (2) only 90%, Fire(1) and Poision dmg 120%
+Pyromancer's/Pyromancer: incoming fire dmg (1) only 90%, Ice(2) and Phys(0) dmg 120%
+Spider's/Spider: incoming poison dmg (3) only 90%, holy(5) and physical(0) 120%  
+Lich's/Lich: incoming dark dmg (4) only 90%, holy(5) and fire(1) 120%  
+Priest's/Priest: incoming holy dmg (5) only 90%, dark(4) and poison(3) 120%  
+http://tinyurl.com/davesmazegamedata

@@ -1,6 +1,5 @@
 var socket = io();
 app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $window, mazeFac, combatFac, UIFac, userFact) {
-
     $scope.width = 6;
     $scope.height = 6;
     $scope.path = []; //all the cells visited, in order.
