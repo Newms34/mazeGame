@@ -20,7 +20,7 @@ app.factory('combatFac', function($http) {
                         className: "btn-primary"
                     }
                 }
-            })
+            });
         },
         updateBars: function(pm, pc, pem, pec, mm, mc) {
             pm = parseInt(pm);
@@ -36,6 +36,11 @@ app.factory('combatFac', function($http) {
             $('#combat-box #enemy .health-bar .stat-bar-stat').css('width', mhperc + '%');
             $('#combat-box #player .health-bar .stat-bar-stat').css('width', phperc + '%');
             $('#combat-box #player .energy-bar .stat-bar-stat').css('width', penperc + '%');
+        },
+        getItems:function(){
+            return $http.get('/allItems').then(function(s){
+                return s;
+            })
         }
     };
 });
