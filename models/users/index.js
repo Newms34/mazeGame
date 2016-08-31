@@ -5,15 +5,14 @@ var usrSchema = new mongoose.Schema({
     name: String, //name of the user
     lvl: Number,
     equip: {
-        head: Number,
-        chest: Number,
-        hands: Number,
-        legs: Number,
-        feet: Number,
-        lHand: Number,
-        rHand: Number,
-        inv: [Number]
-    }, //equip just uses reference ids (nums) for now. may eventually switch this to mongo ids for increased speedibits
+        head: [Number],
+        chest: [Number],
+        hands: [Number],
+        legs: [Number],
+        feet: [Number],
+        weap: [Number],
+        inv: [[Number]]
+    }, //equip just uses reference ids (nums) for now. may eventually switch this to mongo ids for increased speedibits. Note that each item will have THREE vals: a prefix, the item, and a suffix.
     pass: String,
     salt: String,
     questDone: [Number],

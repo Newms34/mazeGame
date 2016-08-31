@@ -2,14 +2,13 @@
 	"Name":"Dave the Not So Brave",
 	"lvl":1,
 	"equip":{
-        "head": -1,
-        "chest": -1,
-        "hands": -1,
-        "legs": -1,
-        "feet": -1,
-        "lHand": -1,
-        "rHand": -1,
-        "inv":[-1]
+        "head": [-1,-1,-1],
+        "chest": [-1,-1,-1],
+        "hands": [-1,-1,-1],
+        "legs": [-1,-1,-1],
+        "feet": [-1,-1,-1],
+        "weap": [-1,-1,-1],
+        "inv":[[-1,-1,-1]]
     },
     "pass":"pass",
     "questDone":[],

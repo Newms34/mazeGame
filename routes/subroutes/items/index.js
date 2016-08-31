@@ -42,6 +42,16 @@ router.get('/Inventory', function(req, res, next) {
         })
     })
 });
+router.get('/allItems', function(req, res, next) {
+    //get all inv items
+    mongoose.model('Armor').find({}, function(err, dataA) {
+        mongoose.model('Weap').find({}, function(err, dataW) {
+            mongoose.model('Affix').find({}, function(err, dataP) {
+                res.send([dataA, dataW,dataP]);
+            })
+        })
+    })
+});
 router.get('/Quests', function(req, res, next) {
     //get all quests
     mongoose.model('Quest').find({}, function(err, data) {

@@ -8,7 +8,12 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
         //this is reset every time we 're-enter' the cell
         $('.pre-battle').hide(250);
         $scope.comb.monsTurn();
-    }
+    };
+    $scope.comb.getItemStats = function() {
+        combatFac.getItems().then(function(r) {
+            return r;
+        });
+    };
     $scope.comb.skillCh = function(dir) {
         if (dir) {
             if ($scope.currSkillNum < $scope.comb.skills.length - 1) {
@@ -93,6 +98,13 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
         }
     }
     $scope.comb.calcDmg = function(d) {
+        //first, get player items:
+        var allItems = $scope.comb.getItemStats(),
+            allWeaps = allItems[0],
+            allArm = allItems[1],
+            allAff = allItems[2];
+        var playerWeap = $scope.playerItems[0]!=-1?[allAff[$scope.playerItems.weap[0]],allWeaps[$scope.playerItems.weap[1]],allAff[$scope.playerItems.weap[2]]]:false;
+        var playerArmor;
         var dtype,
             totalRawD = 0,
             totalRawA = 0,

@@ -16,7 +16,7 @@ Dave's Maze Game (I'll probably change that title later) is a dungeon crawler ap
  - **ExpressJS** for servers
  - **NodeJS** for JavaScript on the back-end
  - **CSS3** Because CSS can do 3D, and CSS really isn't that bad
- - **A Heck of a Lot of NPM/Bower modules** Because if someone else has already done it, why rewrite it?
+ - **A Heck of a Lot of NPM/Bower Modules** Because if someone else has already done it, why rewrite it?
 
 ##Stuff To Be Added:
  - More monsters!
@@ -30,7 +30,7 @@ Dave's Maze Game (I'll probably change that title later) is a dungeon crawler ap
 Writing this app takes a lot of time and love. 
  1. You can help by forking the repo and writing more monsters, weapons, armor, loot, skills, etc., and making a pull request. 
  2. If I like your additions, I'll include em! 
- 3. Take a look at the [models folder](https://github.com/Newms34/mazeGame/tree/master/models) or the [seeds folder](https://github.com/Newms34/mazeGame/tree/master/seeds) to get an example of what the format is!
+ 3. Take a look at the [models folder](https://github.com/Newms34/mazeGame/tree/master/models) or the [seeds folder](https://github.com/Newms34/mazeGame/tree/master/seeds) to get an example of what the format is! Note that while there IS a seed file for the User model, this file isn't used, generally.
  4. I also suck as an artist! Feel free to illustrate your skills/weapons/armor/etc.! Keep in mind that all pictures will be scaled to 55x55 px, so don't waste too much time on one picture!
 
 ##License:
