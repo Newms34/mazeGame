@@ -46,10 +46,28 @@
 }, {
     "name": "Cook's Ring",
     "def": 1,
-    "desc": "A cook's best friend, this little trinket offers defense against not checking your stovetop before you touch it.",
+    "desc": "A cook's best friend, this little trinket offers defense against not checking your stovetop before touching it.",
     "res":[1],
     "cost": 8,
     "itemLvl": 2,
     "slot":5,
+    "imgUrl": ""
+}, {
+    "name": "Boiled Leather Cuirass",
+    "def": 8,
+    "desc": "While not as protective as a metal chestpiece, this armor is much lighter. It's also a lot more brittle, so try not to get hit.",
+    "res":[],
+    "cost": 17,
+    "itemLvl": 5,
+    "slot":1,
+    "imgUrl": ""
+}, {
+    "name": "Boiled Leather Leggings",
+    "def": 7,
+    "desc": "Sometimes quick movement is preferable to standing there and getting hit. Boiled leather armor goes that route. Also, the curing process makes it smell a bit like piss. So there's that.",
+    "res":[1],
+    "cost": 15,
+    "itemLvl": 5,
+    "slot":2,
     "imgUrl": ""
 }]
