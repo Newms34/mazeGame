@@ -38,7 +38,7 @@ app.factory('combatFac', function($http) {
             $('#combat-box #player .energy-bar .stat-bar-stat').css('width', penperc + '%');
         },
         getItems:function(){
-            return $http.get('/allItems').then(function(s){
+            return $http.get('/item/allItems').then(function(s){
                 return s;
             })
         }

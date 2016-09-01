@@ -12,6 +12,7 @@ var jshint = require('gulp-jshint');
 var sass = require('gulp-sass');
 var concat = require('gulp-concat');
 var uglify = require('gulp-uglify');
+var gutil = require('gulp-util')
 var rename = require('gulp-rename');
 
 // Lint Task
@@ -35,7 +36,7 @@ gulp.task('scripts', function() {
         .pipe(concat('all.js'))
         .pipe(gulp.dest('public/js'))
         .pipe(rename('all.min.js'))
-        .pipe(uglify({mangle: false}))
+        .pipe(uglify({mangle: false}).on('error', gutil.log))
         .pipe(gulp.dest('public/js'));
 });
 
