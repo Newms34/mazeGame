@@ -13,4 +13,5 @@ Vampiric: heals you for a small amount of the weapon damage when you attack
 Cruel: increased duration of damage-over-time stuff (like burning)
 Brutal: increased damage
 Benedictive: increased healing
-Rejuvenating: increased duration fo health regen spells.
+Rejuvenating: increased duration of health regen spells
+Various 'attunement' mods: Each of these increases defense towards a particular damage type by a certain amount. But be careful! they also weaken you to two other damage types (e.g., an Axe of Shielding has additional defense against physical damage, but leaves you vulnerable to fire and ice attacks)!
