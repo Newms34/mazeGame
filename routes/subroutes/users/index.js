@@ -25,7 +25,7 @@ router.post('/reset', function(req, res, next) {
                         hands: [-1,-1,-1],
                         legs: [-1,-1,-1],
                         feet: [-1,-1,-1],
-                        weap: [-1,-1,-1],
+                        weap: [3,0,8],
                         inv: []
                     },
                     salt: salt,
