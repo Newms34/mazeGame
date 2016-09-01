@@ -4,3 +4,13 @@ Turn - based Combat
 Works on the MEAN (Mongo, Express, Angular, Node) stack!
 Phone navigation support (WIP)!
 Yes, it's pretty much pure JavaScript!
+Semi-random loot generator picks a general weapon and adds a prefix and suffix modifier. Loot currently doesn't drop, but this will be used for it!
+New weapon effects! Includes: 
+Stun: chance to prevent enemy from taking next turn
+Nova: chance to cause a 'nova' of a particular damage type for additional damage
+Confusion: chance for enemy to damage itself instead of you!
+Vampiric: heals you for a small amount of the weapon damage when you attack
+Cruel: increased duration of damage-over-time stuff (like burning)
+Brutal: increased damage
+Benedictive: increased healing
+Rejuvenating: increased duration fo health regen spells.
