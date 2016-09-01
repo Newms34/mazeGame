@@ -121,6 +121,10 @@ router.get('/nameOkay/:name', function(req, res, next) {
 router.post('/login', function(req, res, next) {
     //notice how there are TWO routes that go to /login. This is OKAY, as long as they're different request types (the other one's GET, this is POST)
     mongoose.model('User').findOne({ 'name': req.body.name }, function(err, usr) {
+        if (err || usr==null){
+            //most likely, this user doesn't exist.
+            res.send('no');
+        }
         if (usr.correctPassword(req.body.pwd)) {
             //woohoo! correct user!
             //important note here: we must set all this session stuff, etc BEFORE
