@@ -141,6 +141,13 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
             if (!$scope.pStunned) {
                 //player is attacking monster, so we take the PLAYER'S dmg and the MONSTER'S armor
                 dtype = $scope.comb.skills[$scope.currSkillNum].type;
+                //note that suffix mod dmg type takes precidence. SO a Firey axe of Ice will do COLD damge, not FIRE
+                if (playerWeap[0].dmgType!=-1){
+                    dtype = playerWeap[0].dmgType
+                }
+                if (playerWeap[2].dmgType!=-1){
+                    dtype = playerWeap[2].dmgType
+                }
                 var weapDmg = playerWeap ? Math.floor(Math.random() * (playerWeap[1].max - playerWeap[1].min)) + playerWeap[1].min : 0;
                 if (Math.random() < playerWeap[0].brut || Math.random() < playerWeap[2].brut) {
                     //check for 'brutal' modifier
