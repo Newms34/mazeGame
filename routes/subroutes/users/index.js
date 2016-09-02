@@ -125,8 +125,7 @@ router.post('/login', function(req, res, next) {
         if (err || !usr || usr==null){
             //most likely, this user doesn't exist.
             res.send('no');
-        }
-        if (usr.correctPassword(req.body.pwd)) {
+        }else if (usr.correctPassword(req.body.pwd)) {
             //woohoo! correct user!
             //important note here: we must set all this session stuff, etc BEFORE
             //we send the response. As soon as we send the response, the server considers us "done"!
