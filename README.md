@@ -38,3 +38,4 @@ Writing this app takes a lot of time and love.
 
 ##Credits:
  This app was designed and coded by yours truly, [David Newman](https://github.com/Newms34)
+ Other additions were (and will be!) made by the MEAN bastards git group!
