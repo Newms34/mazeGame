@@ -143,4 +143,40 @@
     "imgUrl":"/assets/Water_Elemental.jpg",
     "stunCh":0.1,
     "healCh":0.5
+},{
+    "name": "Demon",
+    "desc":"Whether it was summoned by some over-zealous warlock, or managed to enter our world through other means, a Demon is not to be trifled with",
+    "lvl":13,
+    "hp": 23,
+    "min": 22,
+    "max": 34,
+    "type":4,
+    "res": [1,4],
+    "imgUrl":"/assets/Demon.jpg",
+    "stunCh":0.15,
+    "healCh":0
+},{
+    "name": "Succubus",
+    "desc":"Chiefly known as temptresses, the demonically beautiful Succubi should be avoided at all costs. Their ability to ensnare an opponent, combined with their unusual hardiness, is enough to down all but the most resolute adventurer.",
+    "lvl":13,
+    "hp": 27,
+    "min": 10,
+    "max": 18,
+    "type":4,
+    "res": [0,1,4],
+    "imgUrl":"/assets/Succubus.jpg",
+    "stunCh":0.55,
+    "healCh":0
+},{
+    "name": "Corrupted Bowman",
+    "desc":"The veteran of some long-forgotten war, this poor archer is now in the service of some dark power. While his mind has been irrevocably shattered, his survival skills are still sharp, making him a particularly difficult foe to kill.",
+    "lvl":14,
+    "hp": 32,
+    "min": 18,
+    "max": 27,
+    "type":0,
+    "res": [1,2,3,4],
+    "imgUrl":"/assets/Corrupted_Bowman.jpg",
+    "stunCh":0.2,
+    "healCh":0.2
 }]
