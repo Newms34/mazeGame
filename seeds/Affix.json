@@ -2,7 +2,7 @@
     "pre": "Stunning",
     "post": "of Stunning",
     "dmgType": -1,
-    "stunCh":0.2,
+    "stunCh": 0.2,
     "novaType": 0,
     "novaChance": 0,
     "conf": 0,
@@ -12,18 +12,19 @@
     "bene": 0,
     "rejuv": 0,
     "defChanges": {
-    	"phys":0,
-    	"fire":0,
-    	"ice":0,
-    	"pois":0,
-    	"dark":0,
-    	"holy":0
-    }
-},{
+        "phys": 0,
+        "fire": 0,
+        "ice": 0,
+        "pois": 0,
+        "dark": 0,
+        "holy": 0
+    },
+    "num": 0
+}, {
     "pre": "Corporal",
     "post": "of Physics",
     "dmgType": 0,
-    "stunCh":0,
+    "stunCh": 0,
     "novaType": 0,
     "novaChance": 0,
     "conf": 0,
@@ -33,18 +34,19 @@
     "bene": 0,
     "rejuv": 0,
     "defChanges": {
-    	"phys":0,
-    	"fire":0,
-    	"ice":0,
-    	"pois":0,
-    	"dark":0,
-    	"holy":0
-    }
-},{
+        "phys": 0,
+        "fire": 0,
+        "ice": 0,
+        "pois": 0,
+        "dark": 0,
+        "holy": 0
+    },
+    "num": 1
+}, {
     "pre": "Icey",
     "post": "of the Ice",
     "dmgType": 2,
-    "stunCh":0,
+    "stunCh": 0,
     "novaType": 0,
     "novaChance": 0,
     "conf": 0,
@@ -54,18 +56,19 @@
     "bene": 0,
     "rejuv": 0,
     "defChanges": {
-    	"phys":0,
-    	"fire":0,
-    	"ice":0,
-    	"pois":0,
-    	"dark":0,
-    	"holy":0
-    }
-},{
+        "phys": 0,
+        "fire": 0,
+        "ice": 0,
+        "pois": 0,
+        "dark": 0,
+        "holy": 0
+    },
+    "num": 2
+}, {
     "pre": "Firey",
     "post": "of the Fire",
     "dmgType": 1,
-    "stunCh":0,
+    "stunCh": 0,
     "novaType": 0,
     "novaChance": 0,
     "conf": 0,
@@ -75,18 +78,19 @@
     "bene": 0,
     "rejuv": 0,
     "defChanges": {
-    	"phys":0,
-    	"fire":0,
-    	"ice":0,
-    	"pois":0,
-    	"dark":0,
-    	"holy":0
-    }
-},{
+        "phys": 0,
+        "fire": 0,
+        "ice": 0,
+        "pois": 0,
+        "dark": 0,
+        "holy": 0
+    },
+    "num": 3
+}, {
     "pre": "Poisonous",
     "post": "of Poison",
     "dmgType": 3,
-    "stunCh":0,
+    "stunCh": 0,
     "novaType": 0,
     "novaChance": 0,
     "conf": 0,
@@ -96,18 +100,19 @@
     "bene": 0,
     "rejuv": 0,
     "defChanges": {
-    	"phys":0,
-    	"fire":0,
-    	"ice":0,
-    	"pois":0,
-    	"dark":0,
-    	"holy":0
-    }
-},{
+        "phys": 0,
+        "fire": 0,
+        "ice": 0,
+        "pois": 0,
+        "dark": 0,
+        "holy": 0
+    },
+    "num": 4
+}, {
     "pre": "Holy",
     "post": "of Holiness",
     "dmgType": 5,
-    "stunCh":0,
+    "stunCh": 0,
     "novaType": 0,
     "novaChance": 0,
     "conf": 0,
@@ -117,18 +122,19 @@
     "bene": 0,
     "rejuv": 0,
     "defChanges": {
-    	"phys":0,
-    	"fire":0,
-    	"ice":0,
-    	"pois":0,
-    	"dark":0,
-    	"holy":0
-    }
-},{
+        "phys": 0,
+        "fire": 0,
+        "ice": 0,
+        "pois": 0,
+        "dark": 0,
+        "holy": 0
+    },
+    "num": 5
+}, {
     "pre": "Dark",
     "post": "of Darkness",
     "dmgType": 4,
-    "stunCh":0,
+    "stunCh": 0,
     "novaType": 0,
     "novaChance": 0,
     "conf": 0,
@@ -138,18 +144,19 @@
     "bene": 0,
     "rejuv": 0,
     "defChanges": {
-    	"phys":0,
-    	"fire":0,
-    	"ice":0,
-    	"pois":0,
-    	"dark":0,
-    	"holy":0
-    }
-},{
+        "phys": 0,
+        "fire": 0,
+        "ice": 0,
+        "pois": 0,
+        "dark": 0,
+        "holy": 0
+    },
+    "num": 6
+}, {
     "pre": "Confusing",
     "post": "of Confusion",
     "dmgType": -1,
-    "stunCh":0,
+    "stunCh": 0,
     "novaType": 0,
     "novaChance": 0,
     "conf": 0.2,
@@ -159,18 +166,19 @@
     "bene": 0,
     "rejuv": 0,
     "defChanges": {
-    	"phys":0,
-    	"fire":0,
-    	"ice":0,
-    	"pois":0,
-    	"dark":0,
-    	"holy":0
-    }
-},{
+        "phys": 0,
+        "fire": 0,
+        "ice": 0,
+        "pois": 0,
+        "dark": 0,
+        "holy": 0
+    },
+    "num": 7
+}, {
     "pre": "Vampiric",
     "post": "of the Vampire",
     "dmgType": -1,
-    "stunCh":0,
+    "stunCh": 0,
     "novaType": 0,
     "novaChance": 0,
     "conf": 0,
@@ -180,18 +188,19 @@
     "bene": 0,
     "rejuv": 0,
     "defChanges": {
-    	"phys":0,
-    	"fire":0,
-    	"ice":0,
-    	"pois":0,
-    	"dark":0,
-    	"holy":0
-    }
-},{
+        "phys": 0,
+        "fire": 0,
+        "ice": 0,
+        "pois": 0,
+        "dark": 0,
+        "holy": 0
+    },
+    "num": 8
+}, {
     "pre": "Cruel",
     "post": "of Cruelty",
     "dmgType": -1,
-    "stunCh":0,
+    "stunCh": 0,
     "novaType": 0,
     "novaChance": 0,
     "conf": 0,
@@ -201,18 +210,19 @@
     "bene": 0,
     "rejuv": 0,
     "defChanges": {
-    	"phys":0,
-    	"fire":0,
-    	"ice":0,
-    	"pois":0,
-    	"dark":0,
-    	"holy":0
-    }
-},{
+        "phys": 0,
+        "fire": 0,
+        "ice": 0,
+        "pois": 0,
+        "dark": 0,
+        "holy": 0
+    },
+    "num": 9
+}, {
     "pre": "Brutal",
     "post": "of Brutaltiy",
     "dmgType": -1,
-    "stunCh":0,
+    "stunCh": 0,
     "novaType": 0,
     "novaChance": 0,
     "conf": 0,
@@ -222,18 +232,19 @@
     "bene": 0,
     "rejuv": 0,
     "defChanges": {
-    	"phys":0,
-    	"fire":0,
-    	"ice":0,
-    	"pois":0,
-    	"dark":0,
-    	"holy":0
-    }
-},{
+        "phys": 0,
+        "fire": 0,
+        "ice": 0,
+        "pois": 0,
+        "dark": 0,
+        "holy": 0
+    },
+    "num": 10
+}, {
     "pre": "Benedictive",
     "post": "of Benediction",
     "dmgType": -1,
-    "stunCh":0,
+    "stunCh": 0,
     "novaType": 0,
     "novaChance": 0,
     "conf": 0,
@@ -243,18 +254,19 @@
     "bene": 0.2,
     "rejuv": 0,
     "defChanges": {
-    	"phys":0,
-    	"fire":0,
-    	"ice":0,
-    	"pois":0,
-    	"dark":0,
-    	"holy":0
-    }
-},{
+        "phys": 0,
+        "fire": 0,
+        "ice": 0,
+        "pois": 0,
+        "dark": 0,
+        "holy": 0
+    },
+    "num": 11
+}, {
     "pre": "Rejuvenating",
-    "post": "of Rejuvnation",
+    "post": "of Rejuvenation",
     "dmgType": -1,
-    "stunCh":0,
+    "stunCh": 0,
     "novaType": 0,
     "novaChance": 0,
     "conf": 0,
@@ -264,18 +276,19 @@
     "bene": 0,
     "rejuv": 0.2,
     "defChanges": {
-    	"phys":0,
-    	"fire":0,
-    	"ice":0,
-    	"pois":0,
-    	"dark":0,
-    	"holy":0
-    }
-},{
+        "phys": 0,
+        "fire": 0,
+        "ice": 0,
+        "pois": 0,
+        "dark": 0,
+        "holy": 0
+    },
+    "num": 12
+}, {
     "pre": "Shielded",
     "post": "of Shielding",
     "dmgType": -1,
-    "stunCh":0,
+    "stunCh": 0,
     "novaType": 0,
     "novaChance": 0,
     "conf": 0,
@@ -285,18 +298,19 @@
     "bene": 0,
     "rejuv": 0,
     "defChanges": {
-    	"phys":1,
-    	"fire":-1,
-    	"ice":-1,
-    	"pois":0,
-    	"dark":0,
-    	"holy":0
-    }
-},{
+        "phys": 1,
+        "fire": -1,
+        "ice": -1,
+        "pois": 0,
+        "dark": 0,
+        "holy": 0
+    },
+    "num": 13
+}, {
     "pre": "Glacial",
     "post": "of the Glacier",
     "dmgType": -1,
-    "stunCh":0,
+    "stunCh": 0,
     "novaType": 0,
     "novaChance": 0,
     "conf": 0,
@@ -306,18 +320,19 @@
     "bene": 0,
     "rejuv": 0,
     "defChanges": {
-    	"phys":0,
-    	"fire":-1,
-    	"ice":1,
-    	"pois":-1,
-    	"dark":0,
-    	"holy":0
-    }
-},{
+        "phys": 0,
+        "fire": -1,
+        "ice": 1,
+        "pois": -1,
+        "dark": 0,
+        "holy": 0
+    },
+    "num": 14
+}, {
     "pre": "Pyromancer's",
     "post": "of the Pyromancer",
     "dmgType": -1,
-    "stunCh":0,
+    "stunCh": 0,
     "novaType": 0,
     "novaChance": 0,
     "conf": 0,
@@ -327,18 +342,19 @@
     "bene": 0,
     "rejuv": 0,
     "defChanges": {
-    	"phys":-1,
-    	"fire":1,
-    	"ice":-1,
-    	"pois":0,
-    	"dark":0,
-    	"holy":0
-    }
-},{
+        "phys": -1,
+        "fire": 1,
+        "ice": -1,
+        "pois": 0,
+        "dark": 0,
+        "holy": 0
+    },
+    "num": 15
+}, {
     "pre": "Spider's",
     "post": "of the Spider",
     "dmgType": -1,
-    "stunCh":0,
+    "stunCh": 0,
     "novaType": 0,
     "novaChance": 0,
     "conf": 0,
@@ -348,18 +364,19 @@
     "bene": 0,
     "rejuv": 0,
     "defChanges": {
-    	"phys":-1,
-    	"fire":0,
-    	"ice":0,
-    	"pois":1,
-    	"dark":0,
-    	"holy":-1
-    }
-},{
+        "phys": -1,
+        "fire": 0,
+        "ice": 0,
+        "pois": 1,
+        "dark": 0,
+        "holy": -1
+    },
+    "num": 16
+}, {
     "pre": "Lich's",
     "post": "of the Lich",
     "dmgType": -1,
-    "stunCh":0,
+    "stunCh": 0,
     "novaType": 0,
     "novaChance": 0,
     "conf": 0,
@@ -369,18 +386,19 @@
     "bene": 0,
     "rejuv": 0,
     "defChanges": {
-    	"phys":0,
-    	"fire":-1,
-    	"ice":0,
-    	"pois":0,
-    	"dark":1,
-    	"holy":-1
-    }
-},{
+        "phys": 0,
+        "fire": -1,
+        "ice": 0,
+        "pois": 0,
+        "dark": 1,
+        "holy": -1
+    },
+    "num": 17
+}, {
     "pre": "Priest's",
     "post": "of the Priest",
     "dmgType": -1,
-    "stunCh":0,
+    "stunCh": 0,
     "novaType": 0,
     "novaChance": 0,
     "conf": 0,
@@ -390,18 +408,19 @@
     "bene": 0,
     "rejuv": 0,
     "defChanges": {
-    	"phys":0,
-    	"fire":0,
-    	"ice":0,
-    	"pois":-1,
-    	"dark":-1,
-    	"holy":1
-    }
-},{
+        "phys": 0,
+        "fire": 0,
+        "ice": 0,
+        "pois": -1,
+        "dark": -1,
+        "holy": 1
+    },
+    "num": 18
+}, {
     "pre": "Impacting",
     "post": "of the Shockwave",
     "dmgType": -1,
-    "stunCh":0,
+    "stunCh": 0,
     "novaType": 0,
     "novaChance": 0.2,
     "conf": 0,
@@ -411,18 +430,19 @@
     "bene": 0,
     "rejuv": 0,
     "defChanges": {
-    	"phys":0,
-    	"fire":0,
-    	"ice":0,
-    	"pois":0,
-    	"dark":0,
-    	"holy":0
-    }
-},{
+        "phys": 0,
+        "fire": 0,
+        "ice": 0,
+        "pois": 0,
+        "dark": 0,
+        "holy": 0
+    },
+    "num": 19
+}, {
     "pre": "Exploding",
     "post": "of the Inferno",
     "dmgType": -1,
-    "stunCh":0,
+    "stunCh": 0,
     "novaType": 1,
     "novaChance": 0.2,
     "conf": 0,
@@ -432,18 +452,19 @@
     "bene": 0,
     "rejuv": 0,
     "defChanges": {
-    	"phys":0,
-    	"fire":0,
-    	"ice":0,
-    	"pois":0,
-    	"dark":0,
-    	"holy":0
-    }
-},{
+        "phys": 0,
+        "fire": 0,
+        "ice": 0,
+        "pois": 0,
+        "dark": 0,
+        "holy": 0
+    },
+    "num": 20
+}, {
     "pre": "Wendigo's",
     "post": "of the Blizzard",
     "dmgType": -1,
-    "stunCh":0,
+    "stunCh": 0,
     "novaType": 2,
     "novaChance": 0.2,
     "conf": 0,
@@ -453,18 +474,19 @@
     "bene": 0,
     "rejuv": 0,
     "defChanges": {
-    	"phys":0,
-    	"fire":0,
-    	"ice":0,
-    	"pois":0,
-    	"dark":0,
-    	"holy":0
-    }
-},{
+        "phys": 0,
+        "fire": 0,
+        "ice": 0,
+        "pois": 0,
+        "dark": 0,
+        "holy": 0
+    },
+    "num": 21
+}, {
     "pre": "Putrid",
     "post": "of Putrefying",
     "dmgType": -1,
-    "stunCh":0,
+    "stunCh": 0,
     "novaType": 3,
     "novaChance": 0.2,
     "conf": 0,
@@ -474,18 +496,19 @@
     "bene": 0,
     "rejuv": 0,
     "defChanges": {
-    	"phys":0,
-    	"fire":0,
-    	"ice":0,
-    	"pois":0,
-    	"dark":0,
-    	"holy":0
-    }
-},{
+        "phys": 0,
+        "fire": 0,
+        "ice": 0,
+        "pois": 0,
+        "dark": 0,
+        "holy": 0
+    },
+    "num": 22
+}, {
     "pre": "Corrupt",
     "post": "of the Politician",
     "dmgType": -1,
-    "stunCh":0,
+    "stunCh": 0,
     "novaType": 4,
     "novaChance": 0.2,
     "conf": 0,
@@ -495,18 +518,19 @@
     "bene": 0,
     "rejuv": 0,
     "defChanges": {
-    	"phys":0,
-    	"fire":0,
-    	"ice":0,
-    	"pois":0,
-    	"dark":0,
-    	"holy":0
-    }
-},{
+        "phys": 0,
+        "fire": 0,
+        "ice": 0,
+        "pois": 0,
+        "dark": 0,
+        "holy": 0
+    },
+    "num": 23
+}, {
     "pre": "Smiting",
     "post": "of the Righteous",
     "dmgType": -1,
-    "stunCh":0,
+    "stunCh": 0,
     "novaType": 5,
     "novaChance": 0.2,
     "conf": 0,
@@ -516,11 +540,12 @@
     "bene": 0,
     "rejuv": 0,
     "defChanges": {
-    	"phys":0,
-    	"fire":0,
-    	"ice":0,
-    	"pois":0,
-    	"dark":0,
-    	"holy":0
-    }
+        "phys": 0,
+        "fire": 0,
+        "ice": 0,
+        "pois": 0,
+        "dark": 0,
+        "holy": 0
+    },
+    "num": 24
 }]

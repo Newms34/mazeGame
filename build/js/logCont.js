@@ -52,6 +52,8 @@ var app = angular.module('mazeGame', ['ui.bootstrap.contextMenu','ngTouch']).con
                 if (lRes) {
                     $scope.hazLogd = true;
                     $scope.getNews();
+                }else{
+                    bootbox.alert('Either your username or password is not correct!')
                 }
             });
         } else {
@@ -64,6 +66,8 @@ var app = angular.module('mazeGame', ['ui.bootstrap.contextMenu','ngTouch']).con
                 if (lRes) {
                     $scope.hazLogd = true;
                     $scope.getNews();
+                }else{
+                    bootbox.alert('Either your username or password is not correct!');
                 }
             });
         }

@@ -41,6 +41,11 @@ app.factory('combatFac', function($http) {
             return $http.get('/item/allItems').then(function(s){
                 return s;
             })
+        },
+        rollLoot:function(mons){
+            return $http.get('/item/byLvl/'+mons.lvl).then(function(i){
+                return i.data;
+            })
         }
     };
 });

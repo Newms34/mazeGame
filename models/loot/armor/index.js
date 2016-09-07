@@ -7,7 +7,8 @@ var armorSchema = new mongoose.Schema({
     cost:Number,
     itemLvl:Number,
     slot:Number,
-    imgUrl:String
+    imgUrl:String,
+    num:Number
 },{collection: 'Armor'});
 /*slot describes where the item goes:
 0:head,

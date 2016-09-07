@@ -1,0 +1,49 @@
+[{
+    "lvl": 0,
+    "name": "Cave Gunk",
+    "desc": "Just a bit of malodorous residue left on a cave wall. Surprisingly, this is still valuable to some people",
+    "cost": 5,
+    "num": 0
+}, {
+    "lvl": 1,
+    "name": "Copper Nugget",
+    "desc": "Used by skilled weaponsmiths and armorers make cheap (if not particularly durable) bronze items, copper is both extremely useful and extremely plentiful",
+    "cost": 7,
+    "num": 1
+}, {
+    "lvl": 2,
+    "name": "Lesser Gemstone",
+    "desc": "Unlike some better RPGs, the gemstones in this game don't actually confer any magical properties. So you might as well just sell it. Still, money!",
+    "cost": 12,
+    "num": 2
+}, {
+    "lvl": 6,
+    "name": "Greater Gemstone",
+    "desc": "This one's particularly shiny. Also particularly useless. This is a dungeon, not an art show. Sell it and get moving!",
+    "cost": 30,
+    "num": 3
+}, {
+    "lvl": 2,
+    "name": "Wad of Pitch",
+    "desc": "This black substance is useful in sealing holes. Shipwrights find it particularly essential, as it fills the spaces between wooden boards.",
+    "cost": 8,
+    "num": 4
+}, {
+    "lvl": 3,
+    "name": "Ectoplasmic Residue",
+    "desc": "The remains of a banished spirit. Useful to the thaumaturgically-inclined",
+    "cost": 14,
+    "num": 5
+}, {
+    "lvl": 2,
+    "name": "Unidentified Tooth",
+    "desc": "The tooth of some beast. You're not sure why someone would want this, but apparently some people do.",
+    "cost": 10,
+    "num": 6
+}, {
+    "lvl": 3,
+    "name": "Unidentified Claw",
+    "desc": "The claw of some beast. Whatever it is, you're glad you found only its tooth.",
+    "cost": 13,
+    "num": 7
+}]

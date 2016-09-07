@@ -8,7 +8,9 @@
     "max": 5,
     "type":3,
     "res": [3],
-    "imgUrl":""
+    "imgUrl":"/assets/rat.jpg",
+    "stunCh":0,
+    "healCh":0
 },{
     "name": "Lesser Goblin",
     "desc":"Tiny evil. Like, pocket evil. Fun-sized evil?",
@@ -18,7 +20,9 @@
     "max": 3,
     "type":0,
     "res": [4],
-    "imgUrl":""
+    "imgUrl":"/assets/Lesser_Goblin.jpg",
+    "stunCh":0,
+    "healCh":0
 },{
     "name": "Cave Bat",
     "desc":"It's a bat. This is a cave. Are you really surprised?",
@@ -28,7 +32,9 @@
     "max": 6,
     "type":0,
     "res": [],
-    "imgUrl":""
+    "imgUrl":"/assets/Cave_Bat.jpg",
+    "stunCh":0,
+    "healCh":0
 },{
     "name": "Wendigo",
     "desc":"Furry icebeast. From the frozen north or something. Not Vanilla Ice.",
@@ -38,7 +44,9 @@
     "max": 10,
     "type":2,
     "res": [2],
-    "imgUrl":""
+    "imgUrl":"/assets/Wendigo.jpg",
+    "stunCh":0.05,
+    "healCh":0
 },{
     "name": "Imp",
     "desc":"Some mage with a lack of forethought summoned this fire imp. Hope you have some burn cream.",
@@ -48,7 +56,9 @@
     "max": 10,
     "type":1,
     "res": [1],
-    "imgUrl":""
+    "imgUrl":"/assets/Imp.jpg",
+    "stunCh":0,
+    "healCh":0
 },{
     "name": "Priest",
     "desc":"Ancient priest of a forgotten cult, the priests wield holy magic in attempt to make stuff glowy. Or dead. Or one and then the other.",
@@ -58,7 +68,9 @@
     "max": 20,
     "type":5,
     "res": [0],
-    "imgUrl":""
+    "imgUrl":"/assets/Priest.jpg",
+    "stunCh":0,
+    "healCh":0
 },{
     "name": "Warlock",
     "desc":"While most warlocks are not inherently evil, this one is.",
@@ -68,7 +80,9 @@
     "max": 20,
     "type":4,
     "res": [4],
-    "imgUrl":""
+    "imgUrl":"/assets/Warlock.jpg",
+    "stunCh":0,
+    "healCh":0
 },{
     "name": "Greater Goblin",
     "desc":"Lesser Imp's big brother. This guy is a lot more dangerous.",
@@ -78,5 +92,91 @@
     "max": 12,
     "type":4,
     "res": [4],
-    "imgUrl":""
+    "imgUrl":"/assets/Greater_Goblin.jpg",
+    "stunCh":0.05,
+    "healCh":0
+},{
+    "name": "Fire Elemental",
+    "desc":"The conjuring of elementals is an inherently dangerous art, as said conjuring necessitates give the elementals some degree of autonomy and sentience. The fire elemental, a being of pure destruction, is especially perilous.",
+    "lvl":9,
+    "hp": 18,
+    "min": 15,
+    "max": 30,
+    "type":1,
+    "res": [0,1],
+    "imgUrl":"/assets/Fire_Elemental.jpg",
+    "stunCh":0,
+    "healCh":0
+},{
+    "name": "Earth Elemental",
+    "desc":"Conjured by mages of bygone eras with the intent of guarding particularly important areas, the earth elemental lacks in the destructive power of its Firey and Air-based brethren, but more than makes up for that in pure durability.",
+    "lvl":9,
+    "hp": 35,
+    "min": 5,
+    "max": 9,
+    "type":0,
+    "res": [0,1,2,3,4,5],
+    "imgUrl":"/assets/Earth_Elemental.jpg",
+    "stunCh":0,
+    "healCh":0
+},{
+    "name": "Air Elemental",
+    "desc":"The Air Elemental is often overlooked for its more Fiery brethren. However, the ability to stun an opponent - opening them up for essentially a free attack - should not be overlooked.",
+    "lvl":9,
+    "hp": 18,
+    "min": 8,
+    "max": 22,
+    "type":1,
+    "res": [0,2,5],
+    "imgUrl":"/assets/Air_Elemental.jpg",
+    "stunCh":0.3,
+    "healCh":0
+},{
+    "name": "Water Elemental",
+    "desc":"Many mages make the unfortunate mistake of underestimating a good Water elemental. They read 'heal' and 'freeze' as weak and unnecessary, as you could just spend that time burning stuff. However, the ability to heal damage should not be overlooked.",
+    "lvl":9,
+    "hp": 26,
+    "min": 8,
+    "max": 16,
+    "type":2,
+    "res": [0,2,5],
+    "imgUrl":"/assets/Water_Elemental.jpg",
+    "stunCh":0.1,
+    "healCh":0.5
+},{
+    "name": "Demon",
+    "desc":"Whether it was summoned by some over-zealous warlock, or managed to enter our world through other means, a Demon is not to be trifled with",
+    "lvl":13,
+    "hp": 23,
+    "min": 22,
+    "max": 34,
+    "type":4,
+    "res": [1,4],
+    "imgUrl":"/assets/Demon.jpg",
+    "stunCh":0.15,
+    "healCh":0
+},{
+    "name": "Succubus",
+    "desc":"Chiefly known as temptresses, the demonically beautiful Succubi should be avoided at all costs. Their ability to ensnare an opponent, combined with their unusual hardiness, is enough to down all but the most resolute adventurer.",
+    "lvl":13,
+    "hp": 27,
+    "min": 10,
+    "max": 18,
+    "type":4,
+    "res": [0,1,4],
+    "imgUrl":"/assets/Succubus.jpg",
+    "stunCh":0.55,
+    "healCh":0
+},{
+    "name": "Corrupted Bowman",
+    "desc":"The veteran of some long-forgotten war, this poor archer is now in the service of some dark power. While his mind has been irrevocably shattered, his survival skills are still sharp, making him a particularly difficult foe to kill.",
+    "lvl":14,
+    "hp": 32,
+    "min": 18,
+    "max": 27,
+    "type":0,
+    "res": [1,2,3,4],
+    "imgUrl":"/assets/Corrupted_Bowman.jpg",
+    "stunCh":0.2,
+    "healCh":0.2
 }]

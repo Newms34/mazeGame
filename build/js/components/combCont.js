@@ -313,7 +313,20 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
     $scope.comb.dieM = function() {
         alert('U WON SON :D');
         $('.pre-battle').show(10);
-        // $scope.$parent.cells[$scope.$parent.cellNames.indexOf($scope.$parent.playerCell)].has = '';
+        combatFac.rollLoot($scope.intTarg).then(function(items){
+            console.log('FROM ROLL LOOT',items)
+            var iName='';
+            if(items.type=='junk'){
+                iName=items.loot.name;
+                $scope.playerItems.inv.push(items.loot.num);
+            }
+            else{
+                iName = items.loot.pre.pre+' '+items.loot.base.name+' '+items.loot.post.post;
+                $scope.playerItems.inv.push([items.loot.pre.num,items.loot.base.num,items.loot.post.num])
+            }
+            bootbox.alert('After killing the '+$scope.intTarg.name+', you recieve '+iName+'!');
+
+        });
         angular.element('body').scope().cells[angular.element('body').scope().cellNames.indexOf(angular.element('body').scope().playerCell)].has = '';
         angular.element('body').scope().intTarg = false;
         angular.element('body').scope().moveReady = true;

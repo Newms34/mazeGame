@@ -19,6 +19,7 @@ var affSchema = new mongoose.Schema({
         pois: Number,
         dark: Number,
         holy:Number
-    }
+    },
+    num:Number
 }, { collection: 'Affix' });
 mongoose.model('Affix', affSchema);
