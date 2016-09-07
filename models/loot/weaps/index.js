@@ -8,6 +8,7 @@ var weapSchema = new mongoose.Schema({
     itemLvl: Number, //monsters only drop items at or below their 'personal' item lvl
     cost: Number, //cost. Sell price (player --> merch) is a fraction of this 
     imgUrl: String,
+    num:Number
 }, { collection: 'Weap' });
 //note that weapons do NOT have a type, as this is provided by the particular attack used.
 mongoose.model('Weap', weapSchema);

@@ -6,7 +6,8 @@
     "def": 0,
     "itemLvl": 0,
     "cost": 2,
-    "imgUrl": ""
+    "imgUrl": "",
+    "num":0
 }, {
     "name": "Rusted Axe",
     "desc": "This axe has seen better days. Perhaps you should axe for a new one.",
@@ -15,7 +16,8 @@
     "def": 0,
     "itemLvl": 1,
     "cost": 6,
-    "imgUrl": ""
+    "imgUrl": "",
+    "num":1
 }, {
     "name": "Battered Shield",
     "desc": "The royal mathematicians have conclusive proven that having something between you and a monster statistically increases your chances of not dying.",
@@ -24,7 +26,8 @@
     "def": 5,
     "itemLvl": 0,
     "cost": 5,
-    "imgUrl": ""
+    "imgUrl": "",
+    "num":2
 }, {
     "name": "Holy Mace",
     "desc": "This blessed mace shields its user, providing added defense.",
@@ -33,7 +36,8 @@
     "def": 4,
     "itemLvl": 3,
     "cost": 9,
-    "imgUrl": ""
+    "imgUrl": "",
+    "num":3
 }, {
     "name": "Rusted Greatsword",
     "desc": "The battles that this once great weapon took part in have been lost to history. It's still intimidating, though.",
@@ -42,7 +46,8 @@
     "def": 0,
     "itemLvl": 6,
     "cost": 15,
-    "imgUrl": ""
+    "imgUrl": "",
+    "num":4
 }, {
     "name": "Jeweled Staff",
     "desc": "Basically a stick with a pretty rock in it. Some [citation needed] think it makes your magic better.",
@@ -51,7 +56,8 @@
     "def": 0,
     "itemLvl": 5,
     "cost": 12,
-    "imgUrl": ""
+    "imgUrl": "",
+    "num":5
 }, {
     "name": "Rusted Warhammer",
     "desc": "While certainly not as fast or elegant as a sword, a warhammer in the hands of a skilled warrior can be a fearsome sight.",
@@ -60,5 +66,6 @@
     "def": 0,
     "itemLvl": 6,
     "cost": 13,
-    "imgUrl": ""
+    "imgUrl": "",
+    "num":6
 }]

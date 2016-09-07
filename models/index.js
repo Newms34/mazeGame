@@ -4,6 +4,7 @@ var http = require('https');
 require('./loot/weaps/');
 require('./loot/armor/');
 require('./loot/affixes/');
+require('./loot/junk/');
 require('./bestiary/general/');
 require('./bestiary/boss/');
 require('./npcs/');

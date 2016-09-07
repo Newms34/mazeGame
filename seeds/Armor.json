@@ -6,7 +6,8 @@
     "cost": 2,
     "itemLvl": 0,
     "slot": 0,
-    "imgUrl": ""
+    "imgUrl": "",
+    "num":0
 }, {
     "name": "Tattered Shirt",
     "def": 1,
@@ -15,7 +16,8 @@
     "cost": 2,
     "itemLvl": 0,
     "slot": 1,
-    "imgUrl": ""
+    "imgUrl": "",
+    "num":1
 }, {
     "name": "Tattered Pants",
     "def": 1,
@@ -24,7 +26,8 @@
     "cost": 2,
     "itemLvl": 0,
     "slot": 2,
-    "imgUrl": ""
+    "imgUrl": "",
+    "num":2
 }, {
     "name": "Worn Gloves",
     "def": 1,
@@ -33,7 +36,8 @@
     "cost": 2,
     "itemLvl": 0,
     "slot": 3,
-    "imgUrl": ""
+    "imgUrl": "",
+    "num":3
 }, {
     "name": "Farmer's Boots",
     "def": 1,
@@ -42,7 +46,8 @@
     "cost": 2,
     "itemLvl": 0,
     "slot": 4,
-    "imgUrl": ""
+    "imgUrl": "",
+    "num":4
 }, {
     "name": "Cook's Ring",
     "def": 1,
@@ -51,7 +56,8 @@
     "cost": 8,
     "itemLvl": 2,
     "slot":5,
-    "imgUrl": ""
+    "imgUrl": "",
+    "num":5
 }, {
     "name": "Boiled Leather Cuirass",
     "def": 8,
@@ -60,7 +66,8 @@
     "cost": 17,
     "itemLvl": 5,
     "slot":1,
-    "imgUrl": ""
+    "imgUrl": "",
+    "num":6
 }, {
     "name": "Boiled Leather Leggings",
     "def": 7,
@@ -69,5 +76,6 @@
     "cost": 15,
     "itemLvl": 5,
     "slot":2,
-    "imgUrl": ""
+    "imgUrl": "",
+    "num":7
 }]

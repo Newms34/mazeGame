@@ -4,7 +4,8 @@ var router = express.Router(),
     models = require('../../../models/'),
     async = require('async'),
     mongoose = require('mongoose'),
-    session = require('client-sessions');
+    session = require('client-sessions'),
+    gauss = require('gaussian');
 module.exports = router;
 router.get('/beastie/:id', function(req, res, next) {
     //'params' below basically means 'anything in the url with a colon (:) before it'.
@@ -47,7 +48,64 @@ router.get('/allItems', function(req, res, next) {
     mongoose.model('Armor').find({}, function(err, dataA) {
         mongoose.model('Weap').find({}, function(err, dataW) {
             mongoose.model('Affix').find({}, function(err, dataP) {
-                res.send([dataA, dataW,dataP]);
+                res.send([dataA, dataW, dataP]);
+            })
+        })
+    })
+});
+router.get('/byLvl/:lvl', function(req, res, next) {
+    //get all inv items, then pick either loot or junk by lvl
+    //basically, we get all items up to 4 levels above (and below!) current level
+    //we then use a gaussian distribution curve to pick one item
+    var findItemAtLvl = function(l, a) {
+        var retArr = [];
+        for (var i = 0; i < a.length; i++) {
+            if ((a[i].lvl && a[i].lvl == l) || (a[i].itemLvl && a[i].itemLvl == l)) {
+                retArr.push(a[i]);
+            }
+        }
+        return retArr;
+    }
+    var dist = gauss(parseInt(req.params.lvl)+1,4);
+    mongoose.model('Armor').find({ "itemLvl": { $lt: parseInt(req.params.lvl) + 4 } }, function(err, dataA) {
+        mongoose.model('Weap').find({ "itemLvl": { $lt: parseInt(req.params.lvl) + 4 } }, function(err, dataW) {
+            mongoose.model('Affix').find({}, function(err, dataP) {
+                mongoose.model('Junk').find({"lvl": { $lt: parseInt(req.params.lvl) + 4 }}, function(err, dataJ) {
+                    var lootz = { num: parseInt(req.params.lvl) };
+                    console.log('to start, lootz is',lootz)
+                    if (Math.random() > 0.5) {
+                        //half the time, user gets loot
+                        lootz.loot = {};
+                        lootz.type = 'loot';
+                        //60% of the time, loot is armor. Otherwise, loot is weapon.
+                        //I may adjust these nums later, but for now, the slightly higher percentage of armor to weapons is generally because you need more armor than you do weapons.
+                        var itemArr = Math.random()>0.4?dataA:dataW;
+                        var actualLvl = Math.floor(dist.ppf(Math.random()));
+                        //now continue redoing this until we actually get a list of items;
+                        while(!findItemAtLvl(actualLvl,itemArr).length){
+                            actualLvl = Math.floor(dist.ppf(Math.random()));
+                        }
+                        var lItems = findItemAtLvl(actualLvl,itemArr);
+                        //so we should now have an array of item(s) of a normal-distributed random number. Pick one:
+                        lootz.loot.base = lItems[Math.floor(Math.random()*lItems.length)];
+                        //pick a random prefix and suffix
+                        lootz.loot.pre = dataP[Math.floor(Math.random()*dataP.length)];
+                        lootz.loot.post = dataP[Math.floor(Math.random()*dataP.length)];
+
+                    } else {
+                        //otherwise, the user gets junk (which is still valuable, but basically merch fodder)
+                        lootz.type = 'junk';
+                        var actualLvl = Math.floor(dist.ppf(Math.random()));
+                        //now continue redoing this until we actually get a list of items;
+                        while(!findItemAtLvl(actualLvl,dataJ).length){
+                            actualLvl = Math.floor(dist.ppf(Math.random()));
+                        }
+                        var jItems = findItemAtLvl(actualLvl,dataJ);
+                        //so we should now have an array of item(s) of a normal-distributed random number. Pick one:
+                        lootz.loot = jItems[Math.floor(Math.random()*jItems.length)];
+                    }
+                    res.send(lootz);
+                })
             })
         })
     })
