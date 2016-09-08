@@ -22,6 +22,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
     $scope.maxEn = 0;
     $scope.currEn = 0;
     $scope.isStunned = false;
+    $scope.inCombat = false;
     $scope.possRoomConts = ['loot', 'mons', 'npcs', 'jewl', ' ', 'exit', ' ', ' ', 'mons', 'mons']; //things that could be in a room!
     $scope.name = ''; //actual name. 
     $scope.getUsrData = function() {
@@ -219,6 +220,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
                 if ($scope.intTarg) {
                     console.log('cell cons (probly mons):', $scope.intTarg);
                     $scope.moveReady = false; //set to false since we're in combat!
+                    $scope.inCombat = true;
                     combatFac.combatReady(); //set up the board
                 }
                 $scope.$digest();

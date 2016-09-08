@@ -83,3 +83,8 @@
 .bootbox{
 	transform:translateZ(210px) translateY(20%) translateX(-10%);
 }
+#battleStatus{
+	z-index:99;
+	position:relative;
+	height:100%;
+}
