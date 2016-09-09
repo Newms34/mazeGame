@@ -27,7 +27,7 @@
     <div id='uiloader' ng-show='invActive'>
         <div ng-include="'UI.html'" style='width:100%;height:100%;'></div>
     </div>
-    <div id='combatloader' ng-show='intTarg'>
+    <div id='combatloader' ng-show='inCombat'>
         <div ng-include="'combat.html'" style='width:100%;height:100%;'></div>
     </div>
     <div id='maze' style='width:{{width*50}}px; height:{{height*50}}px;transform:rotateZ({{roomRot}}deg) translateZ(180px) scale3d(.5,.5,.5);'>

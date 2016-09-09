@@ -112,7 +112,8 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
     $scope.maxEn = 0;
     $scope.currEn = 0;
     $scope.isStunned = false;
-    $scope.possRoomConts = ['loot', 'mons', 'npcs', 'jewl', ' ', 'exit', ' ', ' ', 'mons', 'mons']; //things that could be in a room!
+    $scope.inCombat = false;
+    // $scope.possRoomConts = ['loot', 'mons', 'npcs', 'jewl', ' ', 'exit', ' ', ' ', 'mons', 'mons']; //things that could be in a room!
     $scope.name = ''; //actual name. 
     $scope.getUsrData = function() {
         $http.get('/user/currUsrData').then(function(d) {
@@ -148,6 +149,15 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
             });
         }
     })();
+    $scope.monsCells = function() {
+        for (var i = 0; i < $scope.cells.length; i++) {
+            if($scope.cells[i].has=='mons'){
+                mazeFac.popCell($scope.lvl,$scope.cells[i].id).then(function(m){
+                    $scope.cells[$scope.cellNames.indexOf(m.cell)].has=m.mons;
+                })
+            }
+        }
+    };
     $scope.dmgType = combatFac.getDmgType;
     $scope.doMaze = function(w, h) {
         var mazeObj = mazeFac.makeMaze(w, h);
@@ -157,7 +167,9 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
         $scope.bombsLeft = 5;
         $scope.moveReady = true;
         $scope.playerCell = '0-0';
+        $scope.monsCells();
     }($scope.width, $scope.height);
+
 
     $scope.compareCell = function(id) {
         return id == $scope.playerCell;
@@ -309,6 +321,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
                 if ($scope.intTarg) {
                     console.log('cell cons (probly mons):', $scope.intTarg);
                     $scope.moveReady = false; //set to false since we're in combat!
+                    $scope.inCombat = true;
                     combatFac.combatReady(); //set up the board
                 }
                 $scope.$digest();
@@ -829,7 +842,14 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
     $scope.comb.playersTurn = false; //monster goes first!
     $scope.comb.itemStats;
     $scope.comb.attackEffects = [];
+    $scope.inCombat=true;
     $scope.comb.prepComb = function() {
+    
+        $scope.comb.battleStatus = {
+            status: false,
+            title: 'NONE',
+            txt: 'NONE'
+        };
         $scope.intTarg.currHp = $scope.intTarg.hp; //set ens current health to max. 
         //this is reset every time we 're-enter' the cell
         $('.pre-battle').hide(250);
@@ -892,16 +912,16 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
         combatFac.updateBars($scope.maxHp, $scope.currHp, $scope.maxEn, $scope.currEn, $scope.$parent.intTarg.hp, $scope.$parent.intTarg.currHp);
         $scope.comb.updateDoTs();
         var attackInfoStr = 'You attack for ' + pDmg + ' ' + combatFac.getDmgType($scope.comb.skills[$scope.currSkillNum].type) + ' damage, using ' + $scope.comb.skills[$scope.currSkillNum].name + '!';
-        if ($scope.comb.attackEffects.length){
+        if ($scope.comb.attackEffects.length) {
             //add special effects!
-            var novaHit = $scope.comb.attackEffects=='nova';
-            if(novaHit) $scope.comb.attackEffects.shift();
+            var novaHit = $scope.comb.attackEffects == 'nova';
+            if (novaHit) $scope.comb.attackEffects.shift();
             var efStr = ' Your attack is a ';
-            for (var i=0;i<$scope.comb.attackEffects.length-1;i++){
-                efStr+=$scope.comb.attackEffects[i]+', ';
+            for (var i = 0; i < $scope.comb.attackEffects.length - 1; i++) {
+                efStr += $scope.comb.attackEffects[i] + ', ';
             }
-            efStr+=$scope.comb.attackEffects.length>1?'and '+$scope.comb.attackEffects[$scope.comb.attackEffects.length-1]+' one.':$scope.comb.attackEffects[$scope.comb.attackEffects.length-1]+' one.';
-            attackInfoStr+=efStr;
+            efStr += $scope.comb.attackEffects.length > 1 ? 'and ' + $scope.comb.attackEffects[$scope.comb.attackEffects.length - 1] + ' one.' : $scope.comb.attackEffects[$scope.comb.attackEffects.length - 1] + ' one.';
+            attackInfoStr += efStr;
         }
         bootbox.alert(attackInfoStr, function(r) {
             if ($scope.intTarg.currHp <= 0) {
@@ -966,10 +986,10 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                 //player is attacking monster, so we take the PLAYER'S dmg and the MONSTER'S armor
                 dtype = $scope.comb.skills[$scope.currSkillNum].type;
                 //note that suffix mod dmg type takes precidence. SO a Firey axe of Ice will do COLD damge, not FIRE
-                if (playerWeap[0].dmgType!=-1){
+                if (playerWeap[0].dmgType != -1) {
                     dtype = playerWeap[0].dmgType
                 }
-                if (playerWeap[2].dmgType!=-1){
+                if (playerWeap[2].dmgType != -1) {
                     dtype = playerWeap[2].dmgType
                 }
                 var weapDmg = playerWeap ? Math.floor(Math.random() * (playerWeap[1].max - playerWeap[1].min)) + playerWeap[1].min : 0;
@@ -983,7 +1003,7 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                 if ($scope.comb.skills[$scope.currSkillNum].degen) {
                     //add monster degen
                     var crueDur = Math.random() < playerWeap[0].crue || Math.random() < playerWeap[2].crue ? 10 : 5;
-                    if (crueDur>5) $scope.comb.attackEffects.push('cruel');
+                    if (crueDur > 5) $scope.comb.attackEffects.push('cruel');
                     if ($scope.comb.checkDoTDup($scope.currMDegens, $scope.$parent.intTarg.name + '-' + $scope.comb.skills[$scope.currSkillNum].name + '-degen')) {
                         $scope.currMDegens.push(new $scope.comb.DoT($scope.$parent.intTarg.name + '-' + $scope.comb.skills[$scope.currSkillNum].name + '-degen', $scope.comb.skills[$scope.currSkillNum].degen, crueDur));
                     } else {
@@ -994,7 +1014,7 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                 if ($scope.comb.skills[$scope.currSkillNum].regen) {
                     //add player regen
                     var rejuvDur = Math.random() < playerWeap[0].rejuv || Math.random() < playerWeap[2].rejuv ? 10 : 5;
-                    if (rejuvDur>5) $scope.comb.attackEffects.push('rejuvenating');
+                    if (rejuvDur > 5) $scope.comb.attackEffects.push('rejuvenating');
                     if ($scope.comb.checkDoTDup($scope.currPRegens, 'player-' + $scope.comb.skills[$scope.currSkillNum].name + '-regen')) {
                         $scope.currPRegens.push(new $scope.comb.DoT('player-' + $scope.comb.skills[$scope.currSkillNum].name + '-regen', $scope.comb.skills[$scope.currSkillNum].regen, rejuvDur));
                     } else {
@@ -1004,7 +1024,7 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                 }
                 if ($scope.comb.skills[$scope.currSkillNum].heal) {
                     var beneMult = Math.random() < playerWeap[0].bene || Math.random() < playerWeap[2].bene ? 2 : 1;
-                    if (rejuvDur>5) $scope.comb.attackEffects.push('benedictive');
+                    if (rejuvDur > 5) $scope.comb.attackEffects.push('benedictive');
                     $scope.currHp += $scope.comb.skills[$scope.currSkillNum].heal * beneMult;
                     if ($scope.currHp > $scope.maxHp) {
                         $scope.currHp = $scope.maxHp
@@ -1016,7 +1036,7 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                 }
                 //calculate optional nova damage
                 var novaDmg = Math.random() < playerWeap[0].novaChance || Math.random() < playerWeap[2].novaChance ? weapDmg * .5 : 0;
-                if(novaDmg) $scope.comb.attackEffects.unshift('nova');
+                if (novaDmg) $scope.comb.attackEffects.unshift('nova');
                 //check for nova resistance
                 if ($scope.intTarg.res.indexOf(playerWeap[0].novaType) != -1 || $scope.intTarg.res.indexOf(playerWeap[1].novaType) != -1) {
                     novaDmg = Math.floor(novaDmg / 3);
@@ -1037,6 +1057,8 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                 }
 
                 return skillDmg + weapDmg + novaDmg;
+            } else {
+                bootbox.alert('You\'ve been stunned! You can\'t attack this turn.')
             }
         } else {
             //monster is attacking PLAYER
@@ -1095,14 +1117,14 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
         dmg = totalRawD / ((3 * Math.log10(totalRawA + 1)) || 1);
         if (activeRes) {
             dmg = dmg / 3;
-        }else{
-            if (playerWeap[0].defChanges[combatFac.getDmgType(dtype)]==1 || playerWeap[2].defChanges[combatFac.getDmgType(dtype)]==1){
+        } else {
+            if (playerWeap[0].defChanges[combatFac.getDmgType(dtype)] == 1 || playerWeap[2].defChanges[combatFac.getDmgType(dtype)] == 1) {
                 //resistance from weapon mods
-                dmg = dmg/3
+                dmg = dmg / 3
             }
-            if (playerWeap[0].defChanges[combatFac.getDmgType(dtype)]==-1 || playerWeap[2].defChanges[combatFac.getDmgType(dtype)]==-1){
+            if (playerWeap[0].defChanges[combatFac.getDmgType(dtype)] == -1 || playerWeap[2].defChanges[combatFac.getDmgType(dtype)] == -1) {
                 //negative resistance (vulnerability) from weapon mods
-                dmg = dmg*1.5
+                dmg = dmg * 1.5
             }
         }
         return dmg;
@@ -1118,40 +1140,40 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
         }
         return outArr;
     }
-    $scope.comb.dieP = function() {
-        alert('U DED SON Q_Q');
-        $('.pre-battle').show(10);
-        angular.element('body').scope().moveReady = true;
-        //reset player back to 'start' of maze. Eventually, I may include some other
-        //penalties, such as losing a piece of armor, losing $, etc.
-        angular.element('body').scope().playerCell = '0-0';
-        angular.element('body').scope().currHp = angular.element('body').scope().maxHp;
-        angular.element('body').scope().currEn = angular.element('body').scope().maxEn;
-        $scope.currHp = $scope.maxHp;
-        $scope.currEn = $scope.maxEn;
-        angular.element('body').scope().intTarg.currHp = angular.element('body').scope().hp;
-        $scope.$parent.intTarg.currHp = $scope.$parent.intTarg.hp;
-        combatFac.updateBars($scope.maxHp, $scope.currHp, $scope.maxEn, $scope.currEn, $scope.$parent.intTarg.hp, $scope.$parent.intTarg.currHp);
-        angular.element('body').scope().$apply();
-    }
-    $scope.comb.dieM = function() {
-        alert('U WON SON :D');
-        $('.pre-battle').show(10);
-        combatFac.rollLoot($scope.intTarg).then(function(items){
-            console.log('FROM ROLL LOOT',items)
-            var iName='';
-            if(items.type=='junk'){
-                iName=items.loot.name;
-                $scope.playerItems.inv.push(items.loot.num);
-            }
-            else{
-                iName = items.loot.pre.pre+' '+items.loot.base.name+' '+items.loot.post.post;
-                $scope.playerItems.inv.push([items.loot.pre.num,items.loot.base.num,items.loot.post.num])
-            }
-            bootbox.alert('After killing the '+$scope.intTarg.name+', you recieve '+iName+'!');
+    $scope.comb.acceptStatus = function() {
+        //essentially we're just making the resetting stuff asynchronous so the user has time to react and bask in their victory/wallow in their defeat
+        var vic = $scope.comb.battleStatus.title=='Victory!';
+        $('.pre-battle').show(10);     
+        $scope.comb.battleStatus = {
+            status: false,
+            title: ' ',
+            txt: ' ',
+            url: './img/paper.jpg'
+        };
+        if (vic) {
+            combatFac.rollLoot($scope.intTarg).then(function(items) {
+                console.log('FROM ROLL LOOT', items)
+                var iName = '';
+                if (items.type == 'junk') {
+                    iName = items.loot.name;
+                    $scope.playerItems.inv.push(items.loot.num);
+                } else {
+                    iName = items.loot.pre.pre + ' ' + items.loot.base.name + ' ' + items.loot.post.post;
+                    $scope.playerItems.inv.push([items.loot.pre.num, items.loot.base.num, items.loot.post.num])
+                }
+                bootbox.alert('After killing the ' + $scope.intTarg.name + ', you recieve ' + iName + '!');
 
-        });
-        angular.element('body').scope().cells[angular.element('body').scope().cellNames.indexOf(angular.element('body').scope().playerCell)].has = '';
+            });
+            angular.element('body').scope().cells[angular.element('body').scope().cellNames.indexOf(angular.element('body').scope().playerCell)].has = '';
+        }
+        else{
+            //defeat
+            angular.element('body').scope().playerCell = '0-0';
+            angular.element('body').scope().intTarg.currHp = angular.element('body').scope().hp;
+            $scope.$parent.intTarg.currHp = $scope.$parent.intTarg.hp;
+        }
+        $scope.inCombat=false;
+        angular.element('body').scope().inCombat = false;
         angular.element('body').scope().intTarg = false;
         angular.element('body').scope().moveReady = true;
         angular.element('body').scope().currHp = angular.element('body').scope().maxHp;
@@ -1160,6 +1182,22 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
         $scope.currEn = $scope.maxEn;
         combatFac.updateBars($scope.maxHp, $scope.currHp, $scope.maxEn, $scope.currEn, $scope.$parent.intTarg.hp, $scope.$parent.intTarg.currHp);
         angular.element('body').scope().$apply();
+    }
+    $scope.comb.dieP = function() {
+        $scope.comb.battleStatus = {
+            status: true,
+            title: 'Defeat!',
+            txt: 'You\'ve been defeated!',
+            url: './img/assets/Defeat.jpg'
+        };
+    }
+    $scope.comb.dieM = function() {
+        $scope.comb.battleStatus = {
+            status: true,
+            title: 'Victory!',
+            txt: 'You are victorious! The ' + $scope.intTarg.name + ' lies defeated at your feet.',
+            url: './img/assets/Victory.jpg'
+        };
     }
     $scope.comb.updateDoTs = function() {
             var a;
@@ -1205,37 +1243,76 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
         }
         // console.log('player stats', $scope.lvl, $scope.playerItems, $scope.questList, $scope.doneQuest, $scope.maxHp, $scope.currHp, $scope.maxEn, $scope.currEn, $scope.isStunned)
     $scope.comb.monsTurn = function() {
-        //for now, monster ALWAYS attacks
+
         //eventually, the monster should be able to do other stuff (heal, wait, etc)
         console.log('monster taking turn!')
-        var monDmg = parseInt($scope.comb.calcDmg()); //mon dmg? Oui oui!
-        var confSelfDmg = Math.random() < 0.5 && $scope.monsConf;
-        if (!confSelfDmg) {
-            $scope.currHp -= monDmg; //reduce player's health by amt
-            combatFac.updateBars($scope.maxHp, $scope.currHp, $scope.maxEn, $scope.currEn, $scope.$parent.intTarg.hp, $scope.$parent.intTarg.currHp); //update health and energy bars
-            bootbox.alert($scope.$parent.intTarg.name + ' attacks for ' + monDmg + ' ' + combatFac.getDmgType($scope.$parent.intTarg.type) + '!', function() {
-                $scope.comb.updateDoTs();
-                if ($scope.currHp <= 0) {
-                    //FATALITY! Monster wins!
-                    $scope.comb.dieP();
+        if (!$scope.monsStunned) {
+            var monDmg = parseInt($scope.comb.calcDmg()); //mon dmg? Oui oui!
+            var confSelfDmg = Math.random() < 0.5 && $scope.monsConf;
+            if (!confSelfDmg) {
+                /*first, effects:
+                    Note that monster can neither heal nor stun if they're confused
+        
+                    */
+                if ($scope.intTarg.currHp / $scope.intTarg.hp > .5 && Math.random < $scope.intTarg.healCh) {
+                    //monster heals. This is the chance that it heals ABOVE a 'low health' threshold
+                    bootbox.alert('The ' + $scope.intTarg.name + ' heals!', function() {
+                        var healAmt = $scope.intTarg.hp * (.07 + Math.random() / 10); //may change this later, but for now, monster heals for a random % of its max health
+                        $scope.intTarg.currHp += healAmt;
+                        //and of course, reset currHp to below max hp if necessary
+                        if ($scope.intTarg.currHp > $scope.intTarg.hp) {
+                            $scope.intTarg.currHp = $scope.currHp
+                        }
+                        $scope.comb.playersTurn = true;
+                    })
+                } else if (($scope.intTarg.currHp / $scope.intTarg.hp) > .5 && ((-18 / 5) * ($scope.intTarg.currHp / $scope.intTarg.hp) + 3 > Math.random())) {
+                    //monster at low hp (<50%), so gets additional % chance to heal
+                    bootbox.alert('The ' + $scope.intTarg.name + ' heals!', function() {
+                        var healAmt = $scope.intTarg.hp * (.07 + Math.random() / 10); //may change this later, but for now, monster heals for a random % of its max health
+                        $scope.intTarg.currHp += healAmt;
+                        //and of course, reset currHp to below max hp if necessary
+                        if ($scope.intTarg.currHp > $scope.intTarg.hp) {
+                            $scope.intTarg.currHp = $scope.currHp
+                        }
+                        $scope.comb.playersTurn = true;
+                    })
                 } else {
-                    $scope.comb.playersTurn = true;
+                    if (Math.random() < $scope.$parent.intTarg.stunCh) {
+                        $scope.pStunned = true;
+                    }
+                    $scope.currHp -= monDmg; //reduce player's health by amt
+                    combatFac.updateBars($scope.maxHp, $scope.currHp, $scope.maxEn, $scope.currEn, $scope.$parent.intTarg.hp, $scope.$parent.intTarg.currHp); //update health and energy bars
+                    bootbox.alert($scope.$parent.intTarg.name + ' attacks for ' + monDmg + ' ' + combatFac.getDmgType($scope.$parent.intTarg.type) + '!', function() {
+                        $scope.comb.updateDoTs();
+                        if ($scope.currHp <= 0) {
+                            //FATALITY! Monster wins!
+                            $scope.comb.dieP();
+                        } else {
+                            $scope.comb.playersTurn = true;
+                        }
+                    })
                 }
-            })
-        }else{
-            $scope.monsConf=false;
-            //monster confused, dmgs self
-            $scope.intTarg.currHp -= monDmg; //monster confused, dmgs self
-            combatFac.updateBars($scope.maxHp, $scope.currHp, $scope.maxEn, $scope.currEn, $scope.$parent.intTarg.hp, $scope.$parent.intTarg.currHp); //update health and energy bars
-            bootbox.alert($scope.$parent.intTarg.name + ' is confused, and attacks itself for ' + monDmg + ' ' + combatFac.getDmgType($scope.$parent.intTarg.type) + '!', function() {
-                $scope.comb.updateDoTs();
-                if ($scope.intTarg.currHp <= 0) {
-                    //Monster kills self
-                    $scope.comb.dieM();
-                } else {
-                    $scope.comb.playersTurn = true;
-                }
-            })
+
+            } else {
+                //monster confused, dmgs self
+                $scope.monsConf = false;
+                $scope.intTarg.currHp -= monDmg; //monster confused, dmgs self
+                combatFac.updateBars($scope.maxHp, $scope.currHp, $scope.maxEn, $scope.currEn, $scope.$parent.intTarg.hp, $scope.$parent.intTarg.currHp); //update health and energy bars
+                bootbox.alert($scope.$parent.intTarg.name + ' is confused, and attacks itself for ' + monDmg + ' ' + combatFac.getDmgType($scope.$parent.intTarg.type) + '!', function() {
+                    $scope.comb.updateDoTs();
+                    if ($scope.intTarg.currHp <= 0) {
+                        //Monster kills self.
+                        //Sad.
+                        $scope.comb.dieM();
+                    } else {
+                        $scope.comb.playersTurn = true;
+                    }
+                })
+            }
+        } else {
+            bootbox.alert($scope.$parent.intTarg.name + ' is stunned this turn!', function() {
+                $scope.comb.playersTurn = true;
+            });
         }
     }
 });
@@ -1346,6 +1423,11 @@ app.factory('mazeFac', function($http) {
     };
 
     return {
+        popCell: function(l,c) {
+            return $http.get('/item/beastie/' + l + '/' + c).then(function(res) {
+                return res.data;
+            });
+        },
         makeMaze: function(mW, mH) {
             //reset
             cells = [];
@@ -1356,12 +1438,12 @@ app.factory('mazeFac', function($http) {
             for (var x = 0; x < mW; x++) {
                 for (var y = 0; y < mH; y++) {
                     var rItem = possRoomConts[Math.floor(Math.random() * possRoomConts.length)];
-                    while ((x===0 || y===0) && rItem=='exit'){
-                    	//entrance and top row and left column cannot be exit
-                    	rItem = possRoomConts[Math.floor(Math.random() * possRoomConts.length)];
+                    while ((x === 0 || y === 0) && rItem == 'exit') {
+                        //entrance and top row and left column cannot be exit
+                        rItem = possRoomConts[Math.floor(Math.random() * possRoomConts.length)];
                     }
                     if (rItem == 'exit') {
-                            //only one exit!
+                        //only one exit!
                         didEx = true;
                         possRoomConts.splice(5, 1);
                     }
@@ -1407,7 +1489,6 @@ app.factory('mazeFac', function($http) {
                 cells[pos].dig(posDirs[targDir], cells[newPos]);
                 cellsDone++;
             }
-            popCells();
             return {
                 cells: cells,
                 names: cellNames,
@@ -1416,6 +1497,7 @@ app.factory('mazeFac', function($http) {
         }
     };
 });
+
 app.factory('socketFac', function ($rootScope) {
   var socket = io.connect();
   return {

@@ -104,6 +104,11 @@ app.factory('mazeFac', function($http) {
     };
 
     return {
+        popCell: function(l,c) {
+            return $http.get('/item/beastie/' + l + '/' + c).then(function(res) {
+                return res.data;
+            });
+        },
         makeMaze: function(mW, mH) {
             //reset
             cells = [];
@@ -114,12 +119,12 @@ app.factory('mazeFac', function($http) {
             for (var x = 0; x < mW; x++) {
                 for (var y = 0; y < mH; y++) {
                     var rItem = possRoomConts[Math.floor(Math.random() * possRoomConts.length)];
-                    while ((x===0 || y===0) && rItem=='exit'){
-                    	//entrance and top row and left column cannot be exit
-                    	rItem = possRoomConts[Math.floor(Math.random() * possRoomConts.length)];
+                    while ((x === 0 || y === 0) && rItem == 'exit') {
+                        //entrance and top row and left column cannot be exit
+                        rItem = possRoomConts[Math.floor(Math.random() * possRoomConts.length)];
                     }
                     if (rItem == 'exit') {
-                            //only one exit!
+                        //only one exit!
                         didEx = true;
                         possRoomConts.splice(5, 1);
                     }
@@ -165,7 +170,6 @@ app.factory('mazeFac', function($http) {
                 cells[pos].dig(posDirs[targDir], cells[newPos]);
                 cellsDone++;
             }
-            popCells();
             return {
                 cells: cells,
                 names: cellNames,

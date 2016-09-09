@@ -22,7 +22,8 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
     $scope.maxEn = 0;
     $scope.currEn = 0;
     $scope.isStunned = false;
-    $scope.possRoomConts = ['loot', 'mons', 'npcs', 'jewl', ' ', 'exit', ' ', ' ', 'mons', 'mons']; //things that could be in a room!
+    $scope.inCombat = false;
+    // $scope.possRoomConts = ['loot', 'mons', 'npcs', 'jewl', ' ', 'exit', ' ', ' ', 'mons', 'mons']; //things that could be in a room!
     $scope.name = ''; //actual name. 
     $scope.getUsrData = function() {
         $http.get('/user/currUsrData').then(function(d) {
@@ -58,6 +59,15 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
             });
         }
     })();
+    $scope.monsCells = function() {
+        for (var i = 0; i < $scope.cells.length; i++) {
+            if($scope.cells[i].has=='mons'){
+                mazeFac.popCell($scope.lvl,$scope.cells[i].id).then(function(m){
+                    $scope.cells[$scope.cellNames.indexOf(m.cell)].has=m.mons;
+                })
+            }
+        }
+    };
     $scope.dmgType = combatFac.getDmgType;
     $scope.doMaze = function(w, h) {
         var mazeObj = mazeFac.makeMaze(w, h);
@@ -67,7 +77,9 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
         $scope.bombsLeft = 5;
         $scope.moveReady = true;
         $scope.playerCell = '0-0';
+        $scope.monsCells();
     }($scope.width, $scope.height);
+
 
     $scope.compareCell = function(id) {
         return id == $scope.playerCell;
@@ -219,6 +231,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
                 if ($scope.intTarg) {
                     console.log('cell cons (probly mons):', $scope.intTarg);
                     $scope.moveReady = false; //set to false since we're in combat!
+                    $scope.inCombat = true;
                     combatFac.combatReady(); //set up the board
                 }
                 $scope.$digest();

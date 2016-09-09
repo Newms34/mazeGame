@@ -70,7 +70,7 @@
     "res": [0],
     "imgUrl":"/assets/Priest.jpg",
     "stunCh":0,
-    "healCh":0
+    "healCh":0.2
 },{
     "name": "Warlock",
     "desc":"While most warlocks are not inherently evil, this one is.",
@@ -142,7 +142,7 @@
     "res": [0,2,5],
     "imgUrl":"/assets/Water_Elemental.jpg",
     "stunCh":0.1,
-    "healCh":0.5
+    "healCh":0.3
 },{
     "name": "Demon",
     "desc":"Whether it was summoned by some over-zealous warlock, or managed to enter our world through other means, a Demon is not to be trifled with",
@@ -178,5 +178,5 @@
     "res": [1,2,3,4],
     "imgUrl":"/assets/Corrupted_Bowman.jpg",
     "stunCh":0.2,
-    "healCh":0.2
+    "healCh":0.15
 }]
