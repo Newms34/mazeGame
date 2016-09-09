@@ -113,7 +113,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
     $scope.currEn = 0;
     $scope.isStunned = false;
     $scope.inCombat = false;
-    $scope.possRoomConts = ['loot', 'mons', 'npcs', 'jewl', ' ', 'exit', ' ', ' ', 'mons', 'mons']; //things that could be in a room!
+    // $scope.possRoomConts = ['loot', 'mons', 'npcs', 'jewl', ' ', 'exit', ' ', ' ', 'mons', 'mons']; //things that could be in a room!
     $scope.name = ''; //actual name. 
     $scope.getUsrData = function() {
         $http.get('/user/currUsrData').then(function(d) {
@@ -149,6 +149,15 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
             });
         }
     })();
+    $scope.monsCells = function() {
+        for (var i = 0; i < $scope.cells.length; i++) {
+            if($scope.cells[i].has=='mons'){
+                mazeFac.popCell($scope.lvl,$scope.cells[i].id).then(function(m){
+                    $scope.cells[$scope.cellNames.indexOf(m.cell)].has=m.mons;
+                })
+            }
+        }
+    };
     $scope.dmgType = combatFac.getDmgType;
     $scope.doMaze = function(w, h) {
         var mazeObj = mazeFac.makeMaze(w, h);
@@ -158,7 +167,9 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
         $scope.bombsLeft = 5;
         $scope.moveReady = true;
         $scope.playerCell = '0-0';
+        $scope.monsCells();
     }($scope.width, $scope.height);
+
 
     $scope.compareCell = function(id) {
         return id == $scope.playerCell;
@@ -1412,6 +1423,11 @@ app.factory('mazeFac', function($http) {
     };
 
     return {
+        popCell: function(l,c) {
+            return $http.get('/item/beastie/' + l + '/' + c).then(function(res) {
+                return res.data;
+            });
+        },
         makeMaze: function(mW, mH) {
             //reset
             cells = [];
@@ -1422,12 +1438,12 @@ app.factory('mazeFac', function($http) {
             for (var x = 0; x < mW; x++) {
                 for (var y = 0; y < mH; y++) {
                     var rItem = possRoomConts[Math.floor(Math.random() * possRoomConts.length)];
-                    while ((x===0 || y===0) && rItem=='exit'){
-                    	//entrance and top row and left column cannot be exit
-                    	rItem = possRoomConts[Math.floor(Math.random() * possRoomConts.length)];
+                    while ((x === 0 || y === 0) && rItem == 'exit') {
+                        //entrance and top row and left column cannot be exit
+                        rItem = possRoomConts[Math.floor(Math.random() * possRoomConts.length)];
                     }
                     if (rItem == 'exit') {
-                            //only one exit!
+                        //only one exit!
                         didEx = true;
                         possRoomConts.splice(5, 1);
                     }
@@ -1473,7 +1489,6 @@ app.factory('mazeFac', function($http) {
                 cells[pos].dig(posDirs[targDir], cells[newPos]);
                 cellsDone++;
             }
-            popCells();
             return {
                 cells: cells,
                 names: cellNames,
@@ -1482,6 +1497,7 @@ app.factory('mazeFac', function($http) {
         }
     };
 });
+
 app.factory('socketFac', function ($rootScope) {
   var socket = io.connect();
   return {
