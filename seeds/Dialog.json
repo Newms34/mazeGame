@@ -1,0 +1,41 @@
+[{
+	"questComp":-1,
+	"text":"Sure is dingy in here",
+	"num":0
+},{
+	"questComp":-1,
+	"text":"Did you hear there are still PHP developers lurking in the lower levels?",
+	"num":1
+},{
+	"questComp":-1,
+	"text":"I've heard the corruption gets worse the deeper you go.",
+	"num":2
+},{
+	"questComp":-1,
+	"text":"This dungeon is almost as dank as my memes!",
+	"num":3
+},{
+	"questComp":-1,
+	"text":"I'm cold!",
+	"num":4
+},{
+	"questComp":-1,
+	"text":"Go away. I'm busy staring at this wall.",
+	"num":5
+},{
+	"questComp":-1,
+	"text":"I could leave, but the developer didn't give me a walk cycle.",
+	"num":6
+},{
+	"questComp":-1,
+	"text":"Sometimes I hear screams coming from below.",
+	"num":7
+},{
+	"questComp":-1,
+	"text":"I've heard a rumor that there's a locked door below, with the number 403 on it. No one can figure out how to get it open",
+	"num":8
+},{
+	"questComp":-1,
+	"text":"Sometimes I hear memes coming from below.",
+	"num":3
+}]

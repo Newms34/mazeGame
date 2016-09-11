@@ -1,0 +1,23 @@
+<div id='merch-box' ng-controller='merch-cont' style='background:url(""); background-size: cover;'>
+    <div class='panel panel-success'>
+        <div class='panel-heading'>
+            <h2>Merchant: {{merchy.merch.name}}</h2></div>
+        <div class='panel-body'>
+            <i>{{merchy.merch.sez}}</i>
+            <hr>
+            <h4>Inventory:</h4>
+            <table class='table table-striped'>
+                <thead>
+                    <tr>
+                        <th>Name</th><th>Price</th><th>Quantity</th>
+                    </tr>
+                </thead>
+                <tbody>
+                	<tr ng-repeat ='it in merchy.merch.inv'>
+                		<td>{{it.item[0].pre}} {{it.item[1].name}} {{it.item[2].post}}</td><td>Free!</td><td>{{it.num}}</td>
+                	</tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

@@ -8,6 +8,7 @@ require('./loot/junk/');
 require('./bestiary/general/');
 require('./bestiary/boss/');
 require('./npcs/');
+require('./dialog/');
 require('./quests/');
 require('./users/');
 require('./skills/')

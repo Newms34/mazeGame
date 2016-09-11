@@ -32,9 +32,8 @@ When should we save?:
 
 Should user heal outside of combat?
 
-change to weapon/armor/combat sys:
-we NEED to implement more effects for weapons, since right now there's no reason to have a lower dmg weapon vs. a higher one. Ideas:
-1) weap:chance to stun 0 - 100%
-2) weap:chance to cast a specific 'nova' of a particular type (frost nova, poison nova, dark nova) on hit 0-100%
-3) armor: chance to prevent stun
-4) 
+TO DO:
+1) Add more monsters
+2) Add NPCs (especially merchants!)
+3) Rewrite bootbox to be less bootstrappy?
+https://jsfiddle.net/6gw8ygn7/24/show/

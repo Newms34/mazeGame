@@ -89,7 +89,7 @@ var app = angular.module('mazeGame', ['ui.bootstrap.contextMenu','ngTouch']).con
 });
 
 var socket = io();
-app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $window, mazeFac, combatFac, UIFac, userFact) {
+app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $window, mazeFac, combatFac, UIFac, userFact,econFac) {
     $scope.width = 6;
     $scope.height = 6;
     $scope.path = []; //all the cells visited, in order.
@@ -113,6 +113,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
     $scope.currEn = 0;
     $scope.isStunned = false;
     $scope.inCombat = false;
+    $scope.merchy = {};
     // $scope.possRoomConts = ['loot', 'mons', 'npcs', 'jewl', ' ', 'exit', ' ', ' ', 'mons', 'mons']; //things that could be in a room!
     $scope.name = ''; //actual name. 
     $scope.getUsrData = function() {
@@ -149,15 +150,29 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
             });
         }
     })();
-    $scope.monsCells = function() {
+    $scope.fillCells = function() {
         for (var i = 0; i < $scope.cells.length; i++) {
             if($scope.cells[i].has=='mons'){
                 mazeFac.popCell($scope.lvl,$scope.cells[i].id).then(function(m){
                     $scope.cells[$scope.cellNames.indexOf(m.cell)].has=m.mons;
                 })
             }
+            else if($scope.cells[i].has=='npcs'){
+                //put a dood in this cell
+                console.log($scope.cells[i].id,'has an npc.')
+                econFac.getNpc($scope.cells[i].id).then(function(r){
+                    $scope.cells[$scope.cellNames.indexOf(r.id)].has=r.data;//assign the merch to cell
+                    if(r.data.isMerch){
+                        //npc is a merchant
+                        econFac.merchInv(r.data.inv,r.id).then(function(inv){
+                             $scope.cells[$scope.cellNames.indexOf(inv.id)].has.inv=inv.inv;
+                        })
+                    }
+                });
+            }
         }
     };
+
     $scope.dmgType = combatFac.getDmgType;
     $scope.doMaze = function(w, h) {
         var mazeObj = mazeFac.makeMaze(w, h);
@@ -167,7 +182,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
         $scope.bombsLeft = 5;
         $scope.moveReady = true;
         $scope.playerCell = '0-0';
-        $scope.monsCells();
+        $scope.fillCells();
     }($scope.width, $scope.height);
 
 
@@ -317,12 +332,19 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
             if ((e.which == 87 || e.which == 38 || e.which == 83 || e.which == 40) && canMove && !$scope.moving) {
                 $scope.playerCell = x + '-' + y;
                 $scope.cells[$scope.cellNames.indexOf($scope.playerCell)].pViz = true;
-                $scope.intTarg = typeof $scope.cells[$scope.cellNames.indexOf($scope.playerCell)].has == 'object' ? $scope.cells[$scope.cellNames.indexOf($scope.playerCell)].has : false;
+                $scope.intTarg = false && typeof $scope.cells[$scope.cellNames.indexOf($scope.playerCell)].has == 'object' && !$scope.cells[$scope.cellNames.indexOf($scope.playerCell)].has.inv? $scope.cells[$scope.cellNames.indexOf($scope.playerCell)].has : false;
                 if ($scope.intTarg) {
                     console.log('cell cons (probly mons):', $scope.intTarg);
                     $scope.moveReady = false; //set to false since we're in combat!
                     $scope.inCombat = true;
                     combatFac.combatReady(); //set up the board
+                }
+                if (typeof $scope.cells[$scope.cellNames.indexOf($scope.playerCell)].has == 'object' && $scope.cells[$scope.cellNames.indexOf($scope.playerCell)].has.inv){
+                    $scope.currNpc = $scope.cells[$scope.cellNames.indexOf($scope.playerCell)].has;
+                    $scope.merchy.prepNpc();
+                    console.log('NPC in cell ',$scope.cells[$scope.cellNames.indexOf($scope.playerCell)].id,':',$scope.currNpc)
+                }else{
+                    $scope.currNpc = null;
                 }
                 $scope.$digest();
                 $scope.moveAni(); //do Move animation
@@ -1317,6 +1339,38 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
     }
 });
 
+app.factory('econFac', function($http, $q) {
+    var npcTypes = ['merch', 'ambient', 'quest']
+    return {
+        merchInv: function(invArr) {
+            //get all item info from backend 
+            return $http.get('/item/allItems').then(function(d) {
+                var fullInvArr = [];
+                console.log('GETTING ITEM DATA:invArr',invArr)
+                //now parse the inventory data, and return the object of that merch's inv
+                for (var i = 0; i < invArr.length; i++) {
+                   if (invArr[i].lootType == 0) {
+                        //armor
+                        fullInvArr.push([d.data[2][invArr[i].item[0]], d.data[0][invArr[i].item[1]], d.data[2][invArr[i].item[2]]]);
+                    } else {
+                        //weap
+                        fullInvArr.push([d.data[2][invArr[i].item[0]], d.data[1][invArr[i].item[1]], d.data[2][invArr[i].item[2]]]);
+                    }
+                }
+                return fullInvArr;
+            })
+        },
+        getNpc: function(i) {
+            return $http.get('/other/oneNpc').then(function(n) {
+                return {
+                    data: n.data,
+                    id: i
+                };
+            })
+        }
+    };
+});
+
 app.factory('mazeFac', function($http) {
     var cell = function(id, cont) {
             this.id = id;
@@ -1495,6 +1549,26 @@ app.factory('mazeFac', function($http) {
                 path: path
             };
         }
+    };
+});
+
+app.controller('merch-cont', function($scope, $http, $q, $timeout, $window, econFac) {
+    //merchants!
+    console.log('THING RUNNING')
+
+    $scope.merchy.prepNpc = function() {
+        $scope.merchy.merch = $scope.currNpc;
+        console.log('FROM MERCH CONT', $scope.merchy)
+        $scope.merchy.merch.sez = $scope.merchy.merch.gossip[Math.floor(Math.random()*$scope.merchy.merch.gossip.length)];
+        console.log(econFac.merchInv,typeof $scope.merchy.merch.inv)
+        var realInv = econFac.merchInv($scope.merchy.merch.inv).then(function(r){
+        	console.log('THIS NPC HAS:',r)
+        	for (var n = 0;n<$scope.merchy.merch.inv.length;n++){
+        		$scope.merchy.merch.inv[n].item = r[n];
+        	}
+        	// $scope.merchy.merch.inv = r
+        	$scope.$apply();
+        })
     };
 });
 

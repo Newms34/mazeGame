@@ -30,6 +30,9 @@
     <div id='combatloader' ng-show='inCombat'>
         <div ng-include="'combat.html'" style='width:100%;height:100%;'></div>
     </div>
+    <div id='merchLoader' ng-show='currNpc'>
+        <div ng-include="'merch.html'" style='width:100%;height:100%;'></div>
+    </div>
     <div id='maze' style='width:{{width*50}}px; height:{{height*50}}px;transform:rotateZ({{roomRot}}deg) translateZ(180px) scale3d(.5,.5,.5);'>
         <!-- This is the maze 'icon' that we use for navigation. 3D! -->
         <div class='cell' ng-repeat='cl in cells' style='left:{{cl.x*50}}px;top:{{cl.y*50}}px;' ng-class='{"nWall":cl.north,"sWall":cl.south,"eWall":cl.east,"wWall":cl.west,"usr":compareCell(cl.id),"daBomb":compareCell(cl.id) && bombOn}' title='{{cl.x}}:{{cl.y}}'>

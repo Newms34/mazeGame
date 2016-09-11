@@ -249,6 +249,17 @@ body {
     height: 100%;
     width: 100%; }
 
+#merchLoader {
+  position: absolute;
+  left: 20%;
+  transform: translateZ(80px);
+  top: 9%;
+  width: 40%;
+  height: 900px; }
+  #merchLoader > div {
+    height: 100%;
+    width: 100%; }
+
 .regErr {
   position: relative;
   background: #fcc;
@@ -381,6 +392,13 @@ body {
   z-index: 99;
   position: relative;
   height: 100%; }
+
+#merch-box {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  color: #000;
+  background: url(".././img/wood.jpg"); }
 
 body#mob {
   height: 100%;

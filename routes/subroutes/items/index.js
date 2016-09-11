@@ -21,16 +21,16 @@ router.get('/beastie/:lvl/:cell', function(req, res, next) {
         var monDist = gauss(parseInt(req.params.lvl) - 1, 4);
         //get a gaussian distribution of monster levels
         var theMons = Math.floor(monDist.ppf(Math.random()));
-        while(!findItemAtLvl(theMons,data).length){
+        while (!findItemAtLvl(theMons, data).length) {
             //no monster @ this lvl!
-            console.log(findItemAtLvl(theMons,data))
+            console.log(findItemAtLvl(theMons, data))
             theMons = Math.floor(monDist.ppf(Math.random()));
-            console.log('trying lvl',theMons)
+            console.log('trying lvl', theMons)
         }
-        var possMons = findItemAtLvl(theMons,data);
-        var mons = possMons[Math.floor(Math.random()*possMons.length)]
+        var possMons = findItemAtLvl(theMons, data);
+        var mons = possMons[Math.floor(Math.random() * possMons.length)]
         console.log('picked a', mons)
-        res.send({ mons: mons,cell:req.params.cell})
+        res.send({ mons: mons, cell: req.params.cell })
     })
 })
 router.get('/getRanMons/:cell', function(req, res, next) {
@@ -65,11 +65,13 @@ router.get('/Inventory', function(req, res, next) {
     })
 });
 router.get('/allItems', function(req, res, next) {
-    //get all inv items
+    //get all inv items (weapons, armor, affixes, AND junk)
     mongoose.model('Armor').find({}, function(err, dataA) {
         mongoose.model('Weap').find({}, function(err, dataW) {
             mongoose.model('Affix').find({}, function(err, dataP) {
-                res.send([dataA, dataW, dataP]);
+                mongoose.model('Junk').find({}, function(err, dataJ) {
+                    res.send([dataA, dataW, dataP, dataJ]);
+                })
             })
         })
     })
