@@ -39,6 +39,12 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
             $scope.currEn = d.data.currEn;
             $scope.isStunned = d.data.isStunned;
             $scope.name = d.data.name;
+            econFac.merchInv($scope.playerItems.inv).then(function(r){
+                for (var ep = 0; ep<r.length;ep++){
+                    console.log('REPLACING',$scope.playerItems.inv[ep].item,'WITH',r[ep])
+                    $scope.playerItems.inv[ep].item = r[ep];
+                }
+            })
         });
     };
     $scope.currSkillNum = 0;
@@ -242,7 +248,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
             if ((e.which == 87 || e.which == 38 || e.which == 83 || e.which == 40) && canMove && !$scope.moving) {
                 $scope.playerCell = x + '-' + y;
                 $scope.cells[$scope.cellNames.indexOf($scope.playerCell)].pViz = true;
-                $scope.intTarg = typeof $scope.cells[$scope.cellNames.indexOf($scope.playerCell)].has == 'object' && !$scope.cells[$scope.cellNames.indexOf($scope.playerCell)].has.inv? $scope.cells[$scope.cellNames.indexOf($scope.playerCell)].has : false;
+                $scope.intTarg = false && typeof $scope.cells[$scope.cellNames.indexOf($scope.playerCell)].has == 'object' && !$scope.cells[$scope.cellNames.indexOf($scope.playerCell)].has.inv? $scope.cells[$scope.cellNames.indexOf($scope.playerCell)].has : false;
                 if ($scope.intTarg) {
                     console.log('cell cons (probly mons):', $scope.intTarg);
                     $scope.moveReady = false; //set to false since we're in combat!
@@ -460,6 +466,9 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
     };
     $scope.logout = UIFac.logout;
     $scope.reset = UIFac.reset;
+    $scope.trunc = function(n){
+        return Math.floor(n*10)/10;
+    };
     $scope.isNearMerch = false; //only active if we're in a room with a merchant
     $scope.invMenu = [
         ['Equip', function($itemScope) {

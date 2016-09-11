@@ -20,6 +20,7 @@ router.post('/reset', function(req, res, next) {
                 var resUsr = {
                     lvl: 1,
                     equip: {
+                        gold:100,
                         head: [-1,-1,-1],
                         chest: [-1,-1,-1],
                         hands: [-1,-1,-1],
@@ -81,6 +82,7 @@ router.post('/new', function(req, res, next) {
                 name: un,
                 lvl: 1,
                 equip: {
+                    gold:100,
                     head: [-1,-1,-1],
                     chest: [-1,-1,-1],
                     hands: [-1,-1,-1],

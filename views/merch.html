@@ -3,21 +3,57 @@
         <div class='panel-heading'>
             <h2>Merchant: {{merchy.merch.name}}</h2></div>
         <div class='panel-body'>
-            <i>{{merchy.merch.sez}}</i>
+            <div id='merch-quote'>{{merchy.merch.sez}}</div>
             <hr>
-            <h4>Inventory:</h4>
-            <table class='table table-striped'>
-                <thead>
-                    <tr>
-                        <th>Name</th><th>Price</th><th>Quantity</th>
-                    </tr>
-                </thead>
-                <tbody>
-                	<tr ng-repeat ='it in merchy.merch.inv'>
-                		<td>{{it.item[0].pre}} {{it.item[1].name}} {{it.item[2].post}}</td><td>Free!</td><td>{{it.num}}</td>
-                	</tr>
-                </tbody>
-            </table>
+            <p>
+                Your cash: {{playerItems.gold}} munneez.
+            </p>
+            <div class='col-md-6 merch-tab' ng-click='merchy.buy=true;' ng-class='{"tab-inact":merchy.buy==false}'>BUY</div>
+            <div class='col-md-6 merch-tab' ng-click='merchy.buy=false;' ng-class='{"tab-inact":merchy.buy==true}'>SELL</div>
+            <div id='merch-buy' class='merch-tab-box' ng-show='merchy.buy'>
+                <table class='table table-striped'>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Buy</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat='it in merchy.merch.inv'>
+                            <td>{{it.item[0].pre}} {{it.item[1].name}} {{it.item[2].post}}</td>
+                            <td>{{trunc(it.item[1].cost*(10+it.item[0].cost+it.item[2].cost)/10)}} Munneez</td>
+                            <td>{{it.num}}</td>
+                            <td>
+                                <button class='btn btn-danger' ng-click='merchy.exchange(it,false,$index)'>Buy</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div id='merch-sell' class='merch-tab-box' ng-show='merchy.buy==false'>
+                <table class='table table-striped'>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Buy</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat='eq in playerItems.inv'>
+                            <td>{{eq.item[0].pre}} {{eq.item[1].name}} {{eq.item[2].post}}</td>
+                            <td>{{trunc(0.9*eq.item[1].cost*(10+eq.item[0].cost+eq.item[2].cost)/10)}} Munneez</td>
+                            <td>{{eq.num}}</td>
+                            <td>
+                                <button class='btn btn-danger' ng-click='merchy.exchange(eq,true,$index)'>Sell</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>

@@ -1,7 +1,29 @@
-#merch-box{
-	position:absolute;
-	width:100%; 
-	height:100%;
-	color:#000;
-	background:url('.././img/wood.jpg');
+#merch-box {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    color: #000;
+    background: url('.././img/wood.jpg');
+    overflow:scroll;
+    #merch-quote {
+        width: 75%;
+        left: 5%;
+        background: #fff0ee;
+        padding:7px;
+        font-style: italic;
+        box-shadow:2px 2px 3px #000;
+    }
+    .merch-tab{
+    	background:#fafafa;
+    	border-radius: 5px 5px 0 0;
+    	text-align: center;
+    	font-size:large;
+    	height:40px;
+    }
+    .tab-inact{
+    	background:#e0e0e0;
+    }
+    .merch-tab-box{
+    	background:#fafafa;
+    }
 }

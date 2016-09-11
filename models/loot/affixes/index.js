@@ -20,6 +20,8 @@ var affSchema = new mongoose.Schema({
         dark: Number,
         holy:Number
     },
-    num:Number
+    description:String,
+    num:Number,
+    cost:Number// cost multiplier
 }, { collection: 'Affix' });
 mongoose.model('Affix', affSchema);

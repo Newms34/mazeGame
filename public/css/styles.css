@@ -398,7 +398,25 @@ body {
   width: 100%;
   height: 100%;
   color: #000;
-  background: url(".././img/wood.jpg"); }
+  background: url(".././img/wood.jpg");
+  overflow: scroll; }
+  #merch-box #merch-quote {
+    width: 75%;
+    left: 5%;
+    background: #fff0ee;
+    padding: 7px;
+    font-style: italic;
+    box-shadow: 2px 2px 3px #000; }
+  #merch-box .merch-tab {
+    background: #fafafa;
+    border-radius: 5px 5px 0 0;
+    text-align: center;
+    font-size: large;
+    height: 40px; }
+  #merch-box .tab-inact {
+    background: #e0e0e0; }
+  #merch-box .merch-tab-box {
+    background: #fafafa; }
 
 body#mob {
   height: 100%;
