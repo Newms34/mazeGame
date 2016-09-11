@@ -8,7 +8,7 @@
     "degen": 0,
     "type": 0,
     "stuns": false,
-    "imgUrl": ""
+    "imgUrl": "./img/assets/Swing.jpg"
 }, {
     "name": "Bandage",
     "desc": "A weak heal.",
@@ -19,7 +19,7 @@
     "degen": 0,
     "type": 0,
     "stuns": false,
-    "imgUrl": ""
+    "imgUrl": "./img/assets/Bandage.jpg"
 }, {
     "name": "Slice",
     "desc": "Twisting your weapon mid-strike creates a jagged wound, bleeding your foe.",
@@ -30,7 +30,7 @@
     "degen": 1,
     "type": 0,
     "stuns": false,
-    "imgUrl": ""
+    "imgUrl": "./img/assets/Slice.jpg"
 }, {
     "name": "Fireball",
     "desc": "Baby's First Spell. Does minor damage, but sets target on fire.",
@@ -41,7 +41,7 @@
     "degen": 1,
     "type": 1,
     "stuns": false,
-    "imgUrl": ""
+    "imgUrl": "./img/assets/Fireball.jpg"
 }, {
     "name": "Holy Beam",
     "desc": "Invoking awesome powers, the priesthood calls down the divine judgement of the Gods. Such devotion is rewarded, as you're healed for a small amount.",
@@ -52,7 +52,7 @@
     "degen": 2,
     "type": 5,
     "stuns": false,
-    "imgUrl": ""
+    "imgUrl": "./img/assets/Holy_Beam.jpg"
 }, {
     "name": "Curse",
     "desc": "Calling upon the... less than savory gods, you invoke eldritch energies upon a foe.",
@@ -63,7 +63,7 @@
     "degen": 0,
     "type": 4,
     "stuns": false,
-    "imgUrl": ""
+    "imgUrl": "./img/assets/Curse.jpg"
 }, {
     "name": "Putrid Curse",
     "desc": "The warlocks would tell you that the natural state of everything is death. They'd also tell you that they're merely speeding up the process",
@@ -74,9 +74,9 @@
     "degen": 3,
     "type": 3,
     "stuns": false,
-    "imgUrl": ""
+    "imgUrl": "./img/assets/Putrid_Curse.jpg"
 }, {
-    "name": "Vampiric bite",
+    "name": "Vampiric Bite",
     "desc": "Somehow, you use your weapon in such a way that it steals life. Not sure how that works.",
     "energy": 8,
     "heal": 0,
@@ -85,7 +85,7 @@
     "degen": 1,
     "type": 0,
     "stuns": false,
-    "imgUrl": ""
+    "imgUrl": "./img/assets/Vampiric_Bite.jpg"
 }, {
     "name": "Uppercut",
     "desc": "Hit your foe with a brutal uppercut, stunning them",
@@ -96,7 +96,7 @@
     "degen": 0,
     "type": 0,
     "stuns": true,
-    "imgUrl": ""
+    "imgUrl": "./img/assets/Uppercut.jpg"
 }, {
     "name": "Taunt",
     "desc": "The mages would have you know that sometimes words are more powerful than simple weapons. Stun your enemy, but deal no damage",
@@ -107,7 +107,7 @@
     "degen": 0,
     "type": 0,
     "stuns": true,
-    "imgUrl": ""
+    "imgUrl": "./img/assets/Taunt.jpg"
 }, {
     "name": "Immolate",
     "desc": "Set your foe alight, dealing massive degen damage",
@@ -118,7 +118,7 @@
     "degen": 4,
     "type": 1,
     "stuns": false,
-    "imgUrl": ""
+    "imgUrl": "./img/assets/Immolate.jpg"
 }, {
     "name": "Chill",
     "desc": "Invoking the north winds, you chill the very air around a foe, dealing damage.",
@@ -129,7 +129,7 @@
     "degen": 0,
     "type": 2,
     "stuns": false,
-    "imgUrl": ""
+    "imgUrl": "./img/assets/Chill.jpg"
 }, {
     "name": "Frostbite",
     "desc": "You call forth the very worst of the mountain winds, freezing and degening your foe.",
@@ -140,7 +140,7 @@
     "degen": 1,
     "type": 2,
     "stuns": true,
-    "imgUrl": ""
+    "imgUrl": "./img/assets/Frostbite.jpg"
 }, {
     "name": "Divine Blessing",
     "desc": "The power of the Gods restores you.",
@@ -151,5 +151,5 @@
     "degen": 0,
     "type": 5,
     "stuns": false,
-    "imgUrl": ""
+    "imgUrl": "./img/assets/Divine_Blessing.jpg"
 }]
