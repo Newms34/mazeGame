@@ -289,10 +289,11 @@ body {
 #uiloader {
     position: absolute;
     left: 25%;
-    transform: translateZ(40px);
+    transform: translateZ(90px);
     top: 9%;
     width: 30%;
     height: 600px;
+    z-index:99;
     &>div {
         height: 100%;
         width: 100%;

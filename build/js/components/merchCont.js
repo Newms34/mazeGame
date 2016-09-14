@@ -8,14 +8,18 @@ app.controller('merch-cont', function($scope, $http, $q, $timeout, $window, econ
         console.log('FROM MERCH CONT', $scope.merchy)
         $scope.merchy.merch.sez = $scope.merchy.merch.gossip[Math.floor(Math.random() * $scope.merchy.merch.gossip.length)];
         console.log(econFac.merchInv, typeof $scope.merchy.merch.inv)
-        var realInv = econFac.merchInv($scope.merchy.merch.inv).then(function(r) {
-            console.log('THIS NPC HAS:', r)
-            for (var n = 0; n < $scope.merchy.merch.inv.length; n++) {
-                $scope.merchy.merch.inv[n].item = r[n];
-            }
-            // $scope.merchy.merch.inv = r
-            $scope.$apply();
-        })
+        if (!$scope.merchy.merch.alreadyInfoed) {
+
+            var realInv = econFac.merchInv($scope.merchy.merch.inv).then(function(r) {
+                console.log('THIS NPC HAS:', r)
+                for (var n = 0; n < $scope.merchy.merch.inv.length; n++) {
+                    $scope.merchy.merch.inv[n].item = r[n];
+                }
+                $scope.merchy.merch.alreadyInfoed = true;
+                // $scope.merchy.merch.inv = r
+                $scope.$apply();
+            })
+        }
     };
     $scope.merchy.itemForPlayer = null;
     $scope.merchy.exchange = function(item, dir, ind) {
@@ -45,7 +49,7 @@ app.controller('merch-cont', function($scope, $http, $q, $timeout, $window, econ
                         } else {
                             //buying
                             if (numToExch * itemBaseCost < $scope.playerItems.gold) {
-                                console.log('Scummy merchant didnt even give me my ',item)
+                                console.log('Scummy merchant didnt even give me my ', item)
                                 if (numToExch < item.num) {
                                     //there'll still be some left over;
                                     $scope.merchy.merch.inv[ind].num -= numToExch;
@@ -53,26 +57,26 @@ app.controller('merch-cont', function($scope, $http, $q, $timeout, $window, econ
                                     $scope.merchy.merch.inv.splice(ind, 1);
                                 }
                                 var itLoc = -1;
-                                for (var i = 0 ;i<$scope.playerItems.inv.length;i++){
+                                for (var i = 0; i < $scope.playerItems.inv.length; i++) {
                                     var compName = $scope.playerItems.inv[i].item[0].pre + ' ' + $scope.playerItems.inv[i].item[1].name + 's ' + $scope.playerItems.inv[i].item[2].post
-                                    if (itemFull==compName){
+                                    if (itemFull == compName) {
                                         //this item already exists, so just increase quantity;
                                         itLoc = i;
                                     }
                                 }
-                                if (itLoc!=-1){
-                                    $scope.playerItems.inv[itLoc].num+=numToExch;
-                                }else{
+                                if (itLoc != -1) {
+                                    $scope.playerItems.inv[itLoc].num += numToExch;
+                                } else {
                                     //item does not already exist;
                                     var itemForPlayer;
                                     $scope.merchy.itemForPlayer = angular.copy(item);
-                                    console.log('ITEM FOR PLAYER',$scope.merchy.itemForPlayer)
+                                    console.log('ITEM FOR PLAYER', $scope.merchy.itemForPlayer)
                                     $scope.merchy.itemForPlayer.num = numToExch;
                                     $scope.playerItems.inv.push($scope.merchy.itemForPlayer);
                                 }
                                 $scope.playerItems.gold -= itemBaseCost * numToExch;
-                            }else{
-                                bootbox.alert('You don\'t have enough money to afford '+numToExch+' '+itemFull+'s!')
+                            } else {
+                                bootbox.alert('You don\'t have enough money to afford ' + numToExch + ' ' + itemFull + 's!')
                             }
                         }
                         angular.element('body').scope().moveReady = true;

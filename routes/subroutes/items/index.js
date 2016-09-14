@@ -88,14 +88,15 @@ router.get('/byLvl/:lvl', function(req, res, next) {
                 mongoose.model('Junk').find({ "lvl": { $lt: parseInt(req.params.lvl) + 4 } }, function(err, dataJ) {
                     var lootz = { num: parseInt(req.params.lvl) };
                     console.log('to start, lootz is', lootz)
-                    if (Math.random() > 0.5) {
+                    if (Math.random() > 0.5 ) {
                         //half the time, user gets loot
                         lootz.loot = {};
-                        lootz.type = 'loot';
                         //60% of the time, loot is armor. Otherwise, loot is weapon.
                         //I may adjust these nums later, but for now, the slightly higher percentage of armor to weapons is generally because you need more armor than you do weapons.
-                        var itemArr = Math.random() > 0.4 ? dataA : dataW;
+                        var itemArrNum = Math.random() > 0.4 ? 0 : 1;
+                        var itemArr = itemArr && itemArr>0 ? dataW : dataA;
                         var actualLvl = Math.floor(dist.ppf(Math.random()));
+                        lootz.type = itemArrNum;
                         //now continue redoing this until we actually get a list of items;
                         while (!findItemAtLvl(actualLvl, itemArr).length) {
                             actualLvl = Math.floor(dist.ppf(Math.random()));

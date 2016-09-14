@@ -257,9 +257,11 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                 }
                 //then inventory items' def
                 if ($scope.playerItems.inv && $scope.playerItems.inv.length) {
+                    //player has items in inv
                     for (var resd = 0; resd < $scope.playerItems.inv.length; resd++) {
-                        bonusA += $scope.playerItems.inv[resd][1].def || 0;
-                        if ($scope.playerItems.inv[resd][1].res && $scope.playerItems.inv[resd][1].res.indexOf(dtype) != -1) {
+                        console.log('CHECKING DEFENSE ON ITEM:',$scope.playerItems.inv[resd])
+                        bonusA += $scope.playerItems.inv[resd].item[1].def || 0;
+                        if ($scope.playerItems.inv[resd].item[1].res && $scope.playerItems.inv[resd].item[1].res.indexOf(dtype) != -1) {
                             //the type of damage done by this monster IS being resisted by an item in inventory
                             activeRes = true;
                         }
@@ -317,12 +319,17 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
             combatFac.rollLoot($scope.intTarg).then(function(items) {
                 console.log('FROM ROLL LOOT', items)
                 var iName = '';
+                var lootObj = {};
                 if (items.type == 'junk') {
                     iName = items.loot.name;
-                    $scope.playerItems.inv.push(items.loot.num);
+                    // $scope.playerItems.inv.push(items.loot.num);
                 } else {
+                    //not junk!
+                    lootObj.lootType = items.type;
+                    lootObj.num = items.num;
+                    lootObj.item = [items.loot.pre,items.loot.base,items.loot.post];
                     iName = items.loot.pre.pre + ' ' + items.loot.base.name + ' ' + items.loot.post.post;
-                    $scope.playerItems.inv.push([items.loot.pre.num, items.loot.base.num, items.loot.post.num])
+                    $scope.playerItems.inv.push(lootObj)
                 }
                 bootbox.alert('After killing the ' + $scope.intTarg.name + ', you recieve ' + iName + '!');
 

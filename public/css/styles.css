@@ -230,10 +230,11 @@ body {
 #uiloader {
   position: absolute;
   left: 25%;
-  transform: translateZ(40px);
+  transform: translateZ(90px);
   top: 9%;
   width: 30%;
-  height: 600px; }
+  height: 600px;
+  z-index: 99; }
   #uiloader > div {
     height: 100%;
     width: 100%; }
@@ -470,6 +471,35 @@ body#mob {
     cursor: pointer; }
     #UI .currUIEl:hover {
       box-shadow: 0 0 4px #fff; }
+  #UI #inv-body-boxes {
+    width: 45%;
+    height: 95%;
+    position: absolute;
+    top: 72px;
+    left: 44px; }
+    #UI #inv-body-boxes .body-box {
+      width: 106px;
+      min-height: 49px;
+      position: absolute;
+      color: #fff;
+      background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(".././img/assets/invIconBg.jpg");
+      background-attachment: fixed;
+      text-align: center; }
+
+#contexMen {
+  position: absolute;
+  transform: translateZ(92px);
+  padding: 10px;
+  background: #fff; }
+  #contexMen li {
+    list-style: none;
+    padding: 5px;
+    border-bottom: 1px solid #aaa;
+    transition-duration: .5s;
+    cursor: pointer; }
+    #contexMen li:hover {
+      background: #ddd;
+      box-shadow: 0 0 4px #ddd; }
 
 .moreInfList {
   list-style: none; }

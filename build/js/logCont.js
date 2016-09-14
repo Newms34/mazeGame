@@ -1,4 +1,4 @@
-var app = angular.module('mazeGame', ['ui.bootstrap.contextMenu','ngTouch']).controller('log-con', function($scope, $http, $q, $timeout, $window, userFact) {
+var app = angular.module('mazeGame', ['ngTouch']).controller('log-con', function($scope, $http, $q, $timeout, $window, userFact) {
     $scope.hazLogd = false;
     $scope.newUsr = function() {
         //eventually we need to CHECK to see if this user is already taken!

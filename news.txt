@@ -1,17 +1,8 @@
-Beginnings of an inventory system (WIP)!
-Turn - based Combat
-3D Maze generation
-Works on the MEAN (Mongo, Express, Angular, Node) stack!
-Phone navigation support (WIP)!
-Yes, it's pretty much pure JavaScript!
-Semi-random loot generator picks a general weapon and adds a prefix and suffix modifier. Loot currently doesn't drop, but this will be used for it!
-New weapon effects! Includes: 
-Stun: chance to prevent enemy from taking next turn
-Nova: chance to cause a 'nova' of a particular damage type for additional damage
-Confusion: chance for enemy to damage itself instead of you!
-Vampiric: heals you for a small amount of the weapon damage when you attack
-Cruel: increased duration of damage-over-time stuff (like burning)
-Brutal: increased damage
-Benedictive: increased healing
-Rejuvenating: increased duration of health regen spells
-Various 'attunement' mods: Each of these increases defense towards a particular damage type by a certain amount. But be careful! they also weaken you to two other damage types (e.g., an Axe of Shielding has additional defense against physical damage, but leaves you vulnerable to fire and ice attacks)!
+Weapon effects!
+Loot drops!
+Inventory system (WIP)!
+Merchants!
+Buying and Selling!
+Meaningless NPC Quotes!
+Pretty pictures!
+NOTE: If your login info didn't work, chances are I wiped the server. I gotta do this whenever I make a change to the User model, so sorry!

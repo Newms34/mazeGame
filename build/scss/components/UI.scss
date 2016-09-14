@@ -33,6 +33,40 @@
             box-shadow: 0 0 4px #fff;
         }
     }
+    #inv-body-boxes {
+        width: 45%;
+        height: 95%;
+        position: absolute;
+        top: 72px;
+        left: 44px;
+        .body-box {
+            width: 106px;
+            min-height: 49px;
+            position: absolute;
+            color: #fff;
+            background: linear-gradient( rgba(0, 0, 0, .5), rgba(0, 0, 0, .5)), url('.././img/assets/invIconBg.jpg');
+            background-attachment: fixed;
+            text-align: center;
+        }
+    }
+}
+
+#contexMen {
+    position: absolute;
+    transform: translateZ(92px);
+    padding: 10px;
+    background: #fff;
+    & li{
+        list-style:none;
+        padding:5px;
+        border-bottom:1px solid #aaa;
+        transition-duration:.5s;
+        cursor:pointer;
+        &:hover{
+            background:#ddd;
+            box-shadow:0 0 4px #ddd;
+        }
+    }
 }
 
 .moreInfList {
@@ -84,7 +118,7 @@ body#mob {
                 position: relative;
                 top: 40%;
                 left: 0%;
-                transform-origin:65% 50% -56px;
+                transform-origin: 65% 50% -56px;
                 .RingUIEl {
                     left: 40%;
                     top: 10%;

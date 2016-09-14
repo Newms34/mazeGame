@@ -23,7 +23,7 @@
                     <tbody>
                         <tr ng-repeat='it in merchy.merch.inv'>
                             <td>{{it.item[0].pre}} {{it.item[1].name}} {{it.item[2].post}}</td>
-                            <td>{{trunc(it.item[1].cost*(10+it.item[0].cost+it.item[2].cost)/10)}} Munneez</td>
+                            <td>{{trunc(it.item[1].cost*(10+it.item[0].cost+it.item[2].cost)/10)}} gold</td>
                             <td>{{it.num}}</td>
                             <td>
                                 <button class='btn btn-danger' ng-click='merchy.exchange(it,false,$index)'>Buy</button>
@@ -45,7 +45,7 @@
                     <tbody>
                         <tr ng-repeat='eq in playerItems.inv'>
                             <td>{{eq.item[0].pre}} {{eq.item[1].name}} {{eq.item[2].post}}</td>
-                            <td>{{trunc(0.9*eq.item[1].cost*(10+eq.item[0].cost+eq.item[2].cost)/10)}} Munneez</td>
+                            <td>{{trunc(0.9*eq.item[1].cost*(10+eq.item[0].cost+eq.item[2].cost)/10)}} gold</td>
                             <td>{{eq.num}}</td>
                             <td>
                                 <button class='btn btn-danger' ng-click='merchy.exchange(eq,true,$index)'>Sell</button>

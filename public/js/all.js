@@ -1,4 +1,4 @@
-var app = angular.module('mazeGame', ['ui.bootstrap.contextMenu','ngTouch']).controller('log-con', function($scope, $http, $q, $timeout, $window, userFact) {
+var app = angular.module('mazeGame', []).controller('log-con', function($scope, $http, $q, $timeout, $window, userFact) {
     $scope.hazLogd = false;
     $scope.newUsr = function() {
         //eventually we need to CHECK to see if this user is already taken!
@@ -89,7 +89,7 @@ var app = angular.module('mazeGame', ['ui.bootstrap.contextMenu','ngTouch']).con
 });
 
 var socket = io();
-app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $window, mazeFac, combatFac, UIFac, userFact,econFac) {
+app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $window, mazeFac, combatFac, UIFac, userFact, econFac) {
     $scope.width = 6;
     $scope.height = 6;
     $scope.path = []; //all the cells visited, in order.
@@ -129,9 +129,9 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
             $scope.currEn = d.data.currEn;
             $scope.isStunned = d.data.isStunned;
             $scope.name = d.data.name;
-            econFac.merchInv($scope.playerItems.inv).then(function(r){
-                for (var ep = 0; ep<r.length;ep++){
-                    console.log('REPLACING',$scope.playerItems.inv[ep].item,'WITH',r[ep])
+            econFac.merchInv($scope.playerItems.inv).then(function(r) {
+                for (var ep = 0; ep < r.length; ep++) {
+                    console.log('REPLACING', $scope.playerItems.inv[ep].item, 'WITH', r[ep])
                     $scope.playerItems.inv[ep].item = r[ep];
                 }
             })
@@ -156,22 +156,35 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
             });
         }
     })();
+    $scope.getInvName = function(el) {
+        var name = '';
+        if (!el.item) {
+            return 'ERROR!'
+        }
+        if (el.item.length && el.item.length > 2) {
+            //armor or weap
+            name = el.item[0].pre + ' ' + el.item[1].name + ' ' + el.item[2].post;
+        } else {
+            //junk
+            name = el.item[0].name;
+        }
+        return name;
+    }
     $scope.fillCells = function() {
         for (var i = 0; i < $scope.cells.length; i++) {
-            if($scope.cells[i].has=='mons'){
-                mazeFac.popCell($scope.lvl,$scope.cells[i].id).then(function(m){
-                    $scope.cells[$scope.cellNames.indexOf(m.cell)].has=m.mons;
+            if ($scope.cells[i].has == 'mons') {
+                mazeFac.popCell($scope.lvl, $scope.cells[i].id).then(function(m) {
+                    $scope.cells[$scope.cellNames.indexOf(m.cell)].has = m.mons;
                 })
-            }
-            else if($scope.cells[i].has=='npcs'){
+            } else if ($scope.cells[i].has == 'npcs') {
                 //put a dood in this cell
-                console.log($scope.cells[i].id,'has an npc.')
-                econFac.getNpc($scope.cells[i].id).then(function(r){
-                    $scope.cells[$scope.cellNames.indexOf(r.id)].has=r.data;//assign the merch to cell
-                    if(r.data.isMerch){
+                console.log($scope.cells[i].id, 'has an npc.')
+                econFac.getNpc($scope.cells[i].id).then(function(r) {
+                    $scope.cells[$scope.cellNames.indexOf(r.id)].has = r.data; //assign the merch to cell
+                    if (r.data.isMerch && r.data.isMerch == true) {
                         //npc is a merchant
-                        econFac.merchInv(r.data.inv,r.id).then(function(inv){
-                             $scope.cells[$scope.cellNames.indexOf(inv.id)].has.inv=inv.inv;
+                        econFac.merchInv(r.data.inv, r.id).then(function(inv) {
+                            $scope.cells[$scope.cellNames.indexOf(inv.id)].has.inv = inv.inv;
                         })
                     }
                 });
@@ -195,7 +208,31 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
     $scope.compareCell = function(id) {
         return id == $scope.playerCell;
     };
-    $scope.Inventory = [];
+    $scope.bodyBoxes = [{
+        name: 'head',
+        x: 81,
+        y: 1
+    }, {
+        name: 'chest',
+        x: 80,
+        y: 115
+    }, {
+        name: 'legs',
+        x: 82,
+        y: 361
+    }, {
+        name: 'hands',
+        x: 1,
+        y: 285
+    }, {
+        name: 'feet',
+        x: 79,
+        y: 510
+    }, {
+        name: 'weap',
+        x: 158,
+        y: 284
+    }];
     $scope.Skills = [];
     $scope.Bestiary = [];
     $scope.Quests = [];
@@ -217,15 +254,20 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
             $scope.currUINum = 0;
         }
         $scope.currUIPan = $scope.UIPans[$scope.currUINum]; //title of current ui panel
-        if ($scope.currUIPan !== 'Menu') {
+        if ($scope.currUIPan !== 'Menu' && $scope.currUIPan !== 'Inventory') {
             UIFac.getUIObj($scope.currUIPan, $scope[$scope.currUIPan]).then(function(uiRes) {
                 $scope.currUIObjs = uiRes.data;
                 console.log('UI OBJS:', $scope.currUIObjs);
             });
+        } else if ($scope.currUIPan == 'Inventory') {
+            UIFac.doPlayerInv($scope.playerItems, $scope.bodyBoxes).then(function(s) {
+                $scope.bodyBoxes = s;
+                $scope.currUIObjs = $scope.playerItems.inv;
+            });
         }
         $scope.currUIBg = UIFac.getUIBg($scope.currUIPan);
     };
-    $scope.chInv(-1);
+    $scope.chInv(1);
     //end UI stuff
     $scope.bombOn = false;
     $scope.roomRot = 0;
@@ -338,18 +380,18 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
             if ((e.which == 87 || e.which == 38 || e.which == 83 || e.which == 40) && canMove && !$scope.moving) {
                 $scope.playerCell = x + '-' + y;
                 $scope.cells[$scope.cellNames.indexOf($scope.playerCell)].pViz = true;
-                $scope.intTarg = typeof $scope.cells[$scope.cellNames.indexOf($scope.playerCell)].has == 'object' && !$scope.cells[$scope.cellNames.indexOf($scope.playerCell)].has.inv? $scope.cells[$scope.cellNames.indexOf($scope.playerCell)].has : false;
+                $scope.intTarg = typeof $scope.cells[$scope.cellNames.indexOf($scope.playerCell)].has == 'object' && !$scope.cells[$scope.cellNames.indexOf($scope.playerCell)].has.inv ? $scope.cells[$scope.cellNames.indexOf($scope.playerCell)].has : false;
                 if ($scope.intTarg) {
                     console.log('cell cons (probly mons):', $scope.intTarg);
                     $scope.moveReady = false; //set to false since we're in combat!
                     $scope.inCombat = true;
                     combatFac.combatReady(); //set up the board
                 }
-                if (typeof $scope.cells[$scope.cellNames.indexOf($scope.playerCell)].has == 'object' && $scope.cells[$scope.cellNames.indexOf($scope.playerCell)].has.inv){
+                if (typeof $scope.cells[$scope.cellNames.indexOf($scope.playerCell)].has == 'object' && $scope.cells[$scope.cellNames.indexOf($scope.playerCell)].has.inv) {
                     $scope.currNpc = $scope.cells[$scope.cellNames.indexOf($scope.playerCell)].has;
                     $scope.merchy.prepNpc();
-                    console.log('NPC in cell ',$scope.cells[$scope.cellNames.indexOf($scope.playerCell)].id,':',$scope.currNpc)
-                }else{
+                    // $scope.isNearMerch = $scope.cells[$scope.cellNames.indexOf($scope.playerCell)].has.isMerch
+                } else {
                     $scope.currNpc = null;
                 }
                 $scope.$digest();
@@ -493,9 +535,25 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
         }
     });
     $scope.getUIInfo = function(el) {
+        var name;
+        if (el.item.length && el.item.length > 2) {
+            //armor or weap
+            name = el.item[0].pre + ' ' + el.item[1].name + ' ' + el.item[2].post;
+        } else {
+            //junk
+            name = el.item[0].name;
+        }
+        var desc;
+        if (el.item.length && el.item.length > 2) {
+            //armor or weap
+            desc = el.item[1].desc + '<br/>' + el.item[0].description + '<br/>' + el.item[2].description;
+        } else {
+            //junk
+            desc = el.item[0].desc;
+        }
         bootbox.dialog({
-            title: '<h3>' + el.name + '</h3>',
-            message: '<p>' + el.desc + '</p><p id="moreInf" style="display:none;"></p>',
+            title: '<h3>' + name + '</h3>',
+            message: '<p>' + desc + '</p><p id="moreInf" style="display:none;"></p>',
             buttons: {
                 success: {
                     label: "Close",
@@ -556,37 +614,74 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
     };
     $scope.logout = UIFac.logout;
     $scope.reset = UIFac.reset;
-    $scope.trunc = function(n){
-        return Math.floor(n*10)/10;
+    $scope.trunc = function(n) {
+        return Math.floor(n * 10) / 10;
     };
     $scope.isNearMerch = false; //only active if we're in a room with a merchant
-    $scope.invMenu = [
-        ['Equip', function($itemScope) {
-            console.log('RIGHT CLICK', $itemScope.UIEl);
-        }], null, ['Destroy', function($itemScope) {
-            console.log('RIGHT CLICK', $itemScope.UIEl);
-            bootbox.confirm('Are you sure you wish to destroy this ' + $itemScope.UIEl.name + '?', function(res) {
-                console.log('RES', res, $itemScope.UIEl.name);
-                if (res && res !== null) {
-                    var itToDest = -1;
-                    for (var i = 0; i < $scope.currUIObjs.length; i++) {
-                        if ($scope.currUIObjs[i].name == $itemScope.UIEl.name) {
-                            itToDest = i;
-                        }
-                    }
-                    if (itToDest != -1) {
-                        console.log($scope.currUIObjs[itToDest])
-                        $scope.currUIObjs.splice(itToDest, 1);
-                        $scope.$digest();
-                    }
-                }
-            });
-        }], null, ['Sell', function($itemScope) {
-            console.log('SELL', $itemScope)
-        }, function($itemScope) {
-            return $scope.isNearMerch;
-        }]
-    ]
+    $scope.equipItem = function(el, numb) {
+        console.log('EL', el)
+        var whereNum = el.item && el.item[1] && typeof el.item[1].slot !== 'undefined' ? el.item[1].slot : -1;
+        if (el.item && el.item.length > 2 && whereNum != -1) {
+            //armor!
+        } else if (el.item && el.item.length > 2) {
+            whereNum = 5;
+        } else {
+            //probly junk
+            return;
+        }
+        var oldItem = angular.copy($scope.bodyBoxes[whereNum]); //have to do something with this later. DUNNO WAT
+        var oldItemInv = {
+            lootType: oldItem.name == 'weap' ? 1 : 0,
+            item: angular.copy(oldItem.itFullInfo),
+            num: 1
+        };
+        $scope.bodyBoxes[whereNum].itFullInfo = el.item;
+        $scope.bodyBoxes[whereNum].itName = $scope.bodyBoxes[whereNum].itFullInfo[0].pre + ' ' + $scope.bodyBoxes[whereNum].itFullInfo[1].name + ' ' + $scope.bodyBoxes[whereNum].itFullInfo[2].post;
+        //now copy to player legs!
+        console.log('LOCATOR', whereNum, 'NAME:', $scope.bodyBoxes[whereNum].name, 'FROM', $scope.bodyBoxes[whereNum], 'TO', $scope.playerItems[$scope.bodyBoxes[whereNum].name], 'OLD ITEM:', oldItem);
+        for (var i = 0; i < $scope.playerItems[$scope.bodyBoxes[whereNum].name].length; i++) {
+
+            $scope.playerItems[$scope.bodyBoxes[whereNum].name][i] = $scope.bodyBoxes[whereNum].itFullInfo[i].num;
+        }
+        //now remove that item from inv
+        var derp = $scope.playerItems.inv.splice(numb, 1);
+        //and add old item (that we just unequipped) to inv
+        if (typeof oldItemInv.item !== 'undefined') {
+            $scope.playerItems.inv.push(oldItemInv);
+        }
+        UIFac.doPlayerInv($scope.playerItems, $scope.bodyBoxes).then(function(s) {
+            $scope.bodyBoxes = s;
+            $scope.currUIObjs = $scope.playerItems.inv;
+        });
+    }
+    $scope.contMenOn = false;
+    window.oncontextmenu = function(e) {
+        if ($scope.currUIPan == "Inventory" && e.target.className == 'currUIEl ng-binding ng-scope') {
+            e.preventDefault();
+            e.stopPropagation();
+            $scope.contMenOn = UIFac.getContMen(angular.element(e.target).scope(), e.x, e.y);
+            $scope.$apply();
+
+        }
+    }
+    window.onclick = function(e) {
+        console.log(e.target, e.target.id, e.target.id == 'contexMen')
+        if ((!e.button || e.button === 0) && e.target.id != 'contexMen') {
+            $scope.contMenOn = false;
+        }
+    }
+    $scope.trashItem = function(el, numb) {
+        bootbox.confirm('Are you sure you wish to destroy this ' + (el.item.length>1?el.item[0].pre+' '+ el.item[1].name + ' '+el.item[2].post:el.item[0].name)+'?', function(res) {
+            console.log('RES', res, el.name);
+            if (res && res !== null) {
+                $scope.playerItems.inv.splice(numb, 1);
+                UIFac.doPlayerInv($scope.playerItems, $scope.bodyBoxes).then(function(s) {
+                    $scope.bodyBoxes = s;
+                    $scope.currUIObjs = $scope.playerItems.inv;
+                });
+            }
+        });
+    }
 });
 
 app.controller('mob-con', function($scope, $http, $q, $interval, $swipe, $window, UIFac) {
@@ -1125,9 +1220,11 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                 }
                 //then inventory items' def
                 if ($scope.playerItems.inv && $scope.playerItems.inv.length) {
+                    //player has items in inv
                     for (var resd = 0; resd < $scope.playerItems.inv.length; resd++) {
-                        bonusA += $scope.playerItems.inv[resd][1].def || 0;
-                        if ($scope.playerItems.inv[resd][1].res && $scope.playerItems.inv[resd][1].res.indexOf(dtype) != -1) {
+                        console.log('CHECKING DEFENSE ON ITEM:',$scope.playerItems.inv[resd])
+                        bonusA += $scope.playerItems.inv[resd].item[1].def || 0;
+                        if ($scope.playerItems.inv[resd].item[1].res && $scope.playerItems.inv[resd].item[1].res.indexOf(dtype) != -1) {
                             //the type of damage done by this monster IS being resisted by an item in inventory
                             activeRes = true;
                         }
@@ -1185,12 +1282,17 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
             combatFac.rollLoot($scope.intTarg).then(function(items) {
                 console.log('FROM ROLL LOOT', items)
                 var iName = '';
+                var lootObj = {};
                 if (items.type == 'junk') {
                     iName = items.loot.name;
-                    $scope.playerItems.inv.push(items.loot.num);
+                    // $scope.playerItems.inv.push(items.loot.num);
                 } else {
+                    //not junk!
+                    lootObj.lootType = items.type;
+                    lootObj.num = items.num;
+                    lootObj.item = [items.loot.pre,items.loot.base,items.loot.post];
                     iName = items.loot.pre.pre + ' ' + items.loot.base.name + ' ' + items.loot.post.post;
-                    $scope.playerItems.inv.push([items.loot.pre.num, items.loot.base.num, items.loot.post.num])
+                    $scope.playerItems.inv.push(lootObj)
                 }
                 bootbox.alert('After killing the ' + $scope.intTarg.name + ', you recieve ' + iName + '!');
 
@@ -1571,14 +1673,18 @@ app.controller('merch-cont', function($scope, $http, $q, $timeout, $window, econ
         console.log('FROM MERCH CONT', $scope.merchy)
         $scope.merchy.merch.sez = $scope.merchy.merch.gossip[Math.floor(Math.random() * $scope.merchy.merch.gossip.length)];
         console.log(econFac.merchInv, typeof $scope.merchy.merch.inv)
-        var realInv = econFac.merchInv($scope.merchy.merch.inv).then(function(r) {
-            console.log('THIS NPC HAS:', r)
-            for (var n = 0; n < $scope.merchy.merch.inv.length; n++) {
-                $scope.merchy.merch.inv[n].item = r[n];
-            }
-            // $scope.merchy.merch.inv = r
-            $scope.$apply();
-        })
+        if (!$scope.merchy.merch.alreadyInfoed) {
+
+            var realInv = econFac.merchInv($scope.merchy.merch.inv).then(function(r) {
+                console.log('THIS NPC HAS:', r)
+                for (var n = 0; n < $scope.merchy.merch.inv.length; n++) {
+                    $scope.merchy.merch.inv[n].item = r[n];
+                }
+                $scope.merchy.merch.alreadyInfoed = true;
+                // $scope.merchy.merch.inv = r
+                $scope.$apply();
+            })
+        }
     };
     $scope.merchy.itemForPlayer = null;
     $scope.merchy.exchange = function(item, dir, ind) {
@@ -1608,7 +1714,7 @@ app.controller('merch-cont', function($scope, $http, $q, $timeout, $window, econ
                         } else {
                             //buying
                             if (numToExch * itemBaseCost < $scope.playerItems.gold) {
-                                console.log('Scummy merchant didnt even give me my ',item)
+                                console.log('Scummy merchant didnt even give me my ', item)
                                 if (numToExch < item.num) {
                                     //there'll still be some left over;
                                     $scope.merchy.merch.inv[ind].num -= numToExch;
@@ -1616,26 +1722,26 @@ app.controller('merch-cont', function($scope, $http, $q, $timeout, $window, econ
                                     $scope.merchy.merch.inv.splice(ind, 1);
                                 }
                                 var itLoc = -1;
-                                for (var i = 0 ;i<$scope.playerItems.inv.length;i++){
+                                for (var i = 0; i < $scope.playerItems.inv.length; i++) {
                                     var compName = $scope.playerItems.inv[i].item[0].pre + ' ' + $scope.playerItems.inv[i].item[1].name + 's ' + $scope.playerItems.inv[i].item[2].post
-                                    if (itemFull==compName){
+                                    if (itemFull == compName) {
                                         //this item already exists, so just increase quantity;
                                         itLoc = i;
                                     }
                                 }
-                                if (itLoc!=-1){
-                                    $scope.playerItems.inv[itLoc].num+=numToExch;
-                                }else{
+                                if (itLoc != -1) {
+                                    $scope.playerItems.inv[itLoc].num += numToExch;
+                                } else {
                                     //item does not already exist;
                                     var itemForPlayer;
                                     $scope.merchy.itemForPlayer = angular.copy(item);
-                                    console.log('ITEM FOR PLAYER',$scope.merchy.itemForPlayer)
+                                    console.log('ITEM FOR PLAYER', $scope.merchy.itemForPlayer)
                                     $scope.merchy.itemForPlayer.num = numToExch;
                                     $scope.playerItems.inv.push($scope.merchy.itemForPlayer);
                                 }
                                 $scope.playerItems.gold -= itemBaseCost * numToExch;
-                            }else{
-                                bootbox.alert('You don\'t have enough money to afford '+numToExch+' '+itemFull+'s!')
+                            } else {
+                                bootbox.alert('You don\'t have enough money to afford ' + numToExch + ' ' + itemFull + 's!')
                             }
                         }
                         angular.element('body').scope().moveReady = true;
@@ -2062,16 +2168,51 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
             }
             var ringData = {
                 objs: objs,
-                rot : 360/objs.length 
+                rot: 360 / objs.length
             }
-            console.log('ring data',ringData)
+            console.log('ring data', ringData)
             return ringData;
         },
         PlatinumSpinningRings: function(curr, inc) {
             return curr + inc;
+        },
+        doPlayerInv: function(stuff, boxes) {
+            return $http.get('/item/allItems').then(function(itArr) {
+                console.log('BOXES O STUFF', stuff, boxes);
+                for (var itm in stuff) {
+                    if (itm != 'gold' && itm != 'inv') {
+                        var fnd = -1;
+                        //find which box this belongs to
+                        for (var i = 0; i < boxes.length; i++) {
+                            if (boxes[i].name == itm) {
+                                fnd = i;
+                                break;
+                            }
+                        }
+                        if (stuff[itm].indexOf(-1)==-1) {
+                            console.log('item isnt undefined!',stuff[itm]);
+                            boxes[fnd].itName = itArr.data[2][stuff[itm][0]].pre +' '+ (itm=='weap'?  itArr.data[1][stuff[itm][1]].name : itArr.data[0][stuff[itm][1]].name)+' '+itArr.data[2][stuff[itm][2]].post;
+                            boxes[fnd].itFullInfo = [itArr.data[2][stuff[itm][0]],itm=='weap'?  itArr.data[1][stuff[itm][1]] : itArr.data[0][stuff[itm][1]],itArr.data[2][stuff[itm][2]]]
+                        } else {
+                            boxes[fnd].itName = 'none';
+                        }
+                    }
+                }
+                return boxes;
+            })
+        }, 
+        getContMen: function(scp,x,y){
+            console.log('GOT TO getContMen()')
+            return {
+                x:x,
+                y:y,
+                el:scp.UIEl,
+                num:scp.$index
+            }
         }
     };
 });
+
 app.factory('userFact', function($http) {
     return {
         checkPwdStr: function(pwd) {

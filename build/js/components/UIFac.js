@@ -379,13 +379,47 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
             }
             var ringData = {
                 objs: objs,
-                rot : 360/objs.length 
+                rot: 360 / objs.length
             }
-            console.log('ring data',ringData)
+            console.log('ring data', ringData)
             return ringData;
         },
         PlatinumSpinningRings: function(curr, inc) {
             return curr + inc;
+        },
+        doPlayerInv: function(stuff, boxes) {
+            return $http.get('/item/allItems').then(function(itArr) {
+                console.log('BOXES O STUFF', stuff, boxes);
+                for (var itm in stuff) {
+                    if (itm != 'gold' && itm != 'inv') {
+                        var fnd = -1;
+                        //find which box this belongs to
+                        for (var i = 0; i < boxes.length; i++) {
+                            if (boxes[i].name == itm) {
+                                fnd = i;
+                                break;
+                            }
+                        }
+                        if (stuff[itm].indexOf(-1)==-1) {
+                            console.log('item isnt undefined!',stuff[itm]);
+                            boxes[fnd].itName = itArr.data[2][stuff[itm][0]].pre +' '+ (itm=='weap'?  itArr.data[1][stuff[itm][1]].name : itArr.data[0][stuff[itm][1]].name)+' '+itArr.data[2][stuff[itm][2]].post;
+                            boxes[fnd].itFullInfo = [itArr.data[2][stuff[itm][0]],itm=='weap'?  itArr.data[1][stuff[itm][1]] : itArr.data[0][stuff[itm][1]],itArr.data[2][stuff[itm][2]]]
+                        } else {
+                            boxes[fnd].itName = 'none';
+                        }
+                    }
+                }
+                return boxes;
+            })
+        }, 
+        getContMen: function(scp,x,y){
+            console.log('GOT TO getContMen()')
+            return {
+                x:x,
+                y:y,
+                el:scp.UIEl,
+                num:scp.$index
+            }
         }
     };
 });
