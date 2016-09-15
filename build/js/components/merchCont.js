@@ -1,4 +1,4 @@
-app.controller('merch-cont', function($scope, $http, $q, $timeout, $window, econFac) {
+app.controller('merch-cont', function($scope, $http, $q, $timeout, $window, econFac, UIFac) {
     //merchants!
     console.log('THING RUNNING')
 
@@ -49,7 +49,6 @@ app.controller('merch-cont', function($scope, $http, $q, $timeout, $window, econ
                         } else {
                             //buying
                             if (numToExch * itemBaseCost < $scope.playerItems.gold) {
-                                console.log('Scummy merchant didnt even give me my ', item)
                                 if (numToExch < item.num) {
                                     //there'll still be some left over;
                                     $scope.merchy.merch.inv[ind].num -= numToExch;
@@ -79,6 +78,10 @@ app.controller('merch-cont', function($scope, $http, $q, $timeout, $window, econ
                                 bootbox.alert('You don\'t have enough money to afford ' + numToExch + ' ' + itemFull + 's!')
                             }
                         }
+                        UIFac.doPlayerInv($scope.playerItems, $scope.bodyBoxes).then(function(s) {
+                            $scope.bodyBoxes = s;
+                            $scope.currUIObjs = $scope.playerItems.inv;
+                        });
                         angular.element('body').scope().moveReady = true;
                         $scope.moveReady = true;
                         return true;

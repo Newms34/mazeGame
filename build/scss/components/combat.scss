@@ -87,4 +87,9 @@
 	z-index:99;
 	position:relative;
 	height:100%;
+	& #battle-result{
+		padding:7px;
+		width:90%;
+		background:#fed;
+	}
 }

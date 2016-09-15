@@ -28,6 +28,11 @@ body {
     height: 50px;
     transition-duration: .25s;
     transform-style: preserve-3d;
+    & span{
+        font-size:xx-large;
+        color:#000;
+        text-align: center;
+    }
 }
 
 .nWall {

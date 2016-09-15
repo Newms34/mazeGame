@@ -1,6 +1,6 @@
 [{
     "pre": "Stunning",
-    "description": "Stunning weapon attacks may stun your foe, causing them to lose their next turn",
+    "description": "Stunning item attacks may stun your foe, causing them to lose their next turn",
     "post": "of Stunning",
     "dmgType": -1,
     "stunCh": 0.2,
@@ -24,7 +24,7 @@
     "cost": 2
 }, {
     "pre": "Corporeal",
-    "description": "Corporeal weapons do physical damage",
+    "description": "Corporeal items do physical damage",
     "post": "of Physics",
     "dmgType": 0,
     "stunCh": 0,
@@ -48,7 +48,7 @@
     "cost": 2
 }, {
     "pre": "Icey",
-    "description": "Icey weapons do ice damage",
+    "description": "Icey items do ice damage",
     "post": "of the Ice",
     "dmgType": 2,
     "stunCh": 0,
@@ -72,7 +72,7 @@
     "cost": 2
 }, {
     "pre": "Firey",
-    "description": "Firey weapons do fire damage",
+    "description": "Firey items do fire damage",
     "post": "of the Fire",
     "dmgType": 1,
     "stunCh": 0,
@@ -96,7 +96,7 @@
     "cost": 2
 }, {
     "pre": "Poisonous",
-    "description": "Poisonous weapons do poison damage",
+    "description": "Poisonous items do poison damage",
     "post": "of Poison",
     "dmgType": 3,
     "stunCh": 0,
@@ -120,7 +120,7 @@
     "cost": 2
 }, {
     "pre": "Holy",
-    "description": "Holy weapons do holy damage",
+    "description": "Holy items do holy damage",
     "post": "of Holiness",
     "dmgType": 5,
     "stunCh": 0,
@@ -144,7 +144,7 @@
     "cost": 2
 }, {
     "pre": "Dark",
-    "description": "Dark weapons do dark damage",
+    "description": "Dark items do dark damage",
     "post": "of Darkness",
     "dmgType": 4,
     "stunCh": 0,
@@ -168,7 +168,7 @@
     "cost": 2
 }, {
     "pre": "Confusing",
-    "description": "Confusing weapons provide a chance that your foe will be confused, and will do damage to itself (instead of you!).",
+    "description": "Confusing items provide a chance that your foe will be confused, and will do damage to itself (instead of you!).",
     "post": "of Confusion",
     "dmgType": -1,
     "stunCh": 0,
@@ -192,7 +192,7 @@
     "cost": 2
 }, {
     "pre": "Vampiric",
-    "description": "Vampiric weapons may heal the user on attack.",
+    "description": "Vampiric items may heal the user on attack.",
     "post": "of the Vampire",
     "dmgType": -1,
     "stunCh": 0,
@@ -216,7 +216,7 @@
     "cost": 1
 }, {
     "pre": "Cruel",
-    "description": "Cruel weapons increase the duration of degeneration effects.",
+    "description": "Cruel items increase the duration of degeneration effects.",
     "post": "of Cruelty",
     "dmgType": -1,
     "stunCh": 0,
@@ -240,7 +240,7 @@
     "cost": 1
 }, {
     "pre": "Brutal",
-    "description": "Brutal weapons increase damage of your base attacks.",
+    "description": "Brutal items increase damage of your base attacks.",
     "post": "of Brutality",
     "dmgType": -1,
     "stunCh": 0,
@@ -264,7 +264,7 @@
     "cost": 1
 }, {
     "pre": "Benedictive",
-    "description": "Benedictive weapons increase healing.",
+    "description": "Benedictive items increase healing.",
     "post": "of Benediction",
     "dmgType": -1,
     "stunCh": 0,
@@ -288,7 +288,7 @@
     "cost": 1
 }, {
     "pre": "Rejuvenating",
-    "description": "Rejuvenating weapons increase regeneration effects",
+    "description": "Rejuvenating items increase regeneration effects",
     "post": "of Rejuvenation",
     "dmgType": -1,
     "stunCh": 0,
@@ -312,7 +312,7 @@
     "cost":1
 }, {
     "pre": "Shielded",
-    "description": "Shielded weapons provide extra defense vs physical, while lowering defense vs ice/fire",
+    "description": "Shielded items provide extra defense vs physical, while lowering defense vs ice/fire",
     "post": "of Shielding",
     "dmgType": -1,
     "stunCh": 0,
@@ -336,7 +336,7 @@
     "cost": 3
 }, {
     "pre": "Glacial",
-    "description": "Glacial weapons provide extra defense vs ice, while lowering defense vs poison/fire",
+    "description": "Glacial items provide extra defense vs ice, while lowering defense vs poison/fire",
     "post": "of the Glacier",
     "dmgType": -1,
     "stunCh": 0,
@@ -360,7 +360,7 @@
     "cost": 3
 }, {
     "pre": "Pyromancer's",
-    "description": "Pyromancer's weapons provide extra defense vs fire, while lowering defense vs ice/physical",
+    "description": "Pyromancer's items provide extra defense vs fire, while lowering defense vs ice/physical",
     "post": "of the Pyromancer",
     "dmgType": -1,
     "stunCh": 0,
@@ -384,7 +384,7 @@
     "cost": 3
 }, {
     "pre": "Spider's",
-    "description": "Spider's weapons provide extra defense vs poison, while lowering defense vs holy/physical",
+    "description": "Spider's items provide extra defense vs poison, while lowering defense vs holy/physical",
     "post": "of the Spider",
     "dmgType": -1,
     "stunCh": 0,
@@ -408,7 +408,7 @@
     "cost": 3
 }, {
     "pre": "Lich's",
-    "description": "Lich's weapons provide extra defense vs dark, while lowering defense vs holy/fire",
+    "description": "Lich's items provide extra defense vs dark, while lowering defense vs holy/fire",
     "post": "of the Lich",
     "dmgType": -1,
     "stunCh": 0,
@@ -432,7 +432,7 @@
     "cost": 3
 }, {
     "pre": "Priest's",
-    "description": "Priest's weapons provide extra defense vs holy, while lowering defense vs dark/poison",
+    "description": "Priest's items provide extra defense vs holy, while lowering defense vs dark/poison",
     "post": "of the Priest",
     "dmgType": -1,
     "stunCh": 0,
@@ -456,7 +456,7 @@
     "cost": 3
 }, {
     "pre": "Impacting",
-    "description": "Impacting weapons provide a chance that your weapon will do additonal physical damage.",
+    "description": "Impacting items provide a chance that your attack will do additonal physical damage.",
     "post": "of the Shockwave",
     "dmgType": -1,
     "stunCh": 0,
@@ -480,7 +480,7 @@
     "cost": 1
 }, {
     "pre": "Exploding",
-    "description": "Exploding weapons provide a chance that your weapon will do additonal fire damage.",
+    "description": "Exploding items provide a chance that your attack will do additonal fire damage.",
     "post": "of the Inferno",
     "dmgType": -1,
     "stunCh": 0,
@@ -504,7 +504,7 @@
     "cost": 3
 }, {
     "pre": "Wendigo's",
-    "description": "Wendigo's weapons provide a chance that your weapon will do additonal ice damage.",
+    "description": "Wendigo's items provide a chance that your attack will do additonal ice damage.",
     "post": "of the Blizzard",
     "dmgType": -1,
     "stunCh": 0,
@@ -528,7 +528,7 @@
     "cost": 3
 }, {
     "pre": "Putrid",
-    "description": "Putrid weapons provide a chance that your weapon will do additonal poison damage.",
+    "description": "Putrid items provide a chance that your attack will do additonal poison damage.",
     "post": "of Putrefying",
     "dmgType": -1,
     "stunCh": 0,
@@ -552,7 +552,7 @@
     "cost": 3
 }, {
     "pre": "Corrupt",
-    "description": "Corrupt weapons provide a chance that your weapon will do additonal dark damage.",
+    "description": "Corrupt items provide a chance that your attack will do additonal dark damage.",
     "post": "of the Politician",
     "dmgType": -1,
     "stunCh": 0,
@@ -576,7 +576,7 @@
     "cost": 3
 }, {
     "pre": "Smiting",
-    "description": "Smiting weapons provide a chance that your weapon will do additonal holy damage.",
+    "description": "Smiting items provide a chance that your attack will do additonal holy damage.",
     "post": "of the Righteous",
     "dmgType": -1,
     "stunCh": 0,

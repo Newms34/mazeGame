@@ -94,16 +94,19 @@ router.get('/byLvl/:lvl', function(req, res, next) {
                         //60% of the time, loot is armor. Otherwise, loot is weapon.
                         //I may adjust these nums later, but for now, the slightly higher percentage of armor to weapons is generally because you need more armor than you do weapons.
                         var itemArrNum = Math.random() > 0.4 ? 0 : 1;
-                        var itemArr = itemArr && itemArr>0 ? dataW : dataA;
+                        var itemArr = itemArrNum && itemArrNum>0 ? dataW : dataA;
                         var actualLvl = Math.floor(dist.ppf(Math.random()));
                         lootz.type = itemArrNum;
                         //now continue redoing this until we actually get a list of items;
                         while (!findItemAtLvl(actualLvl, itemArr).length) {
                             actualLvl = Math.floor(dist.ppf(Math.random()));
                         }
+                        console.log('lvl of item',actualLvl)
                         var lItems = findItemAtLvl(actualLvl, itemArr);
+                        console.log('list of items at level',lItems);
                         //so we should now have an array of item(s) of a normal-distributed random number. Pick one:
                         lootz.loot.base = lItems[Math.floor(Math.random() * lItems.length)];
+                        console.log('chosen base',lootz.loot.base);
                         //pick a random prefix and suffix
                         lootz.loot.pre = dataP[Math.floor(Math.random() * dataP.length)];
                         lootz.loot.post = dataP[Math.floor(Math.random() * dataP.length)];

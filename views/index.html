@@ -42,6 +42,9 @@
             <div class='outWall souWall' ng-if='cl.south'></div>
             <div class='outWall wesWall' ng-if='cl.west'></div>
             <div class='playerFig' ng-if='compareCell(cl.id)' style='transform:rotateZ({{360-roomRot}}deg)'>&uparrow;</div>
+            <span ng-if='cells[cellNames.indexOf(cl.id)].has=="exit" && cells[cellNames.indexOf(cl.id)].pViz==true'>&nbsp;&nbsp;&#128682;
+
+            </span>
         </div>
     </div>
     <div id='room' style='transform:rotateX({{vertRot}}deg) translateY(320px) translateX(250px) rotateZ({{roomRot}}deg) translateZ(-320px); background:url({{isExit()}});background-size:contain;'>
@@ -62,10 +65,10 @@
         <div id='fuse'><span>{{bombsLeft}}</span></div>
     </div>
     <div id='contexMen' ng-show='contMenOn' class='panel panel-info' style='left:{{contMenOn.x}}px;top:{{contMenOn.y}}px;'>
-        
             <li ng-click='equipItem(contMenOn.el,contMenOn.num)'>&#9876; Equip</li>
             <li ng-click='trashItem(contMenOn.el,contMenOn.num)'>&#128465; Destroy</li>
-            <li ng-click=''>&#128176; Sell</li>
+            <li ng-click='merchy.exchange(contMenOn.el,true,contMenOn.num)' ng-show = 'isNearMerch'>&#128176; Sell</li>
+            <li style='color:#aaa;' title='You have to be near a merchant to sell!' ng-show = 'isNearMerch==false'>&#128176; Sell</li>
       
     </div>
     <script src='/socket.io-client/socket.io.js'></script>

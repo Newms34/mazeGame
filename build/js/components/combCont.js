@@ -5,13 +5,15 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
     $scope.comb.playersTurn = false; //monster goes first!
     $scope.comb.itemStats;
     $scope.comb.attackEffects = [];
-    $scope.inCombat=true;
+    $scope.inCombat = true;
+    $scope.comb.lastDefeated=null;
     $scope.comb.prepComb = function() {
-    
+        $scope.comb.lastDefeated = $scope.intTarg.name
         $scope.comb.battleStatus = {
             status: false,
             title: 'NONE',
-            txt: 'NONE'
+            txt: 'NONE',
+            btn:'YOU SHOULD NOT BE HERE'
         };
         $scope.intTarg.currHp = $scope.intTarg.hp; //set ens current health to max. 
         //this is reset every time we 're-enter' the cell
@@ -255,25 +257,25 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                 if (playerWeap[1].def) {
                     bonusA += playerWeap[1].def;
                 }
-                //then inventory items' def
+                //then inventory items' resistance
+                //Note that this only occurs for non-equippable items (i.e., NOT armor or weapons).
                 if ($scope.playerItems.inv && $scope.playerItems.inv.length) {
                     //player has items in inv
+
                     for (var resd = 0; resd < $scope.playerItems.inv.length; resd++) {
-                        console.log('CHECKING DEFENSE ON ITEM:',$scope.playerItems.inv[resd])
-                        bonusA += $scope.playerItems.inv[resd].item[1].def || 0;
+                        if ($scope.playerItems.inv[resd].lootType != 0 && $scope.playerItems.inv[resd].lootType != 1) {
+                            //neither armor nor weap
+                            console.log('CHECKING DEFENSE ON ITEM:', $scope.playerItems.inv[resd])
+                            bonusA += $scope.playerItems.inv[resd].item[1].def || 0;
+                        }
                         if ($scope.playerItems.inv[resd].item[1].res && $scope.playerItems.inv[resd].item[1].res.indexOf(dtype) != -1) {
                             //the type of damage done by this monster IS being resisted by an item in inventory
                             activeRes = true;
                         }
                     }
                 }
+                //now we check res changes from items.
                 totalRawA = partHitA + bonusA;
-                for (var p in parts) {
-                    //check all armor pieces for resistance
-                    if ($scope.playerItems[p].res && $scope.playerItems[p].res.indexOf(dtype) != -1) {
-                        activeRes = true;
-                    }
-                }
             } else {
                 //player was stunned last turn! do nothin, but set stunned status to false (so we can attack next turn)
                 $scope.monsStunned = false;
@@ -307,8 +309,8 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
     }
     $scope.comb.acceptStatus = function() {
         //essentially we're just making the resetting stuff asynchronous so the user has time to react and bask in their victory/wallow in their defeat
-        var vic = $scope.comb.battleStatus.title=='Victory!';
-        $('.pre-battle').show(10);     
+        var vic = $scope.comb.battleStatus.title == 'Victory!';
+        $('.pre-battle').show(10);
         $scope.comb.battleStatus = {
             status: false,
             title: ' ',
@@ -327,22 +329,21 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                     //not junk!
                     lootObj.lootType = items.type;
                     lootObj.num = items.num;
-                    lootObj.item = [items.loot.pre,items.loot.base,items.loot.post];
+                    lootObj.item = [items.loot.pre, items.loot.base, items.loot.post];
                     iName = items.loot.pre.pre + ' ' + items.loot.base.name + ' ' + items.loot.post.post;
                     $scope.playerItems.inv.push(lootObj)
                 }
-                bootbox.alert('After killing the ' + $scope.intTarg.name + ', you recieve ' + iName + '!');
+                bootbox.alert('After killing the ' + $scope.comb.lastDefeated + ', you recieve ' + iName + '!');
 
             });
             angular.element('body').scope().cells[angular.element('body').scope().cellNames.indexOf(angular.element('body').scope().playerCell)].has = '';
-        }
-        else{
+        } else {
             //defeat
             angular.element('body').scope().playerCell = '0-0';
             angular.element('body').scope().intTarg.currHp = angular.element('body').scope().hp;
             $scope.$parent.intTarg.currHp = $scope.$parent.intTarg.hp;
         }
-        $scope.inCombat=false;
+        $scope.inCombat = false;
         angular.element('body').scope().inCombat = false;
         angular.element('body').scope().intTarg = false;
         angular.element('body').scope().moveReady = true;
@@ -353,12 +354,17 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
         combatFac.updateBars($scope.maxHp, $scope.currHp, $scope.maxEn, $scope.currEn, $scope.$parent.intTarg.hp, $scope.$parent.intTarg.currHp);
         angular.element('body').scope().$apply();
     }
+    $scope.comb.battleEndMsgs = {
+        win:['Onward!','To victory!','Forward'],
+        lose:['Retry!','I\'ll be back!','Another time then...']
+    }
     $scope.comb.dieP = function() {
         $scope.comb.battleStatus = {
             status: true,
             title: 'Defeat!',
             txt: 'You\'ve been defeated!',
-            url: './img/assets/Defeat.jpg'
+            url: './img/assets/Defeat.jpg',
+            btn:$scope.comb.battleEndMsgs.lose[Math.floor(Math.random()*$scope.comb.battleEndMsgs.lose.length)]
         };
     }
     $scope.comb.dieM = function() {
@@ -366,8 +372,10 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
             status: true,
             title: 'Victory!',
             txt: 'You are victorious! The ' + $scope.intTarg.name + ' lies defeated at your feet.',
-            url: './img/assets/Victory.jpg'
+            url: './img/assets/Victory.jpg',
+            btn:$scope.comb.battleEndMsgs.win[Math.floor(Math.random()*$scope.comb.battleEndMsgs.win.length)]
         };
+        console.log($scope.comb.battleStatus)
     }
     $scope.comb.updateDoTs = function() {
             var a;

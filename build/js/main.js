@@ -121,27 +121,33 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
     $scope.bodyBoxes = [{
         name: 'head',
         x: 81,
-        y: 1
+        y: 1,
+        imgUrl:'./img/UI/head.jpg'
     }, {
         name: 'chest',
         x: 80,
-        y: 115
+        y: 115,
+        imgUrl:'./img/UI/chest.jpg'
     }, {
         name: 'legs',
         x: 82,
-        y: 361
+        y: 361,
+        imgUrl:'./img/UI/legs.jpg'
     }, {
         name: 'hands',
         x: 1,
-        y: 285
+        y: 285,
+        imgUrl:'./img/UI/hands.jpg'
     }, {
         name: 'feet',
         x: 79,
-        y: 510
+        y: 510,
+        imgUrl:'./img/UI/feet.jpg'
     }, {
         name: 'weap',
         x: 158,
-        y: 284
+        y: 284,
+        imgUrl:'./img/UI/weap.jpg'
     }];
     $scope.Skills = [];
     $scope.Bestiary = [];
@@ -300,7 +306,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
                 if (typeof $scope.cells[$scope.cellNames.indexOf($scope.playerCell)].has == 'object' && $scope.cells[$scope.cellNames.indexOf($scope.playerCell)].has.inv) {
                     $scope.currNpc = $scope.cells[$scope.cellNames.indexOf($scope.playerCell)].has;
                     $scope.merchy.prepNpc();
-                    // $scope.isNearMerch = $scope.cells[$scope.cellNames.indexOf($scope.playerCell)].has.isMerch
+                    $scope.isNearMerch = $scope.cells[$scope.cellNames.indexOf($scope.playerCell)].has.inv
                 } else {
                     $scope.currNpc = null;
                 }

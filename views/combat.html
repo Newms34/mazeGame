@@ -11,7 +11,6 @@
             </div>
         </div>
         <div class='charChoice'>
-           
         </div>
     </div>
     <div id='player' class='char-box' ng-class='{"char-turn":comb.playersTurn}'>
@@ -57,14 +56,17 @@
         </div>
     </div>
     <div class='pre-battle'>
-    	<h2>Oh no! It's a {{intTarg.name}}</h2>
-    	<button class='btn btn-danger' ng-click='comb.prepComb()'>Fight!</button>
+        <h2>Oh no! It's a {{intTarg.name}}</h2>
+        <button class='btn btn-danger' ng-click='comb.prepComb()'>Fight!</button>
     </div>
     <div id='battleStatus' ng-show='comb.battleStatus.status' class='panel panel-info' style='background:url("{{comb.battleStatus.url}}"); background-size: cover;'>
-        <div class='panel-heading'><h3>{{comb.battleStatus.title}}</h3></div>
+        <div class='panel-heading'>
+            <h3>{{comb.battleStatus.title}}</h3></div>
         <div class='panel-body'>
-            {{comb.battleStatus.txt}}
-            <button class='btn btn-default' ng-click='comb.acceptStatus();'>Okay</button>
+            <div id='battle-result'>
+                {{comb.battleStatus.txt}}
+            </div><hr/>
+            <button class='btn btn-default' ng-click='comb.acceptStatus();'>{{comb.battleStatus.btn}}!</button>
         </div>
     </div>
 </div>

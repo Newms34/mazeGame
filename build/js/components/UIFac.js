@@ -125,7 +125,7 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
             //save game, w/ optional logout
             $http.post('/user/save', data).then(function(res) {
                 if (lo && res) {
-                    $http.get('/logout').then(function(r) {
+                    $http.get('/user/logout').then(function(r) {
                         window.location.href = './login';
                     });
                 } else if (rel && res) {
@@ -389,7 +389,6 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
         },
         doPlayerInv: function(stuff, boxes) {
             return $http.get('/item/allItems').then(function(itArr) {
-                console.log('BOXES O STUFF', stuff, boxes);
                 for (var itm in stuff) {
                     if (itm != 'gold' && itm != 'inv') {
                         var fnd = -1;
@@ -413,7 +412,6 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
             })
         }, 
         getContMen: function(scp,x,y){
-            console.log('GOT TO getContMen()')
             return {
                 x:x,
                 y:y,
