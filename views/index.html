@@ -65,7 +65,8 @@
         <div id='fuse'><span>{{bombsLeft}}</span></div>
     </div>
     <div id='contexMen' ng-show='contMenOn' class='panel panel-info' style='left:{{contMenOn.x}}px;top:{{contMenOn.y}}px;'>
-            <li ng-click='equipItem(contMenOn.el,contMenOn.num)'>&#9876; Equip</li>
+            <li ng-click='equipItem(contMenOn.el,contMenOn.num)' ng-show = 'contMenOn.el.lootType!=2'>&#9876; Equip</li>
+            <li style='color:#aaa;' title='You cannot equip this item!' ng-show = 'contMenOn.el.lootType==2'>&#128176; Equip</li>
             <li ng-click='trashItem(contMenOn.el,contMenOn.num)'>&#128465; Destroy</li>
             <li ng-click='merchy.exchange(contMenOn.el,true,contMenOn.num)' ng-show = 'isNearMerch'>&#128176; Sell</li>
             <li style='color:#aaa;' title='You have to be near a merchant to sell!' ng-show = 'isNearMerch==false'>&#128176; Sell</li>

@@ -41,7 +41,7 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
     }
     $scope.comb.getAllSkills = function() {
         $http.get('/item/Skills').then(function(s) {
-            console.log(s.data)
+            console.log('ALL SKILLS',s.data)
             $scope.comb.skills = s.data;
         });
     }
@@ -147,7 +147,7 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
         }
         //d=direction (to or from player). True = from player (player attacking). False = to player (monster attacking)
         if (d) {
-            if (!$scope.pStunned) {
+            if (!$scope.pStunned && $scope.comb.skills[$scope.currSkillNum].energy<=$scope.currEn) {
                 //player is attacking monster, so we take the PLAYER'S dmg and the MONSTER'S armor
                 dtype = $scope.comb.skills[$scope.currSkillNum].type;
                 //note that suffix mod dmg type takes precidence. SO a Firey axe of Ice will do COLD damge, not FIRE
@@ -164,6 +164,8 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                     $scope.comb.attackEffects.push('brutal');
                 }
                 var skillDmg = $scope.comb.skills[$scope.currSkillNum].burst;
+                console.log('ATTACKED USING A SKILL')
+                console.log('SKILL WAS:',$scope.comb.skills[$scope.currSkillNum])
                 //for degen/regen, we basically wanna check to see if this particular degen (identified by monster name, skill name, and the -degen or -regen flag) is already in the list
                 if ($scope.comb.skills[$scope.currSkillNum].degen) {
                     //add monster degen
@@ -220,9 +222,11 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                         $scope.currHp = $scope.maxHp
                     }
                 }
-
+                $scope.currEn-=$scope.comb.skills[$scope.currSkillNum].energy;
                 return skillDmg + weapDmg + novaDmg;
-            } else {
+            } else if($scope.comb.skills[$scope.currSkillNum].energy>$scope.currEn){
+                bootbox.alert('You don\'t have enough energy to use '+$scope.comb.skills[$scope.currSkillNum].name+'.')
+            }else {
                 bootbox.alert('You\'ve been stunned! You can\'t attack this turn.')
             }
         } else {
@@ -325,6 +329,10 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                 if (items.type == 'junk') {
                     iName = items.loot.name;
                     // $scope.playerItems.inv.push(items.loot.num);
+                    lootObj.lootType = 2;
+                    lootObj.num=items.num;
+                    lootObj.item=items.loot;
+                    $scope.playerItems.inv.push(lootObj);
                 } else {
                     //not junk!
                     lootObj.lootType = items.type;
@@ -467,6 +475,10 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                             $scope.comb.dieP();
                         } else {
                             $scope.comb.playersTurn = true;
+                            $scope.currEn+=2;
+                            if($scope.currEn>$scope.maxEn){
+                                $scope.currEn=$scope.maxEn;
+                            }
                         }
                     })
                 }
@@ -484,6 +496,10 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                         $scope.comb.dieM();
                     } else {
                         $scope.comb.playersTurn = true;
+                        $scope.currEn+=2;
+                        if($scope.currEn>$scope.maxEn){
+                            $scope.currEn=$scope.maxEn;
+                        }
                     }
                 })
             }
