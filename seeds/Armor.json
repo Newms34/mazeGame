@@ -7,7 +7,7 @@
     "itemLvl": 0,
     "slot": 0,
     "imgUrl": "",
-    "num":0
+    "num": 0
 }, {
     "name": "Tattered Shirt",
     "def": 1,
@@ -17,7 +17,7 @@
     "itemLvl": 0,
     "slot": 1,
     "imgUrl": "",
-    "num":1
+    "num": 1
 }, {
     "name": "Tattered Pants",
     "def": 1,
@@ -27,7 +27,7 @@
     "itemLvl": 0,
     "slot": 2,
     "imgUrl": "",
-    "num":2
+    "num": 2
 }, {
     "name": "Worn Gloves",
     "def": 1,
@@ -37,7 +37,7 @@
     "itemLvl": 0,
     "slot": 3,
     "imgUrl": "",
-    "num":3
+    "num": 3
 }, {
     "name": "Farmer's Boots",
     "def": 1,
@@ -47,35 +47,85 @@
     "itemLvl": 0,
     "slot": 4,
     "imgUrl": "",
-    "num":4
+    "num": 4
 }, {
     "name": "Cook's Ring",
     "def": 1,
     "desc": "A cook's best friend, this little trinket offers defense against not checking your stovetop before touching it.",
-    "res":[1],
+    "res": [1],
     "cost": 8,
     "itemLvl": 2,
-    "slot":5,
+    "slot": 5,
     "imgUrl": "",
-    "num":5
+    "num": 5
 }, {
     "name": "Boiled Leather Cuirass",
     "def": 8,
     "desc": "While not as protective as a metal chestpiece, this armor is much lighter. It's also a lot more brittle, so try not to get hit.",
-    "res":[],
+    "res": [],
     "cost": 17,
     "itemLvl": 5,
-    "slot":1,
+    "slot": 1,
     "imgUrl": "",
-    "num":6
+    "num": 6
 }, {
     "name": "Boiled Leather Leggings",
     "def": 7,
     "desc": "Sometimes quick movement is preferable to standing there and getting hit. Boiled leather armor goes that route. Also, the curing process makes it smell a bit like piss. So there's that.",
-    "res":[1],
+    "res": [1],
     "cost": 15,
     "itemLvl": 5,
-    "slot":2,
+    "slot": 2,
+    "imgUrl": "",
+    "num": 7
+}, {
+    "name": "Weekend Shirt",
+    "def": 3,
+    "desc": "You wore this last time you were out with the bros. It's pretty dank.",
+    "res": [1],
+    "cost": 15,
+    "itemLvl": 1,
+    "slot": 1,
+    "imgUrl": "",
+    "num": 7
+}, {
+    "name": "Parachute Pants",
+    "def": 2,
+    "desc": "The 1980's called. They want their pants back.",
+    "res": [1],
+    "cost": 15,
+    "itemLvl": 1,
+    "slot": 2,
+    "imgUrl": "",
+    "num": 7
+}, {
+    "name": "Gardening Gloves",
+    "def": 2,
+    "desc": "These aren't exactly designed for fighting monsters. Unless by 'monsters', you mean weeds, and by 'fighting', you mean tending Grandma's veggie patch.",
+    "res":[1],
+    "cost": 15,
+    "itemLvl": 1,
+    "slot":3,
+    "imgUrl": "",
+    "num":7
+}, {
+    "name": "Sneakers from the Back of the Closet",
+    "def": 2,
+    "desc": "You know, that pair that you haven't seen in years. Really comfy, but also really weak.",
+    "res":[1],
+    "cost": 15,
+    "itemLvl": 1,
+    "slot":4,
+    "imgUrl": "",
+    "num":7
+}, {
+    "name": "Mets Hat",
+    "def": 2,
+    "desc": "Show your support for the New York Mets! Keep the sun out of your face! Protect against pretty much nothing!",
+    "res":[1],
+    "cost": 15,
+    "itemLvl": 1,
+    "slot":0,
     "imgUrl": "",
     "num":7
 }]

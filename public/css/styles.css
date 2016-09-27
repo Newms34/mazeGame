@@ -361,6 +361,11 @@ body {
       border: 2px inset #555;
       height: 90%;
       border-radius: 3px; }
+      #combat-box .stat-bar-bg .stat-bar-inner .hb-stats-ind {
+        color: #fff;
+        right: 1px;
+        position: absolute;
+        top: -3px; }
   #combat-box .health-bar .stat-bar-stat {
     position: absolute;
     background: #900;
@@ -392,6 +397,11 @@ body {
 
 .bootbox {
   transform: translateZ(210px) translateY(20%) translateX(-10%); }
+
+#sandalchest-modal-bg {
+  transform: translateZ(170px) translateY(0%) translateX(-10%) scale(0.8); }
+  #sandalchest-modal-bg .sandalchest-modal-main {
+    height: 60%; }
 
 #battleStatus {
   z-index: 99;

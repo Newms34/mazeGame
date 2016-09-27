@@ -5,7 +5,9 @@
             <div class='col-md-12 health-bar'>
                 <div class='stat-bar-bg'>
                     <div class='stat-bar-inner'>
-                        <div class='stat-bar-stat'></div>
+                        <div class='stat-bar-stat'>
+                        </div>
+                        <span class='hb-stats-ind' ng-show='currMRegens.length'>&#9650;</span><span class='hb-stats-ind' ng-show='currMDegens.length'>&#9660;</span>
                     </div>
                 </div>
             </div>
@@ -19,7 +21,9 @@
             <div class='col-md-12 health-bar'>
                 <div class='stat-bar-bg'>
                     <div class='stat-bar-inner'>
-                        <div class='stat-bar-stat'></div>
+                        <div class='stat-bar-stat'>
+                        </div>
+                        <span class='hb-stats-ind' ng-show='currPRegens.length'>&#9650;</span><span class='hb-stats-ind' ng-show='currPDegens.length'>&#9660;</span>
                     </div>
                 </div>
             </div>
@@ -65,7 +69,8 @@
         <div class='panel-body'>
             <div id='battle-result'>
                 {{comb.battleStatus.txt}}
-            </div><hr/>
+            </div>
+            <hr/>
             <button class='btn btn-default' ng-click='comb.acceptStatus();'>{{comb.battleStatus.btn}}!</button>
         </div>
     </div>

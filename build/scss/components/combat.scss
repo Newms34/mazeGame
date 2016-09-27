@@ -40,6 +40,12 @@
 			border: 2px inset #555;
 			height:90%;
 			border-radius:3px;
+			.hb-stats-ind{
+				color:#fff;
+				right:1px;
+				position:absolute;
+				top:-3px;
+			}
 		}
 	}
 	.health-bar{
@@ -83,6 +89,13 @@
 .bootbox{
 	transform:translateZ(210px) translateY(20%) translateX(-10%);
 }
+#sandalchest-modal-bg{
+	transform:translateZ(170px) translateY(0%) translateX(-10%) scale(.8);
+	.sandalchest-modal-main{
+		height:60%;
+	}
+}
+
 #battleStatus{
 	z-index:99;
 	position:relative;

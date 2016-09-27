@@ -400,7 +400,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
     $('#uiloader').draggable({ constrain: 'body' });
     $scope.inpPhone = function() {
         $scope.moveReady = false;
-        bootbox.prompt("Enter a name (you get this by visiting the site on your phone)!", function(result) {
+        sandalchest.prompt("Enter a name (you get this by visiting the site on your phone)!", function(result) {
             if (result !== null && result != ' ') {
                 //as long as its not blank
                 socket.emit('chkName', { n: result });
@@ -491,7 +491,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
     };
     $scope.levelDown = function() {
         //TO DO: this needs to be dependent on quest statuses (i.e., certain quests block it). it also needs to send data back to Mongo to update what level the player's on.
-        bootbox.confirm('Ready to go to the next level?', function(res) {
+        sandalchest.confirm('Ready to go to the next level?', function(res) {
             if (res && res !== null) {
                 $scope.moveAni(1);
             }
@@ -590,7 +590,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
         }
     }
     $scope.trashItem = function(el, numb) {
-        bootbox.confirm('Are you sure you wish to destroy this ' + (el.item.length>1?el.item[0].pre+' '+ el.item[1].name + ' '+el.item[2].post:el.item[0].name)+'?', function(res) {
+        sandalchest.confirm('Are you sure you wish to destroy this ' + (el.item.length>1?el.item[0].pre+' '+ el.item[1].name + ' '+el.item[2].post:el.item[0].name)+'?', function(res) {
             console.log('RES', res, el.name);
             if (res && res !== null) {
                 $scope.playerItems.inv.splice(numb, 1);

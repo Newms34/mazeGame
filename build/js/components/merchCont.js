@@ -75,7 +75,7 @@ app.controller('merch-cont', function($scope, $http, $q, $timeout, $window, econ
                                 }
                                 $scope.playerItems.gold -= itemBaseCost * numToExch;
                             } else {
-                                bootbox.alert('You don\'t have enough money to afford ' + numToExch + ' ' + itemFull + 's!')
+                                sandalchest.alert('You don\'t have enough money to afford ' + numToExch + ' ' + itemFull + 's!')
                             }
                         }
                         UIFac.doPlayerInv($scope.playerItems, $scope.bodyBoxes).then(function(s) {

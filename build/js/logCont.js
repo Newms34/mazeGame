@@ -4,7 +4,7 @@ var app = angular.module('mazeGame', ['ngTouch']).controller('log-con', function
         //eventually we need to CHECK to see if this user is already taken!
         //for now, we assume not
         if ($scope.regForm.pwd.$viewValue != $scope.regForm.pwdTwo.$viewValue) {
-            bootbox.alert('Your passwords don&rsquo;t match!', function() {
+            sandalchest.alert('Your passwords don&rsquo;t match!', function() {
 
             });
         } else {
@@ -53,7 +53,7 @@ var app = angular.module('mazeGame', ['ngTouch']).controller('log-con', function
                     $scope.hazLogd = true;
                     $scope.getNews();
                 }else{
-                    bootbox.alert('Either your username or password is not correct!')
+                    sandalchest.alert('Either your username or password is not correct!')
                 }
             });
         } else {
@@ -67,7 +67,7 @@ var app = angular.module('mazeGame', ['ngTouch']).controller('log-con', function
                     $scope.hazLogd = true;
                     $scope.getNews();
                 }else{
-                    bootbox.alert('Either your username or password is not correct!');
+                    sandalchest.alert('Either your username or password is not correct!');
                 }
             });
         }
@@ -76,7 +76,7 @@ var app = angular.module('mazeGame', ['ngTouch']).controller('log-con', function
         $window.location.href = ('./');
     };
     $scope.passInf = function() {
-        bootbox.alert('<h3>Password Strength</h3><hr/>Here are a few things to include for a stronger password:<ul><li>A lowercase letter</li><li>An uppercase letter</li><li>A number</li><li>A non alpha-numeric symbol (something like "@" or "$")</li></ul>Longer passwords are also generally better!');
+        sandalchest.alert('<h3>Password Strength</h3><hr/>Here are a few things to include for a stronger password:<ul><li>A lowercase letter</li><li>An uppercase letter</li><li>A number</li><li>A non alpha-numeric symbol (something like "@" or "$")</li></ul>Longer passwords are also generally better!');
     };
     $scope.upd = [];
     $scope.getNews=function(){

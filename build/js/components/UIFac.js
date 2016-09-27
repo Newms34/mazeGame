@@ -135,7 +135,7 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
         },
         logout: function(usr) {
             //log out, but dont save game (this effectively wipes all progress from last save)
-            bootbox.confirm("<span id='resetWarn'>WARNING:</span> You will lose all progress since your last save! Are you sure you wanna stop playing and log out?", function(r) {
+            sandalchest.confirm("<span id='resetWarn'>WARNING:</span> You will lose all progress since your last save! Are you sure you wanna stop playing and log out?", function(r) {
                 if (r && r !== null) {
                     $http.get('/user/logout').then(function(lo) {
                         window.location.href = './login';
