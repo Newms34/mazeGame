@@ -11,16 +11,7 @@ app.factory('combatFac', function($http) {
             $('#combat-box #player .energy-bar .stat-bar-stat').css('width', '100%');
         },
         getSkillInf: function(all, n) {
-            bootbox.dialog({
-                message: all[n].desc,
-                title: all[n].name,
-                buttons: {
-                    main: {
-                        label: "Okay",
-                        className: "btn-primary"
-                    }
-                }
-            });
+            sandalchest.dialog( all[n].name,all[n].desc, { buttons: [{ text: 'Okay', close: true }] })
         },
         updateBars: function(pm, pc, pem, pec, mm, mc) {
             pm = parseInt(pm);
@@ -37,13 +28,13 @@ app.factory('combatFac', function($http) {
             $('#combat-box #player .health-bar .stat-bar-stat').css('width', phperc + '%');
             $('#combat-box #player .energy-bar .stat-bar-stat').css('width', penperc + '%');
         },
-        getItems:function(){
-            return $http.get('/item/allItems').then(function(s){
+        getItems: function() {
+            return $http.get('/item/allItems').then(function(s) {
                 return s;
             })
         },
-        rollLoot:function(mons){
-            return $http.get('/item/byLvl/'+mons.lvl).then(function(i){
+        rollLoot: function(mons) {
+            return $http.get('/item/byLvl/' + mons.lvl).then(function(i) {
                 return i.data;
             })
         }

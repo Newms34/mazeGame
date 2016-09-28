@@ -16,21 +16,15 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
             };
             return UIBgs[which];
         },
-        // sendUserUI: function(which) {
-        //     //note that we're actually returning a PROMISE here!
-        //     var p = $http.get('/user/' + whichUI).success(function(res) {
-        //         return res;
-        //     });
-        //     return p;
-        // },
         moreInfo: function(el) {
+            var dmgTypes = ['Physical', 'Fire', 'Ice', 'Poison', 'Dark', 'Holy'];
             var addStuff = '<ul class="moreInfList">';
             //first, determine which type of item it is. Each inv el type has certain fields unique to that type
-            console.log(el);
-            if (el.slot || el.slot == 0) {
+            console.log(el, !!el.item, el.item);
+            if (el.item && (el.item[1].slot || el.item[1].slot == 0)) {
                 //armor
                 var arType;
-                switch (el.slot) {
+                switch (el.item[1].slot) {
                     case 0:
                         arType = 'head';
                         break;
@@ -50,19 +44,33 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
                         arType = 'accessory';
                 }
                 addStuff += '<li>Type:' + arType + '</li>';
-                addStuff += '<li>Defense:' + el.def + '</li>';
-                addStuff += '<li>Cost:' + el.cost + ' coins</li>';
-                addStuff += '<li>Level:' + el.itemLvl + '</li>';
+                addStuff += '<li>Defense:' + el.item[1].def || 'None' + '</li>';
+                addStuff += '<li>Cost:' + el.item[1].cost + ' coins</li>';
+                addStuff += '<li>Level:' + el.item[1].itemLvl + '</li>';
                 addStuff += '<li>Resistance:';
-                if (el.res && el.res.length) {
-                    addStuff += '<ul>';
-                    for (var i = 0; i < el.res.length; i++) {
-                        addStuff += '<li> ' + combatFac.getDmgType(el.res[i]) + ' </li>';
-                    }
-                    addStuff += '</ul>';
-                } else {
-                    addStuff += '<span> none </span></li>';
+                var resists = [];
+                var vulns = [];
+                //base item resists
+                for (var i = 0; i < el.item[1].res.length; i++) {
+                    if (resists.indexOf(dmgTypes[el.item[1].res[i]]) == -1) resists.push(dmgTypes[el.item[1].res[i]]);
                 }
+                //prefix resists
+                for (var n in el.item[0].defChanges) {
+                    if (el.item[0].defChanges[n] == 1 && resists.indexOf(el.item[0].defChanges[n]) == -1) {
+                        resists.push(el.item[0].defChanges[n]);
+                    } else if (el.item[0].defChanges[n] == -1 && vuln.indexOf(el.item[0].defChanges[n]) == -1) {
+                        vuln.push(el.item[0].defChanges[n]);
+                    }
+                }
+                for (var n in el.item[2].defChanges) {
+                    if (el.item[2].defChanges[n] == 1 && resists.indexOf(el.item[2].defChanges[n]) == -1) {
+                        resists.push(el.item[2].defChanges[n]);
+                    } else if (el.item[2].defChanges[n] == -1 && vuln.indexOf(el.item[2].defChanges[n]) == -1) {
+                        vuln.push(el.item[2].defChanges[n]);
+                    }
+                }
+                addStuff += (resists.length ? resists.join(', ') : 'none') + '</li>';
+                addStuff += '<li>Vulnerabilities:' + (vulns.length ? vulns.join(', ') : 'none') + '</li>';;
             } else if (el.giver || el.giver === 0) {
                 //quest
                 $http.get('/item/getGiver/' + el.giver).then(function(res) {
@@ -86,14 +94,15 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
             } else if (el.maxHp) {
                 //user. Shouldn't be this one!
                 addStuff += 'What are you doing? You broke the game!';
-            } else if (el.itemLvl || el.itemLvl === 0) {
+            } else if (el.item && !el.item[1].slot) {
                 //weapon
-                addStuff += el.max ? '<li>Damage:' + el.min + '-' + el.max + ' hp</li>' : '';
-                addStuff += el.def ? '<li>Defense:' + el.def + '</li>' : '';
-                addStuff += '<li>Level:' + el.itemLvl + '</li>';
-                addStuff += '<li>Cost:' + el.cost + ' coins</li>';
+                addStuff += el.item[1].max ? '<li>Damage:' + el.item[1].min + '-' + el.item[1].max + ' hp</li>' : '';
+                addStuff += el.item[1].def ? '<li>Defense:' + el.item[1].def + '</li>' : '';
+                addStuff += '<li>Level:' + el.item[1].itemLvl + '</li>';
+                addStuff += '<li>Cost:' + el.item[1].cost + ' coins</li>';
             } else {
                 //monster
+                var isMons = true;
                 addStuff += '<li>Level:' + el.lvl + '</li>';
                 addStuff += '<li>Hp:' + el.hp + ' hp</li>';
                 addStuff += '<li>Dmg:' + el.min + '-' + el.max + ' hp</li>';
@@ -112,6 +121,14 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
             if (!el.giver && el.giver != 0) {
                 addStuff += '</ul>';
                 $('#moreInf').html(addStuff);
+                if (isMons) {
+                    $('#moreInf').css({
+                        'background': 'linear-gradient(rgba(241,241,212,.4),rgba(241,241,212,.4)),url(' + el.imgUrl + ')',
+                        'background-size': 'contain',
+                        'background-repeat': 'no-repeat',
+                        'background-position': 'right'
+                    })
+                }
                 $('#moreInf').show(200);
                 $('div.modal-footer > button.btn.btn-info').html('Less info');
             }
@@ -147,43 +164,37 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
             //this fn is gonna be somewhat dangerous, so let's make absolutely sure
             var addendOne = Math.floor(Math.random() * 50),
                 addendTwo = Math.floor(Math.random() * 50);
-            bootbox.dialog({
-                message: "<span id='resetWarn'>WARNING:</span> Resetting your account is a <i>permanent</i> move. <br/>If you still wish to reset your game account, enter your username and password below, and solve the math question below and click the appropriate button. Be aware that this decision <i>cannot</i> be reversed!<hr/>Username:<input type='text' id='rmun'><br/>Password:<input type='password' id='rmpw'><hr/>Math Check:<br/>" + addendOne + " + " + addendTwo + " = <input type='number' id='mathChk'> ",
-                title: "Reset Account",
-                buttons: {
-                    danger: {
-                        label: "YES, I would like to reset my account.",
-                        className: "btn-danger",
-                        callback: function() {
+            sandalchest.dialog("Reset Account", "<div id='resetWarn'>WARNING:</div> Resetting your account is a <i>permanent</i> move. <br/>If you still wish to reset your game account, enter your username and password below, and solve the math question below and click the appropriate button. Be aware that this decision <i>cannot</i> be reversed!<hr/>Username:<input type='text' id='rmun'><br/>Password:<input type='password' id='rmpw'><hr/>Math Check:<br/>" + addendOne + " + " + addendTwo + " = <input type='number' id='mathChk'> ", {
+                buttons: [{
+                    text: 'YES, reset.',
+                    close: false,
+                    click: function() {
 
-                            if (parseInt($('#mathChk').val()) == (addendOne + addendTwo)) {
-                                //math check is okay, so let's check the creds
-                                credObj = {
-                                    name: $('#rmun').val(),
-                                    pass: $('#rmpw').val()
-                                };
-                                $http.post('/user/reset', credObj).then(function(resp) {
-                                    if (resp) {
-                                        window.location.replace('./login');
-                                        return true;
-                                    } else {
-                                        return false;
-                                    }
-                                });
-                            } else {
-                                return false;
-                            }
-                        }
-                    },
-                    main: {
-                        label: "NO, I do not wish to reset my account.",
-                        className: "btn-primary",
-                        callback: function() {
-                            return true;
+                        if (parseInt($('#mathChk').val()) == (addendOne + addendTwo)) {
+                            //math check is okay, so let's check the creds
+                            credObj = {
+                                name: $('#rmun').val(),
+                                pass: $('#rmpw').val()
+                            };
+                            $http.post('/user/reset', credObj).then(function(resp) {
+                                if (resp) {
+                                    window.location.replace('./login');
+                                    return true;
+                                } else {
+                                    return false;
+                                }
+                            });
+                        } else {
+                            return false;
                         }
                     }
-                }
+                }, {
+                    text: 'NO, don\'t.',
+                    close: true
+
+                }]
             });
+
         },
         getRingObjs: function(rNum) {
             var objs;
@@ -399,10 +410,10 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
                                 break;
                             }
                         }
-                        if (stuff[itm].indexOf(-1)==-1) {
-                            console.log('item isnt undefined!',stuff[itm]);
-                            boxes[fnd].itName = itArr.data[2][stuff[itm][0]].pre +' '+ (itm=='weap'?  itArr.data[1][stuff[itm][1]].name : itArr.data[0][stuff[itm][1]].name)+' '+itArr.data[2][stuff[itm][2]].post;
-                            boxes[fnd].itFullInfo = [itArr.data[2][stuff[itm][0]],itm=='weap'?  itArr.data[1][stuff[itm][1]] : itArr.data[0][stuff[itm][1]],itArr.data[2][stuff[itm][2]]]
+                        if (stuff[itm].indexOf(-1) == -1) {
+                            console.log('item isnt undefined!', stuff[itm]);
+                            boxes[fnd].itName = itArr.data[2][stuff[itm][0]].pre + ' ' + (itm == 'weap' ? itArr.data[1][stuff[itm][1]].name : itArr.data[0][stuff[itm][1]].name) + ' ' + itArr.data[2][stuff[itm][2]].post;
+                            boxes[fnd].itFullInfo = [itArr.data[2][stuff[itm][0]], itm == 'weap' ? itArr.data[1][stuff[itm][1]] : itArr.data[0][stuff[itm][1]], itArr.data[2][stuff[itm][2]]]
                         } else {
                             boxes[fnd].itName = 'none';
                         }
@@ -410,13 +421,13 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
                 }
                 return boxes;
             })
-        }, 
-        getContMen: function(scp,x,y){
+        },
+        getContMen: function(scp, x, y) {
             return {
-                x:x,
-                y:y,
-                el:scp.UIEl,
-                num:scp.$index
+                x: x,
+                y: y,
+                el: scp.UIEl,
+                num: scp.$index
             }
         }
     };

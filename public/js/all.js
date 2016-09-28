@@ -160,10 +160,10 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
         var name = '';
         if (!el.item) {
             return 'ERROR!'
-        }else if(el.item.name){
+        } else if (el.item.name) {
             //junk!
             name = el.item.name;
-        }else if (el.item.length && el.item instanceof Array && el.item.length > 2) {
+        } else if (el.item.length && el.item instanceof Array && el.item.length > 2) {
             //armor or weap
             name = el.item[0].pre + ' ' + el.item[1].name + ' ' + el.item[2].post;
         }
@@ -211,32 +211,32 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
         name: 'head',
         x: 81,
         y: 1,
-        imgUrl:'./img/UI/head.jpg'
+        imgUrl: './img/UI/head.jpg'
     }, {
         name: 'chest',
         x: 80,
         y: 115,
-        imgUrl:'./img/UI/chest.jpg'
+        imgUrl: './img/UI/chest.jpg'
     }, {
         name: 'legs',
         x: 82,
         y: 361,
-        imgUrl:'./img/UI/legs.jpg'
+        imgUrl: './img/UI/legs.jpg'
     }, {
         name: 'hands',
         x: 1,
         y: 285,
-        imgUrl:'./img/UI/hands.jpg'
+        imgUrl: './img/UI/hands.jpg'
     }, {
         name: 'feet',
         x: 79,
         y: 510,
-        imgUrl:'./img/UI/feet.jpg'
+        imgUrl: './img/UI/feet.jpg'
     }, {
         name: 'weap',
         x: 158,
         y: 284,
-        imgUrl:'./img/UI/weap.jpg'
+        imgUrl: './img/UI/weap.jpg'
     }];
     $scope.Skills = [];
     $scope.Bestiary = [];
@@ -262,6 +262,11 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
         if ($scope.currUIPan !== 'Menu' && $scope.currUIPan !== 'Inventory') {
             UIFac.getUIObj($scope.currUIPan, $scope[$scope.currUIPan]).then(function(uiRes) {
                 $scope.currUIObjs = uiRes.data;
+                if($scope.currUIPan=='Bestiary'){
+                    $scope.currUIObjs.forEach(function(m){
+                        m.imgUrl = '/img'+m.imgUrl;
+                    })
+                }
                 console.log('UI OBJS:', $scope.currUIObjs);
             });
         } else if ($scope.currUIPan == 'Inventory') {
@@ -541,33 +546,36 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
     });
     $scope.getUIInfo = function(el) {
         var name;
-        if (el.item.length && el.item.length > 2) {
+        console.log('getUIInfo:', el)
+        if (el.item && el.item.length && el.item.length > 2) {
             //armor or weap
             name = el.item[0].pre + ' ' + el.item[1].name + ' ' + el.item[2].post;
-        } else {
+        }else if(el.name && el.desc){
+            name = el.name;
+        }else {
             //junk
             name = el.item[0].name;
         }
         var desc;
-        if (el.item.length && el.item.length > 2) {
+        if (el.item && el.item.length && el.item.length > 2) {
             //armor or weap
             desc = el.item[1].desc + '<br/>' + el.item[0].description + '<br/>' + el.item[2].description;
-        } else {
+        }else if(el.name && el.desc){
+            desc = el.desc;
+        }else {
             //junk
             desc = el.item[0].desc;
         }
-        bootbox.dialog({
-            title: '<h3>' + name + '</h3>',
-            message: '<p>' + desc + '</p><p id="moreInf" style="display:none;"></p>',
-            buttons: {
-                success: {
-                    label: "Close",
-                    className: "btn-primary"
-                },
-                info: {
-                    label: "More info",
-                    className: "btn-info",
-                    callback: function() {
+        sandalchest.dialog(
+            '<h3>' + name + '</h3>',
+            '<p>' + desc + '</p><p id="moreInf" style="display:none;"></p>', {
+                buttons: [{
+                    text: 'Close',
+                    close: true
+                }, {
+                    text: 'More Info',
+                    close: false,
+                    click: function() {
                         if ($('#moreInf').css('display') == 'none') {
                             UIFac.moreInfo(el);
                         } else {
@@ -575,9 +583,9 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
                         }
                         return false;
                     }
-                }
+                }]
             }
-        });
+        );
     };
     $scope.levelDown = function() {
         //TO DO: this needs to be dependent on quest statuses (i.e., certain quests block it). it also needs to send data back to Mongo to update what level the player's on.
@@ -624,7 +632,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
     };
     $scope.isNearMerch = false; //only active if we're in a room with a merchant
     $scope.equipItem = function(el, numb) {
-        if (el.lootType==2){
+        if (el.lootType == 2) {
             alert('JUNK REWARD');
             return;
         }
@@ -680,7 +688,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
         }
     }
     $scope.trashItem = function(el, numb) {
-        sandalchest.confirm('Are you sure you wish to destroy this ' + (el.item.length>1?el.item[0].pre+' '+ el.item[1].name + ' '+el.item[2].post:el.item[0].name)+'?', function(res) {
+        sandalchest.confirm('Are you sure you wish to destroy this ' + (el.item.length > 1 ? el.item[0].pre + ' ' + el.item[1].name + ' ' + el.item[2].post : el.item[0].name) + '?', function(res) {
             console.log('RES', res, el.name);
             if (res && res !== null) {
                 $scope.playerItems.inv.splice(numb, 1);
@@ -932,16 +940,7 @@ app.factory('combatFac', function($http) {
             $('#combat-box #player .energy-bar .stat-bar-stat').css('width', '100%');
         },
         getSkillInf: function(all, n) {
-            bootbox.dialog({
-                message: all[n].desc,
-                title: all[n].name,
-                buttons: {
-                    main: {
-                        label: "Okay",
-                        className: "btn-primary"
-                    }
-                }
-            });
+            sandalchest.dialog( all[n].name,all[n].desc, { buttons: [{ text: 'Okay', close: true }] })
         },
         updateBars: function(pm, pc, pem, pec, mm, mc) {
             pm = parseInt(pm);
@@ -958,18 +957,19 @@ app.factory('combatFac', function($http) {
             $('#combat-box #player .health-bar .stat-bar-stat').css('width', phperc + '%');
             $('#combat-box #player .energy-bar .stat-bar-stat').css('width', penperc + '%');
         },
-        getItems:function(){
-            return $http.get('/item/allItems').then(function(s){
+        getItems: function() {
+            return $http.get('/item/allItems').then(function(s) {
                 return s;
             })
         },
-        rollLoot:function(mons){
-            return $http.get('/item/byLvl/'+mons.lvl).then(function(i){
+        rollLoot: function(mons) {
+            return $http.get('/item/byLvl/' + mons.lvl).then(function(i) {
                 return i.data;
             })
         }
     };
 });
+
 app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combatFac) {
     //this is only in the subfolder because it's a subcomponent of the main controller (main.js)
     $scope.comb = {};
@@ -1731,77 +1731,71 @@ app.controller('merch-cont', function($scope, $http, $q, $timeout, $window, econ
         var itemFull = item.item[0].pre + ' ' + item.item[1].name + 's ' + item.item[2].post;
         var itemBaseCost = Math.floor(item.item[1].cost * (10 + item.item[0].cost + item.item[2].cost)) / 10;
         console.log('ITEM DATA TO EXCHANGE', item, 'and dir:', dir)
-        bootbox.dialog({
-            message: "How many " + itemFull + " do you want to " + (dir ? "sell" : "buy") + "?<hr/><input type=number value=1 min=1 max=" + item.num + " id='numExch'>",
-            title: (dir ? "Sell" : "Buy") + " Items",
-            buttons: {
-                main: {
-                    label: (dir ? "Sell" : "Buy") + " Items",
-                    className: "btn-success",
-                    callback: function() {
-                        var numToExch = parseInt($('#numExch').val());
-                        if (dir && dir != 'false') {
-                            //for selling, we dont check player munneez.
+        sandalchest.dialog((dir ? "Sell" : "Buy") + " Items", "How many " + itemFull + " do you want to " + (dir ? "sell" : "buy") + "?<hr/><input type=number value=1 min=1 max=" + item.num + " id='numExch'>", {
+            buttons: [{
+                text: (dir ? "Sell" : "Buy") + " Items",
+                close: true,
+                click: function() {
+                    var numToExch = parseInt($('#numExch').val());
+                    if (dir && dir != 'false') {
+                        //for selling, we dont check player munneez.
+                        if (numToExch < item.num) {
+                            //there'll still be some left over;
+                            $scope.playerItems.inv[ind].num -= numToExch;
+                        } else {
+                            $scope.playerItems.inv.splice(ind, 1);
+                        }
+                        $scope.playerItems.gold += itemBaseCost * numToExch * .9;
+                    } else {
+                        //buying
+                        if (numToExch * itemBaseCost < $scope.playerItems.gold) {
                             if (numToExch < item.num) {
                                 //there'll still be some left over;
-                                $scope.playerItems.inv[ind].num -= numToExch;
+                                $scope.merchy.merch.inv[ind].num -= numToExch;
                             } else {
-                                $scope.playerItems.inv.splice(ind, 1);
+                                $scope.merchy.merch.inv.splice(ind, 1);
                             }
-                            $scope.playerItems.gold += itemBaseCost * numToExch * .9;
+                            var itLoc = -1;
+                            for (var i = 0; i < $scope.playerItems.inv.length; i++) {
+                                var compName = $scope.playerItems.inv[i].item[0].pre + ' ' + $scope.playerItems.inv[i].item[1].name + 's ' + $scope.playerItems.inv[i].item[2].post
+                                if (itemFull == compName) {
+                                    //this item already exists, so just increase quantity;
+                                    itLoc = i;
+                                }
+                            }
+                            if (itLoc != -1) {
+                                $scope.playerItems.inv[itLoc].num += numToExch;
+                            } else {
+                                //item does not already exist;
+                                var itemForPlayer;
+                                $scope.merchy.itemForPlayer = angular.copy(item);
+                                console.log('ITEM FOR PLAYER', $scope.merchy.itemForPlayer)
+                                $scope.merchy.itemForPlayer.num = numToExch;
+                                $scope.playerItems.inv.push($scope.merchy.itemForPlayer);
+                            }
+                            $scope.playerItems.gold -= itemBaseCost * numToExch;
                         } else {
-                            //buying
-                            if (numToExch * itemBaseCost < $scope.playerItems.gold) {
-                                if (numToExch < item.num) {
-                                    //there'll still be some left over;
-                                    $scope.merchy.merch.inv[ind].num -= numToExch;
-                                } else {
-                                    $scope.merchy.merch.inv.splice(ind, 1);
-                                }
-                                var itLoc = -1;
-                                for (var i = 0; i < $scope.playerItems.inv.length; i++) {
-                                    var compName = $scope.playerItems.inv[i].item[0].pre + ' ' + $scope.playerItems.inv[i].item[1].name + 's ' + $scope.playerItems.inv[i].item[2].post
-                                    if (itemFull == compName) {
-                                        //this item already exists, so just increase quantity;
-                                        itLoc = i;
-                                    }
-                                }
-                                if (itLoc != -1) {
-                                    $scope.playerItems.inv[itLoc].num += numToExch;
-                                } else {
-                                    //item does not already exist;
-                                    var itemForPlayer;
-                                    $scope.merchy.itemForPlayer = angular.copy(item);
-                                    console.log('ITEM FOR PLAYER', $scope.merchy.itemForPlayer)
-                                    $scope.merchy.itemForPlayer.num = numToExch;
-                                    $scope.playerItems.inv.push($scope.merchy.itemForPlayer);
-                                }
-                                $scope.playerItems.gold -= itemBaseCost * numToExch;
-                            } else {
-                                sandalchest.alert('You don\'t have enough money to afford ' + numToExch + ' ' + itemFull + 's!')
-                            }
+                            sandalchest.alert('You don\'t have enough money to afford ' + numToExch + ' ' + itemFull + 's!')
                         }
-                        UIFac.doPlayerInv($scope.playerItems, $scope.bodyBoxes).then(function(s) {
-                            $scope.bodyBoxes = s;
-                            $scope.currUIObjs = $scope.playerItems.inv;
-                        });
-                        angular.element('body').scope().moveReady = true;
-                        $scope.moveReady = true;
-                        return true;
                     }
-                },
-                danger: {
-                    label: "Cancel",
-                    className: "btn-danger",
-                    callback: function() {
-                        //dont sell/buy
-                        angular.element('body').scope().moveReady = true;
-                        $scope.moveReady = true;
-                        return true;
-                    }
+                    UIFac.doPlayerInv($scope.playerItems, $scope.bodyBoxes).then(function(s) {
+                        $scope.bodyBoxes = s;
+                        $scope.currUIObjs = $scope.playerItems.inv;
+                    });
+                    angular.element('body').scope().moveReady = true;
+                    $scope.moveReady = true;
                 }
-            }
-        });
+            }, {
+                text: 'Cancel',
+                close: true,
+                click: function() {
+                    //dont sell/buy
+                    angular.element('body').scope().moveReady = true;
+                    $scope.moveReady = true;
+                }
+            }]
+        })
+
     };
 });
 
@@ -1846,21 +1840,15 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
             };
             return UIBgs[which];
         },
-        // sendUserUI: function(which) {
-        //     //note that we're actually returning a PROMISE here!
-        //     var p = $http.get('/user/' + whichUI).success(function(res) {
-        //         return res;
-        //     });
-        //     return p;
-        // },
         moreInfo: function(el) {
+            var dmgTypes = ['Physical', 'Fire', 'Ice', 'Poison', 'Dark', 'Holy'];
             var addStuff = '<ul class="moreInfList">';
             //first, determine which type of item it is. Each inv el type has certain fields unique to that type
-            console.log(el);
-            if (el.slot || el.slot == 0) {
+            console.log(el, !!el.item, el.item);
+            if (el.item && (el.item[1].slot || el.item[1].slot == 0)) {
                 //armor
                 var arType;
-                switch (el.slot) {
+                switch (el.item[1].slot) {
                     case 0:
                         arType = 'head';
                         break;
@@ -1880,19 +1868,33 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
                         arType = 'accessory';
                 }
                 addStuff += '<li>Type:' + arType + '</li>';
-                addStuff += '<li>Defense:' + el.def + '</li>';
-                addStuff += '<li>Cost:' + el.cost + ' coins</li>';
-                addStuff += '<li>Level:' + el.itemLvl + '</li>';
+                addStuff += '<li>Defense:' + el.item[1].def || 'None' + '</li>';
+                addStuff += '<li>Cost:' + el.item[1].cost + ' coins</li>';
+                addStuff += '<li>Level:' + el.item[1].itemLvl + '</li>';
                 addStuff += '<li>Resistance:';
-                if (el.res && el.res.length) {
-                    addStuff += '<ul>';
-                    for (var i = 0; i < el.res.length; i++) {
-                        addStuff += '<li> ' + combatFac.getDmgType(el.res[i]) + ' </li>';
-                    }
-                    addStuff += '</ul>';
-                } else {
-                    addStuff += '<span> none </span></li>';
+                var resists = [];
+                var vulns = [];
+                //base item resists
+                for (var i = 0; i < el.item[1].res.length; i++) {
+                    if (resists.indexOf(dmgTypes[el.item[1].res[i]]) == -1) resists.push(dmgTypes[el.item[1].res[i]]);
                 }
+                //prefix resists
+                for (var n in el.item[0].defChanges) {
+                    if (el.item[0].defChanges[n] == 1 && resists.indexOf(el.item[0].defChanges[n]) == -1) {
+                        resists.push(el.item[0].defChanges[n]);
+                    } else if (el.item[0].defChanges[n] == -1 && vuln.indexOf(el.item[0].defChanges[n]) == -1) {
+                        vuln.push(el.item[0].defChanges[n]);
+                    }
+                }
+                for (var n in el.item[2].defChanges) {
+                    if (el.item[2].defChanges[n] == 1 && resists.indexOf(el.item[2].defChanges[n]) == -1) {
+                        resists.push(el.item[2].defChanges[n]);
+                    } else if (el.item[2].defChanges[n] == -1 && vuln.indexOf(el.item[2].defChanges[n]) == -1) {
+                        vuln.push(el.item[2].defChanges[n]);
+                    }
+                }
+                addStuff += (resists.length ? resists.join(', ') : 'none') + '</li>';
+                addStuff += '<li>Vulnerabilities:' + (vulns.length ? vulns.join(', ') : 'none') + '</li>';;
             } else if (el.giver || el.giver === 0) {
                 //quest
                 $http.get('/item/getGiver/' + el.giver).then(function(res) {
@@ -1916,14 +1918,15 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
             } else if (el.maxHp) {
                 //user. Shouldn't be this one!
                 addStuff += 'What are you doing? You broke the game!';
-            } else if (el.itemLvl || el.itemLvl === 0) {
+            } else if (el.item && !el.item[1].slot) {
                 //weapon
-                addStuff += el.max ? '<li>Damage:' + el.min + '-' + el.max + ' hp</li>' : '';
-                addStuff += el.def ? '<li>Defense:' + el.def + '</li>' : '';
-                addStuff += '<li>Level:' + el.itemLvl + '</li>';
-                addStuff += '<li>Cost:' + el.cost + ' coins</li>';
+                addStuff += el.item[1].max ? '<li>Damage:' + el.item[1].min + '-' + el.item[1].max + ' hp</li>' : '';
+                addStuff += el.item[1].def ? '<li>Defense:' + el.item[1].def + '</li>' : '';
+                addStuff += '<li>Level:' + el.item[1].itemLvl + '</li>';
+                addStuff += '<li>Cost:' + el.item[1].cost + ' coins</li>';
             } else {
                 //monster
+                var isMons = true;
                 addStuff += '<li>Level:' + el.lvl + '</li>';
                 addStuff += '<li>Hp:' + el.hp + ' hp</li>';
                 addStuff += '<li>Dmg:' + el.min + '-' + el.max + ' hp</li>';
@@ -1942,6 +1945,14 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
             if (!el.giver && el.giver != 0) {
                 addStuff += '</ul>';
                 $('#moreInf').html(addStuff);
+                if (isMons) {
+                    $('#moreInf').css({
+                        'background': 'linear-gradient(rgba(241,241,212,.4),rgba(241,241,212,.4)),url(' + el.imgUrl + ')',
+                        'background-size': 'contain',
+                        'background-repeat': 'no-repeat',
+                        'background-position': 'right'
+                    })
+                }
                 $('#moreInf').show(200);
                 $('div.modal-footer > button.btn.btn-info').html('Less info');
             }
@@ -1977,43 +1988,37 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
             //this fn is gonna be somewhat dangerous, so let's make absolutely sure
             var addendOne = Math.floor(Math.random() * 50),
                 addendTwo = Math.floor(Math.random() * 50);
-            bootbox.dialog({
-                message: "<span id='resetWarn'>WARNING:</span> Resetting your account is a <i>permanent</i> move. <br/>If you still wish to reset your game account, enter your username and password below, and solve the math question below and click the appropriate button. Be aware that this decision <i>cannot</i> be reversed!<hr/>Username:<input type='text' id='rmun'><br/>Password:<input type='password' id='rmpw'><hr/>Math Check:<br/>" + addendOne + " + " + addendTwo + " = <input type='number' id='mathChk'> ",
-                title: "Reset Account",
-                buttons: {
-                    danger: {
-                        label: "YES, I would like to reset my account.",
-                        className: "btn-danger",
-                        callback: function() {
+            sandalchest.dialog("Reset Account", "<div id='resetWarn'>WARNING:</div> Resetting your account is a <i>permanent</i> move. <br/>If you still wish to reset your game account, enter your username and password below, and solve the math question below and click the appropriate button. Be aware that this decision <i>cannot</i> be reversed!<hr/>Username:<input type='text' id='rmun'><br/>Password:<input type='password' id='rmpw'><hr/>Math Check:<br/>" + addendOne + " + " + addendTwo + " = <input type='number' id='mathChk'> ", {
+                buttons: [{
+                    text: 'YES, reset.',
+                    close: false,
+                    click: function() {
 
-                            if (parseInt($('#mathChk').val()) == (addendOne + addendTwo)) {
-                                //math check is okay, so let's check the creds
-                                credObj = {
-                                    name: $('#rmun').val(),
-                                    pass: $('#rmpw').val()
-                                };
-                                $http.post('/user/reset', credObj).then(function(resp) {
-                                    if (resp) {
-                                        window.location.replace('./login');
-                                        return true;
-                                    } else {
-                                        return false;
-                                    }
-                                });
-                            } else {
-                                return false;
-                            }
-                        }
-                    },
-                    main: {
-                        label: "NO, I do not wish to reset my account.",
-                        className: "btn-primary",
-                        callback: function() {
-                            return true;
+                        if (parseInt($('#mathChk').val()) == (addendOne + addendTwo)) {
+                            //math check is okay, so let's check the creds
+                            credObj = {
+                                name: $('#rmun').val(),
+                                pass: $('#rmpw').val()
+                            };
+                            $http.post('/user/reset', credObj).then(function(resp) {
+                                if (resp) {
+                                    window.location.replace('./login');
+                                    return true;
+                                } else {
+                                    return false;
+                                }
+                            });
+                        } else {
+                            return false;
                         }
                     }
-                }
+                }, {
+                    text: 'NO, don\'t.',
+                    close: true
+
+                }]
             });
+
         },
         getRingObjs: function(rNum) {
             var objs;
@@ -2229,10 +2234,10 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
                                 break;
                             }
                         }
-                        if (stuff[itm].indexOf(-1)==-1) {
-                            console.log('item isnt undefined!',stuff[itm]);
-                            boxes[fnd].itName = itArr.data[2][stuff[itm][0]].pre +' '+ (itm=='weap'?  itArr.data[1][stuff[itm][1]].name : itArr.data[0][stuff[itm][1]].name)+' '+itArr.data[2][stuff[itm][2]].post;
-                            boxes[fnd].itFullInfo = [itArr.data[2][stuff[itm][0]],itm=='weap'?  itArr.data[1][stuff[itm][1]] : itArr.data[0][stuff[itm][1]],itArr.data[2][stuff[itm][2]]]
+                        if (stuff[itm].indexOf(-1) == -1) {
+                            console.log('item isnt undefined!', stuff[itm]);
+                            boxes[fnd].itName = itArr.data[2][stuff[itm][0]].pre + ' ' + (itm == 'weap' ? itArr.data[1][stuff[itm][1]].name : itArr.data[0][stuff[itm][1]].name) + ' ' + itArr.data[2][stuff[itm][2]].post;
+                            boxes[fnd].itFullInfo = [itArr.data[2][stuff[itm][0]], itm == 'weap' ? itArr.data[1][stuff[itm][1]] : itArr.data[0][stuff[itm][1]], itArr.data[2][stuff[itm][2]]]
                         } else {
                             boxes[fnd].itName = 'none';
                         }
@@ -2240,13 +2245,13 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
                 }
                 return boxes;
             })
-        }, 
-        getContMen: function(scp,x,y){
+        },
+        getContMen: function(scp, x, y) {
             return {
-                x:x,
-                y:y,
-                el:scp.UIEl,
-                num:scp.$index
+                x: x,
+                y: y,
+                el: scp.UIEl,
+                num: scp.$index
             }
         }
     };

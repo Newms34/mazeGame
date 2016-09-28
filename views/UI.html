@@ -6,7 +6,7 @@
     <div class='panel-body' style='background:url({{currUIBg}});background-size: cover;' ng-show='currUIPan!="Menu"'>
         <button class='btn btn-primary' title='connect to a phone!' ng-click='inpPhone()'>&#128241;</button>
         <div id='uiBlokCont'>
-            <div class='currUIEl' ng-repeat='UIEl in currUIObjs' ng-click='getUIInfo(UIEl)' style='background:url({{UIEl.imgUrl||"/img/UI/none.jpg"}});'>
+            <div class='currUIEl' ng-repeat='UIEl in currUIObjs' ng-click='getUIInfo(UIEl)' style='background:linear-gradient(rgba(0,0,0,.3),rgba(0,0,0,.3)),url({{UIEl.imgUrl||"/img/UI/none.jpg"}}); background-size:100% 100%;'>
                 {{currUIPan=='Inventory'?getInvName(UIEl):UIEl.name}}
             </div>
         </div>

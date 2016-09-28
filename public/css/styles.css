@@ -534,6 +534,7 @@ body#mob {
   font-weight: bold;
   font-style: italic;
   background: #000;
+  width: 100%;
   color: #fc0;
   padding: 2px; }
 

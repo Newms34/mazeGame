@@ -70,10 +70,10 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
         var name = '';
         if (!el.item) {
             return 'ERROR!'
-        }else if(el.item.name){
+        } else if (el.item.name) {
             //junk!
             name = el.item.name;
-        }else if (el.item.length && el.item instanceof Array && el.item.length > 2) {
+        } else if (el.item.length && el.item instanceof Array && el.item.length > 2) {
             //armor or weap
             name = el.item[0].pre + ' ' + el.item[1].name + ' ' + el.item[2].post;
         }
@@ -121,32 +121,32 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
         name: 'head',
         x: 81,
         y: 1,
-        imgUrl:'./img/UI/head.jpg'
+        imgUrl: './img/UI/head.jpg'
     }, {
         name: 'chest',
         x: 80,
         y: 115,
-        imgUrl:'./img/UI/chest.jpg'
+        imgUrl: './img/UI/chest.jpg'
     }, {
         name: 'legs',
         x: 82,
         y: 361,
-        imgUrl:'./img/UI/legs.jpg'
+        imgUrl: './img/UI/legs.jpg'
     }, {
         name: 'hands',
         x: 1,
         y: 285,
-        imgUrl:'./img/UI/hands.jpg'
+        imgUrl: './img/UI/hands.jpg'
     }, {
         name: 'feet',
         x: 79,
         y: 510,
-        imgUrl:'./img/UI/feet.jpg'
+        imgUrl: './img/UI/feet.jpg'
     }, {
         name: 'weap',
         x: 158,
         y: 284,
-        imgUrl:'./img/UI/weap.jpg'
+        imgUrl: './img/UI/weap.jpg'
     }];
     $scope.Skills = [];
     $scope.Bestiary = [];
@@ -172,6 +172,11 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
         if ($scope.currUIPan !== 'Menu' && $scope.currUIPan !== 'Inventory') {
             UIFac.getUIObj($scope.currUIPan, $scope[$scope.currUIPan]).then(function(uiRes) {
                 $scope.currUIObjs = uiRes.data;
+                if($scope.currUIPan=='Bestiary'){
+                    $scope.currUIObjs.forEach(function(m){
+                        m.imgUrl = '/img'+m.imgUrl;
+                    })
+                }
                 console.log('UI OBJS:', $scope.currUIObjs);
             });
         } else if ($scope.currUIPan == 'Inventory') {
@@ -451,33 +456,36 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
     });
     $scope.getUIInfo = function(el) {
         var name;
-        if (el.item.length && el.item.length > 2) {
+        console.log('getUIInfo:', el)
+        if (el.item && el.item.length && el.item.length > 2) {
             //armor or weap
             name = el.item[0].pre + ' ' + el.item[1].name + ' ' + el.item[2].post;
-        } else {
+        }else if(el.name && el.desc){
+            name = el.name;
+        }else {
             //junk
             name = el.item[0].name;
         }
         var desc;
-        if (el.item.length && el.item.length > 2) {
+        if (el.item && el.item.length && el.item.length > 2) {
             //armor or weap
             desc = el.item[1].desc + '<br/>' + el.item[0].description + '<br/>' + el.item[2].description;
-        } else {
+        }else if(el.name && el.desc){
+            desc = el.desc;
+        }else {
             //junk
             desc = el.item[0].desc;
         }
-        bootbox.dialog({
-            title: '<h3>' + name + '</h3>',
-            message: '<p>' + desc + '</p><p id="moreInf" style="display:none;"></p>',
-            buttons: {
-                success: {
-                    label: "Close",
-                    className: "btn-primary"
-                },
-                info: {
-                    label: "More info",
-                    className: "btn-info",
-                    callback: function() {
+        sandalchest.dialog(
+            '<h3>' + name + '</h3>',
+            '<p>' + desc + '</p><p id="moreInf" style="display:none;"></p>', {
+                buttons: [{
+                    text: 'Close',
+                    close: true
+                }, {
+                    text: 'More Info',
+                    close: false,
+                    click: function() {
                         if ($('#moreInf').css('display') == 'none') {
                             UIFac.moreInfo(el);
                         } else {
@@ -485,9 +493,9 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
                         }
                         return false;
                     }
-                }
+                }]
             }
-        });
+        );
     };
     $scope.levelDown = function() {
         //TO DO: this needs to be dependent on quest statuses (i.e., certain quests block it). it also needs to send data back to Mongo to update what level the player's on.
@@ -534,7 +542,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
     };
     $scope.isNearMerch = false; //only active if we're in a room with a merchant
     $scope.equipItem = function(el, numb) {
-        if (el.lootType==2){
+        if (el.lootType == 2) {
             alert('JUNK REWARD');
             return;
         }
@@ -590,7 +598,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
         }
     }
     $scope.trashItem = function(el, numb) {
-        sandalchest.confirm('Are you sure you wish to destroy this ' + (el.item.length>1?el.item[0].pre+' '+ el.item[1].name + ' '+el.item[2].post:el.item[0].name)+'?', function(res) {
+        sandalchest.confirm('Are you sure you wish to destroy this ' + (el.item.length > 1 ? el.item[0].pre + ' ' + el.item[1].name + ' ' + el.item[2].post : el.item[0].name) + '?', function(res) {
             console.log('RES', res, el.name);
             if (res && res !== null) {
                 $scope.playerItems.inv.splice(numb, 1);
