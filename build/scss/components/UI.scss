@@ -44,9 +44,9 @@
             min-height: 49px;
             position: absolute;
             color: #fff;
-            background-color:#fff;
-            background-size:contain;
-            background-repeat:no-repeat;
+            background-color: #fff;
+            background-size: contain;
+            background-repeat: no-repeat;
             text-align: center;
         }
     }
@@ -57,15 +57,15 @@
     transform: translateZ(92px);
     padding: 10px;
     background: #fff;
-    & li{
-        list-style:none;
-        padding:5px;
-        border-bottom:1px solid #aaa;
-        transition-duration:.5s;
-        cursor:pointer;
-        &:hover{
-            background:#ddd;
-            box-shadow:0 0 4px #ddd;
+    & li {
+        list-style: none;
+        padding: 5px;
+        border-bottom: 1px solid #aaa;
+        transition-duration: .5s;
+        cursor: pointer;
+        &:hover {
+            background: #ddd;
+            box-shadow: 0 0 4px #ddd;
         }
     }
 }
@@ -74,14 +74,30 @@
     list-style: none;
 }
 
+$menu-buttons:save savelog logout reset-all reset-level;
+
 .menuGrp {
     width: 100%;
     padding: 10px;
     border-bottom: 2px solid #000;
     .bigButt {
-        //we like them
-        //and we cannot lie
-        width: 50%;
+        line-height:2;
+        margin:1%;
+        width: 75%;
+        color:#fff;
+        font-size:large;
+        font-weight:bold;
+        transition-duration:.5s;
+    }
+    @each $mBtn in $menu-buttons{
+        .#{$mBtn}{
+           background: linear-gradient(rgba(0,0,0,.5),rgba(0,0,0,.5)),url('.././img/assets/#{$mBtn}.jpg');
+           background-attachment:fixed;
+           &:hover{
+                background: linear-gradient(rgba(0,0,0,.01),rgba(0,0,0,.01)),url('.././img/assets/#{$mBtn}.jpg');
+                background-attachment:fixed;
+           }
+        }
     }
 }
 
@@ -89,7 +105,7 @@
     font-weight: bold;
     font-style: italic;
     background: #000;
-    width:100%;
+    width: 100%;
     color: #fc0;
     padding: 2px;
 }

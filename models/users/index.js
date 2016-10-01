@@ -27,6 +27,11 @@ var usrSchema = new mongoose.Schema({
         id: Number,
         status: Number
     }],
+    currentLevel:{
+        loc:String,
+        data:[{}],
+        names:[String]
+    },
     maxHp: Number,
     currHp: Number,
     maxEn: Number, //max energy (for skills)

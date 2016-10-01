@@ -134,6 +134,54 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
             });
         }
     })();
+    $scope.fillCells = function() {
+        console.log('cells:', $scope.cells);
+        var promBeasts = [];
+        var promMercs = [];
+        var promMercInvs = [];
+        for (var i = 0; i < $scope.cells.length; i++) {
+            if ($scope.cells[i].has == 'mons') {
+                promBeasts.push(mazeFac.popCell($scope.lvl, $scope.cells[i].id));
+
+            } else if ($scope.cells[i].has == 'npcs') {
+                console.log($scope.cells[i].id, 'has an npc.')
+                promMercs.push(econFac.getNpc($scope.cells[i].id));
+            }
+        }
+        $q.all(promBeasts).then(function(mList) {
+            mList.forEach(function(m) {
+                    $scope.cells[$scope.cellNames.indexOf(m.cell)].has = m.mons;
+                })
+                //now merchants
+            $q.all(promMercs).then(function(eList) {
+                eList.forEach(function(r) {
+                    $scope.cells[$scope.cellNames.indexOf(r.id)].has = r.data;
+                    if (r.data.isMerch && r.data.isMerch == true) {
+                        promMercInvs.push(econFac.merchInv(r.data.inv, r.id));
+                    }
+                })
+                $q.all(promMercInvs).then(function(mercInvs) {
+                    console.log('new level constructed, saving')
+                    mercInvs.forEach(function(inv) {
+                        $scope.cells[$scope.cellNames.indexOf(inv.id)].has.inv = inv.inv;
+                    })
+                    $scope.saveGame(false); //save data, do not reload.
+                })
+            })
+        })
+    };
+
+    $scope.doMaze = function(w, h) {
+        var mazeObj = mazeFac.makeMaze(w, h);
+        $scope.cells = mazeObj.cells;
+        $scope.path = mazeObj.path;
+        $scope.cellNames = mazeObj.names;
+        $scope.bombsLeft = 5;
+        $scope.moveReady = true;
+        $scope.playerCell = '0-0';
+        $scope.fillCells();
+    };
+
     $scope.getUsrData = function() {
         $http.get('/user/currUsrData').then(function(d) {
             console.log('CURR USR DATA', typeof d, d);
@@ -147,10 +195,21 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
             $scope.currEn = d.data.currEn;
             $scope.isStunned = d.data.isStunned;
             $scope.name = d.data.name;
+
             econFac.merchInv($scope.playerItems.inv).then(function(r) {
                 for (var ep = 0; ep < r.length; ep++) {
                     console.log('REPLACING', $scope.playerItems.inv[ep].item, 'WITH', r[ep])
                     $scope.playerItems.inv[ep].item = r[ep];
+                }
+                if (!d.data.currentLevel || !d.data.currentLevel.loc || d.data.currentLevel.loc == null || d.data.currentLevel.loc == '') {
+                    console.log('User does not already have level data saved!')
+                        //if no level data, reset;
+                    $scope.doMaze($scope.width, $scope.height);
+                } else {
+                    $scope.cells = d.data.currentLevel.data;
+                    $scope.cellNames = d.data.currentLevel.names;
+                    $scope.playerCell = d.data.currentLevel.loc;
+                    $scope.moveReady = true;
                 }
             })
         });
@@ -169,41 +228,9 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
         }
         return name;
     }
-    $scope.fillCells = function() {
-        for (var i = 0; i < $scope.cells.length; i++) {
-            if ($scope.cells[i].has == 'mons') {
-                mazeFac.popCell($scope.lvl, $scope.cells[i].id).then(function(m) {
-                    $scope.cells[$scope.cellNames.indexOf(m.cell)].has = m.mons;
-                })
-            } else if ($scope.cells[i].has == 'npcs') {
-                //put a dood in this cell
-                console.log($scope.cells[i].id, 'has an npc.')
-                econFac.getNpc($scope.cells[i].id).then(function(r) {
-                    $scope.cells[$scope.cellNames.indexOf(r.id)].has = r.data; //assign the merch to cell
-                    if (r.data.isMerch && r.data.isMerch == true) {
-                        //npc is a merchant
-                        econFac.merchInv(r.data.inv, r.id).then(function(inv) {
-                            $scope.cells[$scope.cellNames.indexOf(inv.id)].has.inv = inv.inv;
-                        })
-                    }
-                });
-            }
-        }
-    };
+
 
     $scope.dmgType = combatFac.getDmgType;
-    $scope.doMaze = function(w, h) {
-        var mazeObj = mazeFac.makeMaze(w, h);
-        $scope.cells = mazeObj.cells;
-        $scope.path = mazeObj.path;
-        $scope.cellNames = mazeObj.names;
-        $scope.bombsLeft = 5;
-        $scope.moveReady = true;
-        $scope.playerCell = '0-0';
-        $scope.fillCells();
-    }($scope.width, $scope.height);
-
-
     $scope.compareCell = function(id) {
         return id == $scope.playerCell;
     };
@@ -262,9 +289,9 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
         if ($scope.currUIPan !== 'Menu' && $scope.currUIPan !== 'Inventory') {
             UIFac.getUIObj($scope.currUIPan, $scope[$scope.currUIPan]).then(function(uiRes) {
                 $scope.currUIObjs = uiRes.data;
-                if($scope.currUIPan=='Bestiary'){
-                    $scope.currUIObjs.forEach(function(m){
-                        m.imgUrl = '/img'+m.imgUrl;
+                if ($scope.currUIPan == 'Bestiary') {
+                    $scope.currUIObjs.forEach(function(m) {
+                        m.imgUrl = '/img' + m.imgUrl;
                     })
                 }
                 console.log('UI OBJS:', $scope.currUIObjs);
@@ -421,14 +448,32 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
     };
     $scope.moving = false;
     $scope.moveAni = function(ex) {
+        //ex: is this an exit (i.e., are we goin to the next level)?
         $scope.moving = true;
         $('body').fadeOut(500, function() {
             $('body').fadeIn(500, function() {
                 $scope.moving = false;
                 if (ex && ex !== 0) {
                     $scope.lvl++;
+                    var data = {
+                        name: $scope.name,
+                        lvl: $scope.lvl,
+                        equip: $scope.playerItems,
+                        questDone: $scope.questList || [],
+                        inProf: $scope.doneQuest,
+                        maxHp: $scope.maxHp,
+                        currHp: $scope.currHp,
+                        maxEn: $scope.maxEn,
+                        currEn: $scope.currEn,
+                        isStunned: $scope.isStunned,
+                        currentLevel: {
+                            loc: '',
+                            data: [],
+                            names: []
+                        }
+                    };
                     console.log('new lvl!:', $scope.lvl);
-                    $scope.saveGame(true);
+                    UIFac.saveGame(data, false, true)
                 }
             });
         });
@@ -479,11 +524,19 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
     $scope.rotOn = true;
     $scope.vertRot = 85;
     $scope.getWallStatus = function(dir) {
-        var roomWall = $scope.cells[$scope.cellNames.indexOf($scope.playerCell)][dir] ? './img/wall.jpg' : './img/door.jpg';
+        try {
+            var roomWall = $scope.cells[$scope.cellNames.indexOf($scope.playerCell)][dir] ? './img/wall.jpg' : './img/door.jpg';
+        } catch (e) {
+
+        }
         return roomWall;
     };
     $scope.isExit = function() {
-        var tex = $scope.cells[$scope.cellNames.indexOf($scope.playerCell)].has == 'exit' ? './img/exit.png' : './img/ground.jpg';
+        try {
+            var tex = $scope.cells[$scope.cellNames.indexOf($scope.playerCell)].has == 'exit' ? './img/exit.png' : './img/ground.jpg';
+        } catch (e) {
+
+        }
         return tex;
     };
     $scope.noMove = function($event) {
@@ -550,9 +603,9 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
         if (el.item && el.item.length && el.item.length > 2) {
             //armor or weap
             name = el.item[0].pre + ' ' + el.item[1].name + ' ' + el.item[2].post;
-        }else if(el.name && el.desc){
+        } else if (el.name && el.desc) {
             name = el.name;
-        }else {
+        } else {
             //junk
             name = el.item[0].name;
         }
@@ -560,9 +613,9 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
         if (el.item && el.item.length && el.item.length > 2) {
             //armor or weap
             desc = el.item[1].desc + '<br/>' + el.item[0].description + '<br/>' + el.item[2].description;
-        }else if(el.name && el.desc){
+        } else if (el.name && el.desc) {
             desc = el.desc;
-        }else {
+        } else {
             //junk
             desc = el.item[0].desc;
         }
@@ -606,8 +659,14 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
             currHp: $scope.currHp,
             maxEn: $scope.maxEn,
             currEn: $scope.currEn,
-            isStunned: $scope.isStunned
+            isStunned: $scope.isStunned,
+            currentLevel: {
+                loc: $scope.playerCell,
+                data: $scope.cells,
+                names: $scope.cellNames
+            }
         };
+        console.log('save data to ui fac:', data)
         UIFac.saveGame(data, false, reload); //save the game with the updated data. optional reset and reload
     };
     $scope.saveAndLogout = function() {
@@ -621,7 +680,12 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
             currHp: $scope.currHp,
             maxEn: $scope.maxEn,
             currEn: $scope.currEn,
-            isStunned: $scope.isStunned
+            isStunned: $scope.isStunned,
+            currentLevel: {
+                loc: $scope.playerCell,
+                data: $scope.cells,
+                names: $scope.cellNames
+            }
         };
         UIFac.saveGame(data, true, false);
     };
@@ -1317,7 +1381,7 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                     iName = items.loot.pre.pre + ' ' + items.loot.base.name + ' ' + items.loot.post.post;
                     $scope.playerItems.inv.push(lootObj)
                 }
-                sandalChest.alert('After killing the ' + $scope.comb.lastDefeated + ', you recieve ' + iName + '!');
+                sandalchest.alert('After killing the ' + $scope.comb.lastDefeated + ', you recieve ' + iName + '!');
 
             });
             angular.element('body').scope().cells[angular.element('body').scope().cellNames.indexOf(angular.element('body').scope().playerCell)].has = '';
@@ -1964,6 +2028,27 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
         },
         saveGame: function(data, lo, rel) {
             //save game, w/ optional logout
+            //first, we need to reset user data to ONLY have the item ids:
+            for (var i = 0; i < data.equip.inv.length; i++) {
+                // if(data.equip.inv[i].item.length<2){
+                //     console.log('JUNK!',data.equip.inv[i].item[0].num);
+
+                // }else{
+                //     if(typeof data.equip.inv[i].item[0]!=='number'){
+                //         throw new Error('item '+JSON.stringify(data.equip.inv[i].item)+' isnt a number!')
+                //     }
+                // }
+                console.log('ITEM:',data.equip.inv[i])
+                if (!(data.equip.inv[i].item instanceof Array) && typeof data.equip.inv[i].item == 'object') {
+                    //probly a junk item:
+                    data.equip.inv[i].item=[data.equip.inv[i].item.num];
+                } else {
+                    for (var j = 0; j < data.equip.inv[i].item.length; j++) {
+                        data.equip.inv[i].item[j] = data.equip.inv[i].item[j].num;
+                    }
+                }
+                console.log('Inventory reducified!:', JSON.stringify(data.equip.inv))
+            }
             $http.post('/user/save', data).then(function(res) {
                 if (lo && res) {
                     $http.get('/user/logout').then(function(r) {
@@ -1971,12 +2056,14 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
                     });
                 } else if (rel && res) {
                     $window.location.reload();
+                } else{
+                    sandalchest.alert('Saved!','Your game has been saved!')
                 }
             });
         },
         logout: function(usr) {
             //log out, but dont save game (this effectively wipes all progress from last save)
-            sandalchest.confirm("<span id='resetWarn'>WARNING:</span> You will lose all progress since your last save! Are you sure you wanna stop playing and log out?", function(r) {
+            sandalchest.confirm("Logout", "<span id='resetWarn'>WARNING:</span> You will lose all progress since your last save! Are you sure you wanna stop playing and log out?", function(r) {
                 if (r && r !== null) {
                     $http.get('/user/logout').then(function(lo) {
                         window.location.href = './login';
@@ -2019,6 +2106,15 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
                 }]
             });
 
+        },
+        resetLevel: function() {
+            sandalchest.confirm('Are you sure you wanna reset this level?', function(r) {
+                if (r) {
+                    $http.get('/resetLevel').then(function(r) {
+                        $window.location.reload();
+                    })
+                }
+            })
         },
         getRingObjs: function(rNum) {
             var objs;

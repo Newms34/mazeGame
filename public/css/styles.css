@@ -395,9 +395,6 @@ body {
     position: absolute;
     z-index: 120; }
 
-.bootbox {
-  transform: translateZ(210px) translateY(20%) translateX(-10%); }
-
 #sandalchest-modal-bg {
   transform: translateZ(170px) translateY(0%) translateX(-10%) scale(0.8); }
   #sandalchest-modal-bg .sandalchest-modal-main {
@@ -528,7 +525,43 @@ body#mob {
   padding: 10px;
   border-bottom: 2px solid #000; }
   .menuGrp .bigButt {
-    width: 50%; }
+    line-height: 2;
+    margin: 1%;
+    width: 75%;
+    color: #fff;
+    font-size: large;
+    font-weight: bold;
+    transition-duration: .5s; }
+  .menuGrp .save {
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(".././img/assets/save.jpg");
+    background-attachment: fixed; }
+    .menuGrp .save:hover {
+      background: linear-gradient(rgba(0, 0, 0, 0.01), rgba(0, 0, 0, 0.01)), url(".././img/assets/save.jpg");
+      background-attachment: fixed; }
+  .menuGrp .savelog {
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(".././img/assets/savelog.jpg");
+    background-attachment: fixed; }
+    .menuGrp .savelog:hover {
+      background: linear-gradient(rgba(0, 0, 0, 0.01), rgba(0, 0, 0, 0.01)), url(".././img/assets/savelog.jpg");
+      background-attachment: fixed; }
+  .menuGrp .logout {
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(".././img/assets/logout.jpg");
+    background-attachment: fixed; }
+    .menuGrp .logout:hover {
+      background: linear-gradient(rgba(0, 0, 0, 0.01), rgba(0, 0, 0, 0.01)), url(".././img/assets/logout.jpg");
+      background-attachment: fixed; }
+  .menuGrp .reset-all {
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(".././img/assets/reset-all.jpg");
+    background-attachment: fixed; }
+    .menuGrp .reset-all:hover {
+      background: linear-gradient(rgba(0, 0, 0, 0.01), rgba(0, 0, 0, 0.01)), url(".././img/assets/reset-all.jpg");
+      background-attachment: fixed; }
+  .menuGrp .reset-level {
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(".././img/assets/reset-level.jpg");
+    background-attachment: fixed; }
+    .menuGrp .reset-level:hover {
+      background: linear-gradient(rgba(0, 0, 0, 0.01), rgba(0, 0, 0, 0.01)), url(".././img/assets/reset-level.jpg");
+      background-attachment: fixed; }
 
 #resetWarn {
   font-weight: bold;

@@ -140,6 +140,27 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
         },
         saveGame: function(data, lo, rel) {
             //save game, w/ optional logout
+            //first, we need to reset user data to ONLY have the item ids:
+            for (var i = 0; i < data.equip.inv.length; i++) {
+                // if(data.equip.inv[i].item.length<2){
+                //     console.log('JUNK!',data.equip.inv[i].item[0].num);
+
+                // }else{
+                //     if(typeof data.equip.inv[i].item[0]!=='number'){
+                //         throw new Error('item '+JSON.stringify(data.equip.inv[i].item)+' isnt a number!')
+                //     }
+                // }
+                console.log('ITEM:',data.equip.inv[i])
+                if (!(data.equip.inv[i].item instanceof Array) && typeof data.equip.inv[i].item == 'object') {
+                    //probly a junk item:
+                    data.equip.inv[i].item=[data.equip.inv[i].item.num];
+                } else {
+                    for (var j = 0; j < data.equip.inv[i].item.length; j++) {
+                        data.equip.inv[i].item[j] = data.equip.inv[i].item[j].num;
+                    }
+                }
+                console.log('Inventory reducified!:', JSON.stringify(data.equip.inv))
+            }
             $http.post('/user/save', data).then(function(res) {
                 if (lo && res) {
                     $http.get('/user/logout').then(function(r) {
@@ -147,12 +168,14 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
                     });
                 } else if (rel && res) {
                     $window.location.reload();
+                } else{
+                    sandalchest.alert('Saved!','Your game has been saved!')
                 }
             });
         },
         logout: function(usr) {
             //log out, but dont save game (this effectively wipes all progress from last save)
-            sandalchest.confirm("<span id='resetWarn'>WARNING:</span> You will lose all progress since your last save! Are you sure you wanna stop playing and log out?", function(r) {
+            sandalchest.confirm("Logout", "<span id='resetWarn'>WARNING:</span> You will lose all progress since your last save! Are you sure you wanna stop playing and log out?", function(r) {
                 if (r && r !== null) {
                     $http.get('/user/logout').then(function(lo) {
                         window.location.href = './login';
@@ -195,6 +218,15 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
                 }]
             });
 
+        },
+        resetLevel: function() {
+            sandalchest.confirm('Are you sure you wanna reset this level?', function(r) {
+                if (r) {
+                    $http.get('/resetLevel').then(function(r) {
+                        $window.location.reload();
+                    })
+                }
+            })
         },
         getRingObjs: function(rNum) {
             var objs;

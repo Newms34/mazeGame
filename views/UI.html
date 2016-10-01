@@ -15,20 +15,18 @@
         </div>
     </div>
     <div class='panel-body' style='' ng-show='currUIPan=="Menu"'>
-        <div class="form-group">
+        <div class="form-group cent">
             <div class="menuGrp">
-                Save:
+                <button ng-click='saveGame();' class='btn bigButt save'>Save</button>
                 <br/>
-                <button ng-click='saveGame();' class='btn btn-success bigButt'>Save</button>
-                <br/>
-                <button ng-click='saveAndLogout();' class='btn btn-success bigButt'>Save and Logout</button>
+                <button ng-click='saveAndLogout();' class='btn bigButt savelog'>Save and Logout</button>
             </div>
             <div class="menuGrp">
-                Logout:
+                <button ng-click='logout();' class='btn bigButt logout'>Logout without saving</button>
                 <br/>
-                <button ng-click='logout();' class='btn btn-success bigButt'>Logout without saving</button>
+                <button ng-click='resetLevel();' class='btn bigButt reset-level'>Reset Level</button>
                 <br/>
-                <button ng-click='reset();' class='btn btn-success bigButt'>Reset Game</button>
+                <button ng-click='reset();' class='btn bigButt reset-all'>Reset Game</button>
             </div>
         </div>
     </div>

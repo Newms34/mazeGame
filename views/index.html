@@ -43,7 +43,7 @@
             <div class='outWall souWall' ng-if='cl.south'></div>
             <div class='outWall wesWall' ng-if='cl.west'></div>
             <div class='playerFig' ng-if='compareCell(cl.id)' style='transform:rotateZ({{360-roomRot}}deg)'>&uparrow;</div>
-            <span ng-if='cells[cellNames.indexOf(cl.id)].has=="exit" && cells[cellNames.indexOf(cl.id)].pViz==true'>&nbsp;&nbsp;&#128682;
+            <span ng-if='cells[cellNames.indexOf(cl.id)].has=="exit"'>&nbsp;&nbsp;&#128682;
 
             </span>
         </div>
@@ -81,7 +81,6 @@
     <script src="/angular-touch/angular-touch.min.js"></script>
     <script src="/angular-bootstrap-contextmenu/contextMenu.js"></script>
     <script src="/sandal-chest/sandal-chest.js"></script>
-    <script src="/bootbox.js/bootbox.js"></script>
     <!-- Because of gulp, we can include just one, minified file!: -->
     <script src="/js/all.min.js"></script>
 </body>

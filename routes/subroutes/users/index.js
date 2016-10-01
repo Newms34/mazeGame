@@ -33,6 +33,11 @@ router.post('/reset', function(req, res, next) {
                     pass: mongoose.model('User').encryptPassword(pwd, salt),
                     questDone: [],
                     inProg: [],
+                    currentLevel:{
+                        loc:null,
+                        data:[],
+                        names:[]
+                    },
                     maxHp: 50,
                     currHp: 50,
                     maxEn: 30,
@@ -54,9 +59,11 @@ router.post('/save', function(req, res, next) {
     var newData = req.body,
         un= req.body.name;
     console.log('body', req.body, 'sesh', un)
+    console.log('inventory:',req.body.equip.inv)
     mongoose.model('User').update({ 'name': un }, newData, function(err, usr) {
         mongoose.model('User').findOne({ 'name': un }, function(err, usr) {
             console.log('tried to find user we just saved. Result is', usr, 'err is', err)
+            // console.log('current cell of user:',usr.currentLevel.loc)
             req.session.user = usr;
             res.send(true);
         })
@@ -64,6 +71,7 @@ router.post('/save', function(req, res, next) {
 })
 router.get('/currUsrData', function(req, res, next) {
     //get current user data so we can update the front-end fields
+    console.log(req.session.user)
     mongoose.model('User').findOne({ 'name': req.session.user.name }, function(err, usr) {
         res.send(usr);
     })
@@ -95,6 +103,11 @@ router.post('/new', function(req, res, next) {
                 pass: mongoose.model('User').encryptPassword(pwd, salt),
                 questDone: [],
                 inProg: [],
+                currentLevel:{
+                    loc:null,
+                    data:[],
+                    names:[]
+                },
                 maxHp: 50,
                 currHp: 50,
                 maxEn: 30,

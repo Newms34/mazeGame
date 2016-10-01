@@ -345,7 +345,7 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                     iName = items.loot.pre.pre + ' ' + items.loot.base.name + ' ' + items.loot.post.post;
                     $scope.playerItems.inv.push(lootObj)
                 }
-                sandalChest.alert('After killing the ' + $scope.comb.lastDefeated + ', you recieve ' + iName + '!');
+                sandalchest.alert('After killing the ' + $scope.comb.lastDefeated + ', you recieve ' + iName + '!');
 
             });
             angular.element('body').scope().cells[angular.element('body').scope().cellNames.indexOf(angular.element('body').scope().playerCell)].has = '';
