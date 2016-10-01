@@ -16,6 +16,7 @@ var gutil = require('gulp-util')
 var rename = require('gulp-rename');
 var kid = require('child_process')
 var ps = require('ps-node');
+var cleany = require('gulp-clean-css')
 // Lint Task
 gulp.task('lint', function() {
     return gulp.src('js/*.js')
@@ -28,6 +29,7 @@ gulp.task('sass', function() {
     return gulp.src(['build/scss/*.scss', 'build/scss/**/*.scss'])
         .pipe(sass())
         .pipe(concat('styles.css'))
+        .pipe(cleany())
         .pipe(gulp.dest('public/css'));
 });
 // Concatenate & Minify JS
@@ -42,7 +44,6 @@ gulp.task('scripts', function() {
 gulp.task('checkDB', function() {
     if (process.platform == 'win32' && process.env.USERNAME == 'Newms') {
         console.log('Checking to see if mongod already running!');
-        // return batchpls('c: && cd c:\\mongodb\\bin && mongod -dbpath "d:\\data\\mongo\\db"').exec();
         ps.lookup({ command: 'mongod' }, function(e, f) {
             if (!f.length){
                 //database not already running, so start it up!
