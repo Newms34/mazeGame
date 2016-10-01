@@ -68,4 +68,24 @@
     "cost": 13,
     "imgUrl": "",
     "num":6
+}, {
+    "name": "Tower Shield",
+    "desc": "While many view shields as useless or weak, the thought of having a big piece of metal between you and a foe is rather comforting.",
+    "min": 1,
+    "max": 3,
+    "def": 10,
+    "itemLvl": 8,
+    "cost": 25,
+    "imgUrl": "",
+    "num":7
+}, {
+    "name": "Crude Sword",
+    "desc": "Little more than a sharpened piece of metal, this isn't very intimidating.",
+    "min": 2,
+    "max": 8,
+    "def": 0,
+    "itemLvl": 2,
+    "cost": 6,
+    "imgUrl": "",
+    "num":8
 }]

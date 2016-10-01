@@ -1,0 +1,57 @@
+[{
+    "name": "Hi Hawkins",
+    "isMerch": true,
+    "num": 0,
+    "lvl": 4,
+    "important": false,
+    "inv": [{ "lootType": 0, "num": 4, "item": [18, 4, 22] }, { "lootType": 1, "num": 4, "item": [8, 4, 15] }, { "lootType": 1, "num": 5, "item": [23, 4, 21] }, { "lootType": 1, "num": 2, "item": [24, 0, 10] }, { "lootType": 0, "num": 5, "item": [2, 0, 6] }, { "lootType": 0, "num": 1, "item": [18, 1, 5] }, { "lootType": 1, "num": 4, "item": [1, 6, 13] }, { "lootType": 0, "num": 5, "item": [22, 0, 5] }, { "lootType": 1, "num": 5, "item": [2, 3, 18] }, { "lootType": 1, "num": 2, "item": [14, 0, 8] }, { "lootType": 0, "num": 5, "item": [10, 3, 8] }, { "lootType": 0, "num": 2, "item": [8, 0, 0] }, { "lootType": 0, "num": 1, "item": [13, 2, 20] }, { "lootType": 1, "num": 3, "item": [23, 4, 16] }, { "lootType": 1, "num": 3, "item": [5, 5, 8] }, { "lootType": 0, "num": 1, "item": [4, 5, 15] }, { "lootType": 0, "num": 5, "item": [5, 4, 5] }, { "lootType": 0, "num": 4, "item": [19, 0, 2] }],
+    "gossip": ["I'm cold!", "Sometimes I hear screams coming from below.", "This dungeon is almost as dank as my memes!", "Go away. I'm busy staring at this wall.", "I'm cold!", "I could leave, but the developer didn't give me a walk cycle.", "I'm cold!", "Did you hear there are still PHP developers lurking in the lower levels?", "Sometimes I hear memes coming from below."]
+}, {
+    "name": "Irusha Velasquez",
+    "isMerch": true,
+    "num": 1,
+    "lvl": 1,
+    "important": false,
+    "inv": [{ "lootType": 1, "num": 5, "item": [0, 2, 12] }, { "lootType": 0, "num": 2, "item": [21, 1, 22] }, { "lootType": 0, "num": 1, "item": [1, 0, 17] }, { "lootType": 0, "num": 3, "item": [0, 7, 21] }, { "lootType": 1, "num": 3, "item": [12, 6, 4] }, { "lootType": 0, "num": 2, "item": [12, 6, 11] }, { "lootType": 0, "num": 5, "item": [23, 3, 3] }, { "lootType": 0, "num": 4, "item": [3, 0, 1] }, { "lootType": 0, "num": 4, "item": [3, 7, 24] }, { "lootType": 1, "num": 3, "item": [23, 6, 17] }, { "lootType": 0, "num": 5, "item": [22, 4, 5] }, { "lootType": 1, "num": 3, "item": [14, 6, 21] }, { "lootType": 1, "num": 5, "item": [7, 5, 20] }, { "lootType": 0, "num": 1, "item": [17, 3, 9] }, { "lootType": 0, "num": 1, "item": [15, 5, 20] }, { "lootType": 1, "num": 5, "item": [7, 5, 13] }, { "lootType": 1, "num": 1, "item": [23, 1, 4] }, { "lootType": 0, "num": 2, "item": [6, 7, 22] }, { "lootType": 1, "num": 5, "item": [6, 4, 12] }, { "lootType": 0, "num": 3, "item": [19, 3, 3] }],
+    "gossip": ["I could leave, but the developer didn't give me a walk cycle.", "I'm cold!", "I've heard a rumor that there's a locked door below, with the number 403 on it. No one can figure out how to get it open", "Did you hear there are still PHP developers lurking in the lower levels?", "I'm cold!", "I've heard the corruption gets worse the deeper you go.", "I could leave, but the developer didn't give me a walk cycle."]
+}, {
+    "name": "Oghenewome Lennon",
+    "isMerch": true,
+    "num": 2,
+    "lvl": 3,
+    "important": false,
+    "inv": [{ "lootType": 0, "num": 3, "item": [2, 4, 11] }, { "lootType": 1, "num": 5, "item": [3, 5, 7] }],
+    "gossip": ["Sometimes I hear memes coming from below.", "I'm cold!", "I've heard the corruption gets worse the deeper you go.", "Did you hear there are still PHP developers lurking in the lower levels?", "I've heard the corruption gets worse the deeper you go.", "This dungeon is almost as dank as my memes!", "This dungeon is almost as dank as my memes!", "Go away. I'm busy staring at this wall.", "Sometimes I hear screams coming from below."]
+}, {
+    "name": "Alpheus Bain",
+    "isMerch": true,
+    "num": 3,
+    "lvl": 3,
+    "important": false,
+    "inv": [{ "lootType": 1, "num": 1, "item": [10, 5, 8] }, { "lootType": 1, "num": 2, "item": [21, 5, 20] }, { "lootType": 1, "num": 5, "item": [24, 2, 19] }, { "lootType": 0, "num": 4, "item": [1, 2, 9] }, { "lootType": 0, "num": 1, "item": [3, 1, 0] }, { "lootType": 0, "num": 4, "item": [18, 7, 4] }, { "lootType": 1, "num": 1, "item": [17, 6, 24] }, { "lootType": 1, "num": 3, "item": [24, 3, 10] }, { "lootType": 1, "num": 2, "item": [8, 4, 21] }, { "lootType": 1, "num": 3, "item": [12, 1, 20] }, { "lootType": 1, "num": 2, "item": [8, 4, 8] }, { "lootType": 0, "num": 2, "item": [13, 6, 20] }, { "lootType": 0, "num": 5, "item": [13, 5, 23] }, { "lootType": 1, "num": 1, "item": [13, 1, 6] }, { "lootType": 0, "num": 4, "item": [24, 3, 6] }],
+    "gossip": ["I'm cold!", "Did you hear there are still PHP developers lurking in the lower levels?", "Did you hear there are still PHP developers lurking in the lower levels?", "I've heard a rumor that there's a locked door below, with the number 403 on it. No one can figure out how to get it open", "I'm cold!", "I've heard the corruption gets worse the deeper you go.", "Sure is dingy in here", "This dungeon is almost as dank as my memes!"]
+}, {
+    "name": "Sorley Goodrich",
+    "isMerch": false,
+    "num": 4,
+    "lvl": 0,
+    "important": false,
+    "inv": [{ "lootType": 0, "num": 1, "item": [6, 3, 20] }, { "lootType": 1, "num": 4, "item": [19, 0, 23] }, { "lootType": 1, "num": 5, "item": [8, 1, 24] }, { "lootType": 0, "num": 5, "item": [3, 1, 13] }, { "lootType": 1, "num": 1, "item": [7, 6, 3] }, { "lootType": 0, "num": 1, "item": [14, 0, 16] }, { "lootType": 1, "num": 4, "item": [1, 3, 4] }, { "lootType": 1, "num": 4, "item": [18, 3, 19] }, { "lootType": 1, "num": 1, "item": [18, 6, 22] }, { "lootType": 0, "num": 3, "item": [20, 1, 12] }, { "lootType": 1, "num": 2, "item": [3, 5, 20] }, { "lootType": 1, "num": 4, "item": [5, 3, 11] }],
+    "gossip": ["I'm cold!", "Sometimes I hear memes coming from below.", "I could leave, but the developer didn't give me a walk cycle.", "I'm cold!", "Go away. I'm busy staring at this wall."]
+}, {
+    "name": "Septimus Flowers",
+    "isMerch": false,
+    "num": 5,
+    "lvl": 3,
+    "important": false,
+    "inv": [{ "lootType": 1, "num": 5, "item": [21, 1, 9] }, { "lootType": 1, "num": 5, "item": [20, 4, 1] }, { "lootType": 0, "num": 2, "item": [18, 4, 15] }, { "lootType": 1, "num": 1, "item": [17, 1, 19] }, { "lootType": 0, "num": 4, "item": [21, 5, 5] }, { "lootType": 0, "num": 4, "item": [11, 5, 9] }, { "lootType": 0, "num": 3, "item": [11, 2, 12] }, { "lootType": 0, "num": 1, "item": [3, 7, 18] }, { "lootType": 1, "num": 2, "item": [7, 0, 9] }, { "lootType": 1, "num": 2, "item": [15, 4, 13] }, { "lootType": 1, "num": 2, "item": [1, 5, 5] }, { "lootType": 1, "num": 3, "item": [17, 5, 15] }, { "lootType": 1, "num": 5, "item": [22, 1, 14] }, { "lootType": 0, "num": 4, "item": [18, 6, 23] }, { "lootType": 1, "num": 3, "item": [20, 0, 1] }, { "lootType": 0, "num": 5, "item": [10, 3, 8] }, { "lootType": 0, "num": 5, "item": [18, 0, 17] }, { "lootType": 0, "num": 2, "item": [22, 0, 16] }, { "lootType": 1, "num": 4, "item": [14, 0, 12] }, { "lootType": 1, "num": 4, "item": [14, 2, 15] }, { "lootType": 0, "num": 4, "item": [12, 4, 19] }, { "lootType": 0, "num": 4, "item": [15, 7, 13] }, { "lootType": 0, "num": 4, "item": [21, 4, 11] }, { "lootType": 0, "num": 2, "item": [16, 7, 6] }, { "lootType": 0, "num": 4, "item": [10, 0, 15] }, { "lootType": 0, "num": 5, "item": [20, 2, 17] }, { "lootType": 0, "num": 1, "item": [2, 6, 23] }, { "lootType": 1, "num": 3, "item": [21, 5, 15] }, { "lootType": 0, "num": 3, "item": [14, 1, 19] }, { "lootType": 1, "num": 1, "item": [1, 2, 13] }],
+    "gossip": ["This dungeon is almost as dank as my memes!", "Sometimes I hear screams coming from below.", "Go away. I'm busy staring at this wall.", "I've heard a rumor that there's a locked door below, with the number 403 on it. No one can figure out how to get it open", "I've heard a rumor that there's a locked door below, with the number 403 on it. No one can figure out how to get it open", "Did you hear there are still PHP developers lurking in the lower levels?", "This dungeon is almost as dank as my memes!", "I'm cold!"]
+}, {
+    "name": "Barrack Osgood",
+    "isMerch": false,
+    "num": 6,
+    "lvl": 3,
+    "important": false,
+    "inv": [{ "lootType": 0, "num": 4, "item": [18, 1, 15] }, { "lootType": 0, "num": 5, "item": [17, 6, 7] }, { "lootType": 0, "num": 1, "item": [20, 5, 15] }, { "lootType": 0, "num": 3, "item": [0, 7, 22] }, { "lootType": 1, "num": 2, "item": [3, 6, 10] }, { "lootType": 0, "num": 5, "item": [22, 5, 20] }, { "lootType": 1, "num": 4, "item": [20, 5, 10] }, { "lootType": 0, "num": 1, "item": [9, 4, 5] }],
+    "gossip": ["I've heard a rumor that there's a locked door below, with the number 403 on it. No one can figure out how to get it open", "Sometimes I hear memes coming from below.", "This dungeon is almost as dank as my memes!", "I'm cold!", "I'm cold!", "I've heard the corruption gets worse the deeper you go.", "I've heard a rumor that there's a locked door below, with the number 403 on it. No one can figure out how to get it open", "Sometimes I hear memes coming from below.", "This dungeon is almost as dank as my memes!"]
+}]

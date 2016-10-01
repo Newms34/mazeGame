@@ -325,7 +325,7 @@
     "healCh": 0
 }, {
     "name": "Fire Ant",
-    "desc": "",
+    "desc": "This ant is so fire right now.",
     "lvl": 3,
     "hp": 5,
     "min": 4,

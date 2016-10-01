@@ -4,12 +4,23 @@
 var mongoose = require('mongoose'),
     models = require('./models'),
     npcList = [],
-    https = require('https');
+    https = require('https'),
+    kid = require('child_process'),
+    prompt = require('prompt'),
+    fs = require('fs');
 console.log(process.argv)
 mongoose.model('Npc').find({}, function(err, npcs) {
     npcList = npcs;
-    var makeMerch = process.argv[2] == '-merch' || process.argv[2] == '-m';
-    var randName = 'John Smith'
+    var makeMerch = false,
+        live = false,
+        randName = 'John Smith';
+    for (var i = 0; i < process.argv.length; i++) {
+        if (process.argv[i] == '-m' || process.argv[i] == '-merch' || process.argv[i] == '-merc') {
+            makeMerch = true;
+        } else if (process.argv[i] == '-exp' || process.argv[i] == '-e' || process.argv[i] == '-live') {
+            live = true;
+        }
+    }
     https.get({
         host: 'en.wiktionary.org',
         path: '/w/api.php?action=query&list=categorymembers&cmlimit=500&cmtype=page&format=json&cmtitle=Category:English_male_given_names'
@@ -53,46 +64,72 @@ mongoose.model('Npc').find({}, function(err, npcs) {
                                         numItems = Math.ceil(Math.random() * 30),
                                         numDiag = Math.ceil(Math.random() * 10),
                                         mNpc = mongoose.model('Npc')();
-                                        // theNpc = {
-                                        //     name: randName,
-                                        //     important: false, //since these are randomly generated, they're not important
-                                        //     isMerch: makeMerch,
-                                        //     gossip: [],
-                                        //     inv: [],
-                                        //     lvl: lvl,
-                                        //     num: npcs.length
-                                        // };
-                                        mNpc.important = false;
-                                        mNpc.lvl = lvl;
-                                        mNpc.gossip = [];
-                                        mNpc.inv = [];
-                                        mNpc.num = npcs.length;
-                                        mNpc.isMerch = makeMerch;
-                                        mNpc.name = randName;
+                                    // theNpc = {
+                                    //     name: randName,
+                                    //     important: false, //since these are randomly generated, they're not important
+                                    //     isMerch: makeMerch,
+                                    //     gossip: [],
+                                    //     inv: [],
+                                    //     lvl: lvl,
+                                    //     num: npcs.length
+                                    // };
+                                    mNpc.important = false;
+                                    mNpc.lvl = lvl;
+                                    mNpc.gossip = [];
+                                    mNpc.inv = [];
+                                    mNpc.num = npcs.length;
+                                    mNpc.isMerch = makeMerch;
+                                    mNpc.name = randName;
                                     for (var t = 0; t < numItems; t++) {
                                         if (Math.random() > .5) {
                                             //weap
                                             mNpc.inv.push({
-                                            	lootType:1,
-                                            	num:Math.ceil(Math.random()*5),
+                                                lootType: 1,
+                                                num: Math.ceil(Math.random() * 5),
                                                 item: [Math.floor(Math.random() * dataP.length), Math.floor(Math.random() * dataW.length), Math.floor(Math.random() * dataP.length)]
                                             })
                                         } else {
                                             //armor
                                             mNpc.inv.push({
-                                            	lootType:0,
-                                            	num:Math.ceil(Math.random()*5),
+                                                lootType: 0,
+                                                num: Math.ceil(Math.random() * 5),
                                                 item: [Math.floor(Math.random() * dataP.length), Math.floor(Math.random() * dataA.length), Math.floor(Math.random() * dataP.length)]
                                             })
                                         }
                                     }
-                                    for (var q=0;q<numDiag;q++){
-                                    	mNpc.gossip.push(dataD[Math.floor(Math.random()*dataD.length)].text)
+                                    for (var q = 0; q < numDiag; q++) {
+                                        mNpc.gossip.push(dataD[Math.floor(Math.random() * dataD.length)].text)
                                     }
-                                    console.log('Your NPC:',mNpc)
-                                    mNpc.inv.forEach(function(e){console.log(e.item)})
-                                    // mongoose.model('Npc').create(theNpc);
-                                    mNpc.save();
+                                    console.log('Your NPC:', mNpc)
+                                    mNpc.inv.forEach(function(e) { console.log('ITEMS:', e.item) })
+                                        // mongoose.model('Npc').create(theNpc);
+                                    if (!live) {
+                                        //saving to local db, not heroku
+                                        mNpc.save();
+                                    } else {
+                                        prompt.start();
+                                        var promSchema = {
+                                            properties: {
+                                                password: {
+                                                    hidden: true
+                                                }
+                                            }
+                                        }
+                                        prompt.get(promSchema, function(err, resp) {
+                                            fs.writeFile('D:\\Data\\Projects\\maze\\seeds\\tempNpc.json', '[' + JSON.stringify(mNpc).replace(/"_id":"\w+",/g, '') + ']', { flags: 'w' }, function(err, res) {
+                                                if (err) console.log('Uh oh! trouble writing to file!');
+                                                kid.exec('c: && cd c:\\mongodb\\bin && mongoimport -h ds011913.mlab.com:11913 -d heroku_701xzs88 -c Npc -u newms -p ' + resp.password + ' --jsonArray --file D:\\Data\\Projects\\maze\\seeds\\tempNpc.json', function(err, stdout, stderr) {
+                                                    if (err) {
+                                                        console.log('Uh oh! An error of "', err, '" prevented us from uploading this merch!');
+                                                    }else{
+                                                        console.log('Successfully uploaded NPC',mNpc.name)
+                                                    }
+                                                    process.exit(0)
+                                                })
+
+                                            })
+                                        })
+                                    }
                                 });
                             });
                         });

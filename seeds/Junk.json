@@ -46,4 +46,10 @@
     "desc": "The claw of some beast. Whatever it is, you're glad you found only its tooth.",
     "cost": 13,
     "num": 7
+}, {
+    "lvl": 2,
+    "name": "Unidentified Blob",
+    "desc": "I can't believe you actually picked this up....",
+    "cost": 7,
+    "num": 8
 }]

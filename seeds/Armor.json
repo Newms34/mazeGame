@@ -72,7 +72,7 @@
     "name": "Boiled Leather Leggings",
     "def": 7,
     "desc": "Sometimes quick movement is preferable to standing there and getting hit. Boiled leather armor goes that route. Also, the curing process makes it smell a bit like piss. So there's that.",
-    "res": [1],
+    "res": [],
     "cost": 15,
     "itemLvl": 5,
     "slot": 2,
@@ -82,50 +82,120 @@
     "name": "Weekend Shirt",
     "def": 3,
     "desc": "You wore this last time you were out with the bros. It's pretty dank.",
-    "res": [1],
+    "res": [],
     "cost": 15,
     "itemLvl": 1,
     "slot": 1,
     "imgUrl": "",
-    "num": 7
+    "num": 8
 }, {
     "name": "Parachute Pants",
     "def": 2,
     "desc": "The 1980's called. They want their pants back.",
-    "res": [1],
+    "res": [],
     "cost": 15,
     "itemLvl": 1,
     "slot": 2,
     "imgUrl": "",
-    "num": 7
+    "num": 9
 }, {
     "name": "Gardening Gloves",
     "def": 2,
     "desc": "These aren't exactly designed for fighting monsters. Unless by 'monsters', you mean weeds, and by 'fighting', you mean tending Grandma's veggie patch.",
-    "res":[1],
+    "res":[],
     "cost": 15,
     "itemLvl": 1,
     "slot":3,
     "imgUrl": "",
-    "num":7
+    "num":10
 }, {
     "name": "Sneakers from the Back of the Closet",
     "def": 2,
     "desc": "You know, that pair that you haven't seen in years. Really comfy, but also really weak.",
-    "res":[1],
+    "res":[],
     "cost": 15,
     "itemLvl": 1,
     "slot":4,
     "imgUrl": "",
-    "num":7
+    "num":11
 }, {
     "name": "Mets Hat",
     "def": 2,
     "desc": "Show your support for the New York Mets! Keep the sun out of your face! Protect against pretty much nothing!",
-    "res":[1],
+    "res":[],
     "cost": 15,
     "itemLvl": 1,
     "slot":0,
     "imgUrl": "",
-    "num":7
+    "num":12
+}, {
+    "name": "Hardened Leather Skullcap",
+    "def": 10,
+    "desc": "A mid-level helmet, this skullcap will protect you from minor boo-boos.",
+    "res":[],
+    "cost": 20,
+    "itemLvl": 7,
+    "slot":0,
+    "imgUrl": "",
+    "num":13
+}, {
+    "name": "Hardened Leather Breastplate",
+    "def": 15,
+    "desc": "Not nearly as protective as metal armor, but a lot more comfy.",
+    "res":[],
+    "cost": 25,
+    "itemLvl": 7,
+    "slot":1,
+    "imgUrl": "",
+    "num":14
+}, {
+    "name": "Hardened Leather Leggings",
+    "def": 12,
+    "desc": "They chafe a bit. They also protect your sensitive areas a bit, so that's good.",
+    "res":[],
+    "cost": 22,
+    "itemLvl": 7,
+    "slot":2,
+    "imgUrl": "",
+    "num":15
+}, {
+    "name": "Hardened Leather Bracers",
+    "def": 10,
+    "desc": "Via a complex curing process involving many nasty chemicals, the original cow hide is transformed into something that makes digging the weeds a lot easier.",
+    "res":[],
+    "cost": 21,
+    "itemLvl": 7,
+    "slot":3,
+    "imgUrl": "",
+    "num":16
+}, {
+    "name": "Hardened Leather Greaves",
+    "def": 10,
+    "desc": "They kinda smell after a while.",
+    "res":[],
+    "cost": 21,
+    "itemLvl": 7,
+    "slot":4,
+    "imgUrl": "",
+    "num":17
+}, {
+    "name": "Cleric Robes",
+    "def": 14,
+    "desc": "So holy you can feel the self-righteousness oozing off of them.",
+    "res":[1,5],
+    "cost": 34,
+    "itemLvl": 9,
+    "slot":1,
+    "imgUrl": "",
+    "num":18
+}, {
+    "name": "Robes of the Damned",
+    "def": 14,
+    "desc": "Damn, these are nice robes!",
+    "res":[3,4],
+    "cost": 34,
+    "itemLvl": 9,
+    "slot":1,
+    "imgUrl": "",
+    "num":19
 }]
