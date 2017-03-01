@@ -1629,6 +1629,7 @@ app.factory('mazeFac', function($http) {
             return good;
         },
         popCells = function() {
+            // is this ever called?
             cells.forEach(function(cel) {
                 if (cel.has == 'mons') {
                     $http.get('/item/getRanMons/' + cel.id).then(function(res) {

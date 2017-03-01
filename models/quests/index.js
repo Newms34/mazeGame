@@ -8,11 +8,12 @@ var qstSchema = new mongoose.Schema({
     steps: [{
         txt: String,
         stepNum: Number,
-        monsGoal: Number,
+        monsGoal: Number,//id of boss to be defeated. Only bosses can act as monster goals.
         itGoal: Number
     }],//for now, steps will be a bunch of things like "go kill X" or "go get a Y".
     desc: String,//Description of the quest
     lvl: Number,
+    lvlQuest:{type:Boolean, default:false},//is this a levelQuest? Only one levelQuest per level (max)
     giver: Number //we may not need both giver AND lvl, since the giver should only give the quest at an appropriate lvl
 }, { collection: 'Quest' });
 

@@ -16,6 +16,8 @@ var findItemAtLvl = function(l, a) {
     }
     return retArr;
 }
+
+//note that for the monster-getters, they ONLY select from normal monsters. Boss monsters are kept in a separate collection.
 router.get('/beastie/:lvl/:cell', function(req, res, next) {
     mongoose.model('Mon').find({}, function(err, data) {
         var monDist = gauss(parseInt(req.params.lvl) - 1, 4);
@@ -28,7 +30,7 @@ router.get('/beastie/:lvl/:cell', function(req, res, next) {
             console.log('trying lvl', theMons)
         }
         var possMons = findItemAtLvl(theMons, data);
-        var mons = possMons[Math.floor(Math.random() * possMons.length)]
+        var mons = possMons[Math.floor(Math.random() * possMons.length)];
         console.log('picked a', mons)
         res.send({ mons: mons, cell: req.params.cell })
     })
@@ -52,6 +54,10 @@ router.get('/getRanMons/:cell', function(req, res, next) {
             }
         }
         var pickedMons = data[probArr[Math.floor(Math.random() * probArr.length)]];
+        while(mons.isBoss){
+            //cannot select boss (quest-specific) monsters
+            mons = possMons[Math.floor(Math.random() * possMons.length)];
+        }
         console.log('picked a', pickedMons)
         res.send({ mons: pickedMons, cell: cell })
     })

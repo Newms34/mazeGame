@@ -14,7 +14,7 @@ var concat = require('gulp-concat');
 var uglify = require('gulp-uglify');
 var gutil = require('gulp-util')
 var rename = require('gulp-rename');
-var kid = require('child_process')
+var kid = require('child_process');
 var ps = require('ps-node');
 var cleany = require('gulp-clean-css')
 // Lint Task

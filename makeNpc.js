@@ -56,6 +56,7 @@ mongoose.model('Npc').find({}, function(err, npcs) {
                     randName += lNameList[Math.floor(Math.random() * lNameList.length)];
                     console.log(randName);
                     //note that merchants do not sell junk.
+                    //they (should) buy it tho!
                     mongoose.model('Armor').find({}, function(err, dataA) {
                         mongoose.model('Weap').find({}, function(err, dataW) {
                             mongoose.model('Affix').find({}, function(err, dataP) {
@@ -64,16 +65,7 @@ mongoose.model('Npc').find({}, function(err, npcs) {
                                         numItems = Math.ceil(Math.random() * 30),
                                         numDiag = Math.ceil(Math.random() * 10),
                                         mNpc = mongoose.model('Npc')();
-                                    // theNpc = {
-                                    //     name: randName,
-                                    //     important: false, //since these are randomly generated, they're not important
-                                    //     isMerch: makeMerch,
-                                    //     gossip: [],
-                                    //     inv: [],
-                                    //     lvl: lvl,
-                                    //     num: npcs.length
-                                    // };
-                                    mNpc.important = false;
+                                    mNpc.important = false;//since these npcs are randomly generated, and thus not part of a quest, they are not important.
                                     mNpc.lvl = lvl;
                                     mNpc.gossip = [];
                                     mNpc.inv = [];

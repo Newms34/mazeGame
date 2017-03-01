@@ -15,7 +15,7 @@ app.use(express.static(path.join(__dirname, 'bower_components')));
 app.use(express.static(path.join(__dirname, 'views')));
 app.use(session({
     cookieName: 'session', // cookie name dictates the key name added to the request object
-    secret: 'Anakin Skywalker was actually kinda right', // should be a large unguessable string
+    secret: 'ea augusta est et carissima', // should be a large unguessable string
     duration: 24 * 60 * 60 * 1000, // how long the session will stay valid in ms
     ephemeral: false, // when true, cookie expires when the browser closes
     httpOnly: true, // when true, cookie is not accessible from javascript
