@@ -161,11 +161,20 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
                     }
                 })
                 $q.all(promMercInvs).then(function(mercInvs) {
-                    console.log('new level constructed, saving')
+                    var promMerchQuests = [];
                     mercInvs.forEach(function(inv) {
+                        console.log('INV',inv);
                         $scope.cells[$scope.cellNames.indexOf(inv.id)].has.inv = inv.inv;
+                        promMerchQuests.push(econFac.getQuests($scope.name,inv.id,$scope.lvl));
                     })
-                    $scope.saveGame(false); //save data, do not reload.
+                    $q.all(promMerchQuests).then(function(mq){
+                        console.log(mq);
+                        mq.forEach(function(q){
+                            $scope.cells[$scope.cellNames.indexOf(q.id)].has.quest = q.q
+                            console.log('NPC HAS QUEST:',q.q,q.id)
+                        })
+                        // $scope.saveGame(false); //save data, do not reload.
+                    })
                 })
             })
         })
@@ -425,6 +434,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
                     combatFac.combatReady(); //set up the board
                 }
                 if (typeof $scope.cells[$scope.cellNames.indexOf($scope.playerCell)].has == 'object' && $scope.cells[$scope.cellNames.indexOf($scope.playerCell)].has.inv) {
+                    //cell contains an object, and that object has an inventory. Hence, a merch.
                     $scope.currNpc = $scope.cells[$scope.cellNames.indexOf($scope.playerCell)].has;
                     $scope.merchy.prepNpc();
                     $scope.isNearMerch = $scope.cells[$scope.cellNames.indexOf($scope.playerCell)].has.inv
@@ -1055,7 +1065,6 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
         //this is reset every time we 're-enter' the cell
         $('.pre-battle').hide(250);
         combatFac.getItems().then(function(r) {
-            console.log(r)
             $scope.comb.itemStats = r.data;
             $scope.currPRegens = [];
             $scope.currPDegens = [];
@@ -1166,8 +1175,9 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
 
         var allWeaps = $scope.comb.itemStats[1],
             allArm = $scope.comb.itemStats[0],
-            allAff = $scope.comb.itemStats[2];
-        console.log('WEAP IDS', $scope.$parent.playerItems.weap, 'WEAPS', allWeaps, 'ARMOR', allArm, 'Affixes', allAff)
+            allAff = $scope.comb.itemStats[2],
+            allJunk = $scope.comb.itemStats[3];
+        console.log('WEAP IDS', $scope.$parent.playerItems.weap, 'WEAPS', allWeaps, 'ARMOR', allArm, 'AFFIXES', allAff,'JUNK',allJunk)
         var playerWeap = $scope.$parent.playerItems.weap[1] != -1 ? [allAff[$scope.$parent.playerItems.weap[0]], allWeaps[$scope.$parent.playerItems.weap[1]], allAff[$scope.$parent.playerItems.weap[2]]] : false;
         console.log(playerWeap[0].pre + ' ' + playerWeap[1].name + ' ' + playerWeap[2].post, playerWeap)
         var playerArmor;
@@ -1295,7 +1305,12 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                 //first, we pick a random part of the body to be 'hit'
                 var partFreqs = $scope.comb.freqGen(parts);
                 var thePart = partFreqs[Math.floor(Math.random() * partFreqs.length)];
-                var partHitA = $scope.playerItems[thePart] && $scope.playerItems[thePart][1].def != 0 ? $scope.playerItems[thePart][1].def : 0; //which part was hit
+                //which part was hit, and its armor. 
+                var partHitA = 0;
+                if ($scope.playerItems[thePart] && $scope.playerItems[thePart][1] && $scope.playerItems[thePart][1]>-1){
+                    //this piece exists, is armor, and haz a value.
+                    partHitA = allArm[$scope.playerItems[thePart][1]].def;
+                }
                 //next, we sum up additional def from weapons
                 var bonusA = 0;
                 if (playerWeap[1].def) {
@@ -1303,16 +1318,17 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                 }
                 //then inventory items' resistance
                 //Note that this only occurs for non-equippable items (i.e., NOT armor or weapons).
+                //in other words, only rings/trinkets
+                console.log('Now running inv item defense',$scope.playerItems.inv)
                 if ($scope.playerItems.inv && $scope.playerItems.inv.length) {
-                    //player has items in inv
-
+                    //player has items in inv  
+                    console.log('----Checking defense items:----')
                     for (var resd = 0; resd < $scope.playerItems.inv.length; resd++) {
-                        if ($scope.playerItems.inv[resd].lootType != 0 && $scope.playerItems.inv[resd].lootType != 1) {
-                            //neither armor nor weap
+                        if ($scope.playerItems.inv[resd].lootType==0) {
                             console.log('CHECKING DEFENSE ON ITEM:', $scope.playerItems.inv[resd])
                             bonusA += $scope.playerItems.inv[resd].item[1].def || 0;
                         }
-                        if ($scope.playerItems.inv[resd].item[1].res && $scope.playerItems.inv[resd].item[1].res.indexOf(dtype) != -1) {
+                        if ($scope.playerItems.inv[resd].item && $scope.playerItems.inv[resd].item[1] && $scope.playerItems.inv[resd].item[1].res && $scope.playerItems.inv[resd].item[1].res.indexOf(dtype) != -1) {
                             //the type of damage done by this monster IS being resisted by an item in inventory
                             activeRes = true;
                         }
@@ -1321,7 +1337,7 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                 //now we check res changes from items.
                 totalRawA = partHitA + bonusA;
             } else {
-                //player was stunned last turn! do nothin, but set stunned status to false (so we can attack next turn)
+                //mons was stunned last turn! do nothin, but set stunned status to false (so it can attack next turn)
                 $scope.monsStunned = false;
             }
         }
@@ -1555,14 +1571,14 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
 app.factory('econFac', function($http, $q) {
     var npcTypes = ['merch', 'ambient', 'quest']
     return {
-        merchInv: function(invArr) {
+        merchInv: function(invArr, id) {
             //get all item info from backend 
-            return $http.get('/item/allItems').then(function(d) {
+            return $http.get('/item/allItems/').then(function(d) {
                 var fullInvArr = [];
-                console.log('GETTING ITEM DATA:invArr',invArr)
-                //now parse the inventory data, and return the object of that merch's inv
+                console.log('GETTING ITEM DATA:invArr', invArr)
+                    //now parse the inventory data, and return the object of that merch's inv
                 for (var i = 0; i < invArr.length; i++) {
-                   if (invArr[i].lootType == 0) {
+                    if (invArr[i].lootType == 0) {
                         //armor
                         fullInvArr.push([d.data[2][invArr[i].item[0]], d.data[0][invArr[i].item[1]], d.data[2][invArr[i].item[2]]]);
                     } else {
@@ -1570,15 +1586,24 @@ app.factory('econFac', function($http, $q) {
                         fullInvArr.push([d.data[2][invArr[i].item[0]], d.data[1][invArr[i].item[1]], d.data[2][invArr[i].item[2]]]);
                     }
                 }
-                return fullInvArr;
+                return {
+                    inv: fullInvArr,
+                    id: id
+                };
             })
         },
         getNpc: function(i) {
-            return $http.get('/other/oneNpc').then(function(n) {
+            return $http.get('/other/oneNpc/' + i).then(function(n) {
                 return {
-                    data: n.data,
-                    id: i
+                    data: n.data.data,
+                    id: n.data.i
                 };
+            })
+        },
+        getQuests: function(name, id, lvl) {
+            var idArr = id.split('-')
+            return $http.get('/quest/npcQ/' + idArr[0] + '/' + idArr[1] + '/' + lvl + '/' + name).then(function(q) {
+                return q.data;
             })
         }
     };
@@ -1773,24 +1798,22 @@ app.controller('merch-cont', function($scope, $http, $q, $timeout, $window, econ
     $scope.merchy.prepNpc = function() {
         $scope.merchy.buy = true;
         $scope.merchy.merch = $scope.currNpc;
-        console.log('FROM MERCH CONT', $scope.merchy)
         $scope.merchy.merch.sez = $scope.merchy.merch.gossip[Math.floor(Math.random() * $scope.merchy.merch.gossip.length)];
-        console.log(econFac.merchInv, typeof $scope.merchy.merch.inv)
         if (!$scope.merchy.merch.alreadyInfoed) {
 
             var realInv = econFac.merchInv($scope.merchy.merch.inv).then(function(r) {
                 console.log('THIS NPC HAS:', r)
                 for (var n = 0; n < $scope.merchy.merch.inv.length; n++) {
-                    $scope.merchy.merch.inv[n].item = r[n];
+                    $scope.merchy.merch.inv[n].item = r.inv[n];
                 }
                 $scope.merchy.merch.alreadyInfoed = true;
-                // $scope.merchy.merch.inv = r
                 $scope.$apply();
             })
         }
     };
     $scope.merchy.itemForPlayer = null;
     $scope.merchy.exchange = function(item, dir, ind) {
+        //main sell function
         $scope.moveReady = false;
         angular.element('body').scope().moveReady = false;
         var itemFull = item.item[0].pre + ' ' + item.item[1].name + 's ' + item.item[2].post;

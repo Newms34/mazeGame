@@ -14,7 +14,7 @@ var mongoose = require('mongoose'),
     randName = 'John the Codeydude',
     startLet = String.fromCharCode(97 + Math.floor(Math.random() * 25)),
     nameCats = ['Albanian', 'Basque', 'Catalan', 'Czech', 'English', 'Esperanto', 'Danish', 'Dutch', 'Estonian', 'Faroese', 'Finnish', 'French', 'German', 'Greenlandic', 'Hawaiian', 'Hungarian', 'Icelandic', 'Irish', 'Italian', 'Latin', 'Latvian', 'Lithuanian', 'Manx', 'Maori', 'Middle_French', 'Norman', 'Northern_Sami', 'Norwegian', 'Old_French', 'Old_Irish', 'Old_Norse', 'Polish', 'Portuguese', 'Romanian', 'Scots', 'Scottish_Gaelic', 'Serbo-Croatian', 'Slovak', 'Slovene', 'Somali', 'Spanish', 'Swedish', 'Turkish', 'Vietnamese', 'Vilamovian', 'Welsh', 'West_Frisian', 'Zazaki'],
-    adjs = ['large', 'bad', 'small', 'obsequious', 'strange', 'pious', 'good', 'strong', 'tough', 'malodorous', 'threatening'],
+    adjs = ['large', 'bad', 'small', 'obsequious', 'strange', 'pious', 'good', 'strong', 'tough', 'malodorous', 'threatening','beautiful','ugly'],
     manualResist = false,
     prod = false,
     resist = [],
@@ -86,7 +86,7 @@ https.get({
         });
 
         var theName = nameList[Math.floor(Math.random() * nameList.length)];
-        while (theName.match(/:|\s|\.|-/)) {
+        while (!theName || theName.match(/:|\s|\.|-/)) {
             theName = nameList[Math.floor(Math.random() * nameList.length)];
         }
         var adjPik = adjs[Math.floor(Math.random() * adjs.length)];
@@ -175,28 +175,36 @@ https.get({
                     prompt.get(promptLocSchema, function(err, resp) {
                         console.log('local user sez: ', resp);
                         if (resp.confirm.toLowerCase() == 'y' || resp.confirm.toLowerCase() == 'yes') {
-                            boss.save();
-                            quest.save();
+                            console.log('SAVING', boss, quest)
+                            boss.save(function(errBS) {
+                                if (errBS) console.log('uh oh! problem saving boss:', errBS)
+                                quest.save(function(errQS) {
+                                    if (errQS) console.log('uh oh! problem saving quest:', errQS)
+                                    process.exit(0);
+
+                                });
+                            });
+
+                            // mongoose.model('Boss').create(boss);
+                        } else {
+                            process.exit(0);
                         }
-                        process.exit(0);
                     })
                 } else {
-                    {
-                        prompt.get(promptLiveSchema, function(err, resp) {
-                            console.log('live user sez: ', resp);
-                            if (resp.confirm.toLowerCase() == 'y' || resp.confirm.toLowerCase() == 'yes') {
-                                fs.writeFile('D:\\Data\\Projects\\maze\\seeds\\tempBoss.json', '[' + JSON.stringify(boss).replace(/"_id":"\w+",/g, '') + ']', { flags: 'w' }, function(err, res) {
-                                    if (err) console.log('Uh oh! trouble writing boss to file!');
-                                    fs.writeFile('D:\\Data\\Projects\\maze\\seeds\\tempQuest.json', '[' + JSON.stringify(quest).replace(/"_id":"\w+",/g, '') + ']', { flags: 'w' }, function(err, res) {
-                                        if (err) console.log('Uh oh! trouble writing quest to file!');
-                                        kid.exec('c: && cd c:\\mongodb\\bin && mongoimport -h ds011913.mlab.com:11913 -d heroku_701xzs88 -c Boss -u newms -p ' + resp.password + ' --jsonArray --file D:\\Data\\Projects\\maze\\seeds\\tempBoss.json', function(err, stdout, stderr) {
-                                            if (err) {
-                                                console.log('Uh oh! An error of "', err, '" prevented us from uploading this boss!');
-                                                process.exit();
-                                            } else {
-                                                console.log('Successfully uploaded boss', boss.name)
-                                            }
-                                            kid.exec('c: && cd c:\\mongodb\\bin && mongoimport -h ds011913.mlab.com:11913 -d heroku_701xzs88 -c Quest -u newms -p ' + resp.password + ' --jsonArray --file D:\\Data\\Projects\\maze\\seeds\\tempQuest.json', function(err, stdout, stderr) {
+                    prompt.get(promptLiveSchema, function(err, resp) {
+                        if (resp.confirm.toLowerCase() == 'y' || resp.confirm.toLowerCase() == 'yes') {
+                            fs.writeFile('D:\\Data\\Projects\\maze\\seeds\\tempBoss.json', '[' + JSON.stringify(boss).replace(/"_id":"\w+",/g, '') + ']', { flags: 'w' }, function(err, res) {
+                                if (err) console.log('Uh oh! trouble writing boss to file!');
+                                fs.writeFile('D:\\Data\\Projects\\maze\\seeds\\tempQuest.json', '[' + JSON.stringify(quest).replace(/"_id":"\w+",/g, '') + ']', { flags: 'w' }, function(err, res) {
+                                    if (err) console.log('Uh oh! trouble writing quest to file!');
+                                    kid.exec('c: && cd c:\\mongodb\\bin && mongoimport -h ds011913.mlab.com:11913 -d heroku_701xzs88 -c Boss -u newms -p ' + resp.password + ' --jsonArray --file D:\\Data\\Projects\\maze\\seeds\\tempBoss.json', function(err, stdout, stderr) {
+                                        if (err) {
+                                            console.log('Uh oh! An error of "', err, '" prevented us from uploading this boss!');
+                                            process.exit();
+                                        } else {
+                                            console.log('Successfully uploaded boss', boss.name)
+                                        }
+                                        kid.exec('c: && cd c:\\mongodb\\bin && mongoimport -h ds011913.mlab.com:11913 -d heroku_701xzs88 -c Quest -u newms -p ' + resp.password + ' --jsonArray --file D:\\Data\\Projects\\maze\\seeds\\tempQuest.json', function(err, stdout, stderr) {
                                             if (err) {
                                                 console.log('Uh oh! An error of "', err, '" prevented us from uploading this quest! Please note that the boss WAS uploaded successfully.');
                                             } else {
@@ -204,12 +212,11 @@ https.get({
                                             }
                                             process.exit(0)
                                         })
-                                        })
                                     })
                                 })
-                            }
-                        })
-                    }
+                            })
+                        }
+                    })
                 }
             })
         })

@@ -17,8 +17,8 @@ router.get('/news', function(req, res, next) {
         }
     })
 })
-router.get('/oneNpc', function(req, res, next) {
+router.get('/oneNpc/:i', function(req, res, next) {
     mongoose.model('Npc').find({}, function(err, data) {
-        res.send(data[Math.floor(Math.random() * data.length)]);
+        res.send({i:req.params.i,data:data[Math.floor(Math.random() * data.length)]});
     })
 })

@@ -70,7 +70,8 @@ router.get('/Inventory', function(req, res, next) {
         })
     })
 });
-router.get('/allItems', function(req, res, next) {
+
+router.get('/allItems/', function(req, res, next) {
     //get all inv items (weapons, armor, affixes, AND junk)
     mongoose.model('Armor').find({}, function(err, dataA) {
         mongoose.model('Weap').find({}, function(err, dataW) {

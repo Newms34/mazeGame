@@ -71,11 +71,20 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
                     }
                 })
                 $q.all(promMercInvs).then(function(mercInvs) {
-                    console.log('new level constructed, saving')
+                    var promMerchQuests = [];
                     mercInvs.forEach(function(inv) {
+                        console.log('INV',inv);
                         $scope.cells[$scope.cellNames.indexOf(inv.id)].has.inv = inv.inv;
+                        promMerchQuests.push(econFac.getQuests($scope.name,inv.id,$scope.lvl));
                     })
-                    $scope.saveGame(false); //save data, do not reload.
+                    $q.all(promMerchQuests).then(function(mq){
+                        console.log(mq);
+                        mq.forEach(function(q){
+                            $scope.cells[$scope.cellNames.indexOf(q.id)].has.quest = q.q
+                            console.log('NPC HAS QUEST:',q.q,q.id)
+                        })
+                        // $scope.saveGame(false); //save data, do not reload.
+                    })
                 })
             })
         })
@@ -335,6 +344,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
                     combatFac.combatReady(); //set up the board
                 }
                 if (typeof $scope.cells[$scope.cellNames.indexOf($scope.playerCell)].has == 'object' && $scope.cells[$scope.cellNames.indexOf($scope.playerCell)].has.inv) {
+                    //cell contains an object, and that object has an inventory. Hence, a merch.
                     $scope.currNpc = $scope.cells[$scope.cellNames.indexOf($scope.playerCell)].has;
                     $scope.merchy.prepNpc();
                     $scope.isNearMerch = $scope.cells[$scope.cellNames.indexOf($scope.playerCell)].has.inv

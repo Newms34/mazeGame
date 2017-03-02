@@ -118,7 +118,6 @@ mongoose.model('Npc').find({}, function(err, npcs) {
                                                     }
                                                     process.exit(0)
                                                 })
-
                                             })
                                         })
                                     }

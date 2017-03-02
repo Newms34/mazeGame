@@ -19,7 +19,6 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
         //this is reset every time we 're-enter' the cell
         $('.pre-battle').hide(250);
         combatFac.getItems().then(function(r) {
-            console.log(r)
             $scope.comb.itemStats = r.data;
             $scope.currPRegens = [];
             $scope.currPDegens = [];
@@ -130,8 +129,9 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
 
         var allWeaps = $scope.comb.itemStats[1],
             allArm = $scope.comb.itemStats[0],
-            allAff = $scope.comb.itemStats[2];
-        console.log('WEAP IDS', $scope.$parent.playerItems.weap, 'WEAPS', allWeaps, 'ARMOR', allArm, 'Affixes', allAff)
+            allAff = $scope.comb.itemStats[2],
+            allJunk = $scope.comb.itemStats[3];
+        console.log('WEAP IDS', $scope.$parent.playerItems.weap, 'WEAPS', allWeaps, 'ARMOR', allArm, 'AFFIXES', allAff,'JUNK',allJunk)
         var playerWeap = $scope.$parent.playerItems.weap[1] != -1 ? [allAff[$scope.$parent.playerItems.weap[0]], allWeaps[$scope.$parent.playerItems.weap[1]], allAff[$scope.$parent.playerItems.weap[2]]] : false;
         console.log(playerWeap[0].pre + ' ' + playerWeap[1].name + ' ' + playerWeap[2].post, playerWeap)
         var playerArmor;
@@ -259,7 +259,12 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                 //first, we pick a random part of the body to be 'hit'
                 var partFreqs = $scope.comb.freqGen(parts);
                 var thePart = partFreqs[Math.floor(Math.random() * partFreqs.length)];
-                var partHitA = $scope.playerItems[thePart] && $scope.playerItems[thePart][1].def != 0 ? $scope.playerItems[thePart][1].def : 0; //which part was hit
+                //which part was hit, and its armor. 
+                var partHitA = 0;
+                if ($scope.playerItems[thePart] && $scope.playerItems[thePart][1] && $scope.playerItems[thePart][1]>-1){
+                    //this piece exists, is armor, and haz a value.
+                    partHitA = allArm[$scope.playerItems[thePart][1]].def;
+                }
                 //next, we sum up additional def from weapons
                 var bonusA = 0;
                 if (playerWeap[1].def) {
@@ -267,16 +272,17 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                 }
                 //then inventory items' resistance
                 //Note that this only occurs for non-equippable items (i.e., NOT armor or weapons).
+                //in other words, only rings/trinkets
+                console.log('Now running inv item defense',$scope.playerItems.inv)
                 if ($scope.playerItems.inv && $scope.playerItems.inv.length) {
-                    //player has items in inv
-
+                    //player has items in inv  
+                    console.log('----Checking defense items:----')
                     for (var resd = 0; resd < $scope.playerItems.inv.length; resd++) {
-                        if ($scope.playerItems.inv[resd].lootType != 0 && $scope.playerItems.inv[resd].lootType != 1) {
-                            //neither armor nor weap
+                        if ($scope.playerItems.inv[resd].lootType==0) {
                             console.log('CHECKING DEFENSE ON ITEM:', $scope.playerItems.inv[resd])
                             bonusA += $scope.playerItems.inv[resd].item[1].def || 0;
                         }
-                        if ($scope.playerItems.inv[resd].item[1].res && $scope.playerItems.inv[resd].item[1].res.indexOf(dtype) != -1) {
+                        if ($scope.playerItems.inv[resd].item && $scope.playerItems.inv[resd].item[1] && $scope.playerItems.inv[resd].item[1].res && $scope.playerItems.inv[resd].item[1].res.indexOf(dtype) != -1) {
                             //the type of damage done by this monster IS being resisted by an item in inventory
                             activeRes = true;
                         }
@@ -285,7 +291,7 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                 //now we check res changes from items.
                 totalRawA = partHitA + bonusA;
             } else {
-                //player was stunned last turn! do nothin, but set stunned status to false (so we can attack next turn)
+                //mons was stunned last turn! do nothin, but set stunned status to false (so it can attack next turn)
                 $scope.monsStunned = false;
             }
         }

@@ -8,9 +8,10 @@
             <p>
                 Your cash: {{playerItems.gold}} munneez.
             </p>
-            <div class='col-md-6 merch-tab' ng-click='merchy.buy=true;' ng-class='{"tab-inact":merchy.buy==false}'>BUY</div>
-            <div class='col-md-6 merch-tab' ng-click='merchy.buy=false;' ng-class='{"tab-inact":merchy.buy==true}'>SELL</div>
-            <div id='merch-buy' class='merch-tab-box' ng-show='merchy.buy'>
+            <div class='col-md-4 merch-tab' ng-click='merchy.buy=1;' ng-class='{"tab-inact":merchy.buy!=1}'>BUY</div>
+            <div class='col-md-4 merch-tab' ng-click='merchy.buy=0;' ng-class='{"tab-inact":merchy.buy!=0}'>SELL</div>
+            <div class='col-md-4 merch-tab' ng-click='merchy.buy=2;' ng-class='{"tab-inact":merchy.buy!=2}'>NEWS</div>
+            <div id='merch-buy' class='merch-tab-box' ng-show='merchy.buy==1'>
                 <table class='table table-striped'>
                     <thead>
                         <tr>
@@ -32,14 +33,14 @@
                     </tbody>
                 </table>
             </div>
-            <div id='merch-sell' class='merch-tab-box' ng-show='merchy.buy==false'>
+            <div id='merch-sell' class='merch-tab-box' ng-show='merchy.buy==0'>
                 <table class='table table-striped'>
                     <thead>
                         <tr>
                             <th>Name</th>
                             <th>Price</th>
                             <th>Quantity</th>
-                            <th>Buy</th>
+                            <th>Sell</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -53,6 +54,28 @@
                         </tr>
                     </tbody>
                 </table>
+            </div>
+            <div id='merch-quest' class='merch-tab-box' ng-show='merchy.buy==2'>
+                <div ng-show='merchy.merch.quest'>
+                    <hr/>
+                    <h4>News</h4>
+                    <div class='row'>
+                        <div class='col-md-3'>Name:</div>
+                        <div class='col-md-7'>{{merchy.merch.quest.name}}</div>
+                    </div>
+                    <div class='row'>
+                        <div class='col-md-3'>Level:</div>
+                        <div class='col-md-7'>{{merchy.merch.quest.lvl}}</div>
+                    </div>
+                    <div class='row'>
+                        <div class='col-md-3'>Description:</div>
+                        <div class='col-md-7'>{{merchy.merch.quest.desc}}</div>
+                    </div>
+                    <div class='row'>
+                        <div class='col-md-6 col-md-offset-3'><button ng-click='merchy.acceptQuest()' class='btn btn-success'>Accept</button></div>
+                    </div>
+                </div>
+                <div ng-show='!merchy.merch.quest'>Sorry! I've got no new news right now!</div>
             </div>
         </div>
     </div>

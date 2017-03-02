@@ -5,24 +5,22 @@ app.controller('merch-cont', function($scope, $http, $q, $timeout, $window, econ
     $scope.merchy.prepNpc = function() {
         $scope.merchy.buy = true;
         $scope.merchy.merch = $scope.currNpc;
-        console.log('FROM MERCH CONT', $scope.merchy)
         $scope.merchy.merch.sez = $scope.merchy.merch.gossip[Math.floor(Math.random() * $scope.merchy.merch.gossip.length)];
-        console.log(econFac.merchInv, typeof $scope.merchy.merch.inv)
         if (!$scope.merchy.merch.alreadyInfoed) {
 
             var realInv = econFac.merchInv($scope.merchy.merch.inv).then(function(r) {
                 console.log('THIS NPC HAS:', r)
                 for (var n = 0; n < $scope.merchy.merch.inv.length; n++) {
-                    $scope.merchy.merch.inv[n].item = r[n];
+                    $scope.merchy.merch.inv[n].item = r.inv[n];
                 }
                 $scope.merchy.merch.alreadyInfoed = true;
-                // $scope.merchy.merch.inv = r
                 $scope.$apply();
             })
         }
     };
     $scope.merchy.itemForPlayer = null;
     $scope.merchy.exchange = function(item, dir, ind) {
+        //main sell function
         $scope.moveReady = false;
         angular.element('body').scope().moveReady = false;
         var itemFull = item.item[0].pre + ' ' + item.item[1].name + 's ' + item.item[2].post;
