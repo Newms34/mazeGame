@@ -5,22 +5,25 @@ More importantly, it also means our user's browser only needs to fetch ONE file 
 
 
 // First, we'll just include gulp itself.
-var gulp = require('gulp');
+const gulp = require('gulp');
 
 // Include Our Plugins
-var jshint = require('gulp-jshint');
-var sass = require('gulp-sass');
-var concat = require('gulp-concat');
-var uglify = require('gulp-uglify');
-var gutil = require('gulp-util')
-var rename = require('gulp-rename');
-var kid = require('child_process');
-var ps = require('ps-node');
-var cleany = require('gulp-clean-css')
+const jshint = require('gulp-jshint');
+const sass = require('gulp-sass');
+const concat = require('gulp-concat');
+const uglify = require('gulp-uglify');
+const gutil = require('gulp-util')
+const rename = require('gulp-rename');
+const kid = require('child_process');
+const ps = require('ps-node');
+const cleany = require('gulp-clean-css')
+const babel = require('gulp-babel');
+const ngAnnotate = require('gulp-ng-annotate');
+
 // Lint Task
 gulp.task('lint', function() {
     return gulp.src('js/*.js')
-        .pipe(jshint())
+        .pipe(jshint({esversion:6}))
         .pipe(jshint.reporter('default'));
 });
 
@@ -38,7 +41,9 @@ gulp.task('scripts', function() {
         .pipe(concat('all.js'))
         .pipe(gulp.dest('public/js'))
         .pipe(rename('all.min.js'))
-        .pipe(uglify({ mangle: false }).on('error', gutil.log))
+        .pipe(babel({presets: ['es2015']}))
+        .pipe(ngAnnotate())
+        .pipe(uglify().on('error', gutil.log))
         .pipe(gulp.dest('public/js'));
 });
 gulp.task('checkDB', function() {
