@@ -53,6 +53,7 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
     $scope.currMRegens = [];
     $scope.currMDegens = [];
     $scope.monsStunned = false;
+    $scope.comb.fleeMult = 1; //this is only increased if player fleez.
     $scope.pStunned = false;
     $scope.comb.getAllSkills(); //we reload the skills each time, just in case there's been an update
     $scope.comb.showSkillInf = function() {
@@ -60,6 +61,29 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
     }
     $scope.comb.attemptFlee = function() {
         //user attempting to run
+        $scope.comb.fleeMult = 1;
+        //calculate (and cap) the level difference multiplier
+        //this does not change the chance that the user will be able to flee, but rather the damage that occurs if they fail to.
+        if ($scope.$parent.intTarg.lvl / $scope.lvl > 3) {
+            $scope.comb.fleeMult = 4;
+        } else if ($scope.$parent.intTarg.lvl / $scope.lvl < .2) {
+            $scope.comb.fleeMult = 1.2;
+        } else {
+            $scope.comb.fleeMult = 1 + ($scope.$parent.intTarg.lvl / $scope.lvl);
+        }
+        //i may change this flee chance to be more dynamic later, so that it's dependent on something like HP or something.
+        if (Math.random() > .7) {
+            //flee successful!
+            $scope.comb.fleeMult = 1;
+            $scope.comb.flee();
+        } else {
+            //flee unsuccessful.
+            sandalchest.alert('You attempt to flee the ' + $scope.intTarg.name + ', but fail! It attacks!', function(r) {
+                $scope.comb.playersTurn = false;
+                $scope.comb.monsTurn();
+            })
+        }
+
     }
     $scope.comb.wait = function() {
         //user does nothing
@@ -131,7 +155,7 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
             allArm = $scope.comb.itemStats[0],
             allAff = $scope.comb.itemStats[2],
             allJunk = $scope.comb.itemStats[3];
-        console.log('WEAP IDS', $scope.$parent.playerItems.weap, 'WEAPS', allWeaps, 'ARMOR', allArm, 'AFFIXES', allAff,'JUNK',allJunk)
+        console.log('WEAP IDS', $scope.$parent.playerItems.weap, 'WEAPS', allWeaps, 'ARMOR', allArm, 'AFFIXES', allAff, 'JUNK', allJunk)
         var playerWeap = $scope.$parent.playerItems.weap[1] != -1 ? [allAff[$scope.$parent.playerItems.weap[0]], allWeaps[$scope.$parent.playerItems.weap[1]], allAff[$scope.$parent.playerItems.weap[2]]] : false;
         console.log(playerWeap[0].pre + ' ' + playerWeap[1].name + ' ' + playerWeap[2].post, playerWeap)
         var playerArmor;
@@ -261,7 +285,7 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                 var thePart = partFreqs[Math.floor(Math.random() * partFreqs.length)];
                 //which part was hit, and its armor. 
                 var partHitA = 0;
-                if ($scope.playerItems[thePart] && $scope.playerItems[thePart][1] && $scope.playerItems[thePart][1]>-1){
+                if ($scope.playerItems[thePart] && $scope.playerItems[thePart][1] && $scope.playerItems[thePart][1] > -1) {
                     //this piece exists, is armor, and haz a value.
                     partHitA = allArm[$scope.playerItems[thePart][1]].def;
                 }
@@ -273,12 +297,12 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                 //then inventory items' resistance
                 //Note that this only occurs for non-equippable items (i.e., NOT armor or weapons).
                 //in other words, only rings/trinkets
-                console.log('Now running inv item defense',$scope.playerItems.inv)
+                console.log('Now running inv item defense', $scope.playerItems.inv)
                 if ($scope.playerItems.inv && $scope.playerItems.inv.length) {
                     //player has items in inv  
                     console.log('----Checking defense items:----')
                     for (var resd = 0; resd < $scope.playerItems.inv.length; resd++) {
-                        if ($scope.playerItems.inv[resd].lootType==0) {
+                        if ($scope.playerItems.inv[resd].lootType == 0) {
                             console.log('CHECKING DEFENSE ON ITEM:', $scope.playerItems.inv[resd])
                             bonusA += $scope.playerItems.inv[resd].item[1].def || 0;
                         }
@@ -308,7 +332,7 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                 dmg = dmg * 1.5
             }
         }
-        return dmg;
+        return $scope.comb.fleeMult * dmg; //we return the total damage, multiplied by the flee multiplier (if any!).
     }
     $scope.comb.freqGen = function(obj) {
         //given an obj of objs, each with a frequency freq, generate an frequency array
@@ -374,7 +398,8 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
     }
     $scope.comb.battleEndMsgs = {
         win: ['Onward!', 'To victory!', 'Forward'],
-        lose: ['Retry!', 'I\'ll be back!', 'Another time then...']
+        lose: ['Retry!', 'I\'ll be back!', 'Another time then...'],
+        flee: ['I\'m not a coward!', 'I\'ll be back...', 'Another time then...', 'A close one!']
     }
     $scope.comb.dieP = function() {
         $scope.comb.battleStatus = {
@@ -393,7 +418,16 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
             url: './img/assets/Victory.jpg',
             btn: $scope.comb.battleEndMsgs.win[Math.floor(Math.random() * $scope.comb.battleEndMsgs.win.length)]
         };
-        console.log($scope.comb.battleStatus)
+    }
+    $scope.comb.flee = function() {
+        console.log('flee worked!')
+        $scope.comb.battleStatus = {
+            status: true,
+            title: 'Flee!',
+            txt: 'You\'ve successfully fled the ' + $scope.intTarg.name + '.',
+            url: './img/assets/flee.jpg',
+            btn: $scope.comb.battleEndMsgs.flee[Math.floor(Math.random() * $scope.comb.battleEndMsgs.flee.length)]
+        };
     }
     $scope.comb.updateDoTs = function() {
             var a;
@@ -460,6 +494,7 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                             $scope.intTarg.currHp = $scope.currHp
                         }
                         $scope.comb.playersTurn = true;
+                        $scope.comb.fleeMult = 1;
                     })
                 } else if (($scope.intTarg.currHp / $scope.intTarg.hp) > .5 && ((-18 / 5) * ($scope.intTarg.currHp / $scope.intTarg.hp) + 3 > Math.random())) {
                     //monster at low hp (<50%), so gets additional % chance to heal
@@ -471,6 +506,7 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                             $scope.intTarg.currHp = $scope.currHp
                         }
                         $scope.comb.playersTurn = true;
+                        $scope.comb.fleeMult = 1;
                     })
                 } else {
                     if (Math.random() < $scope.$parent.intTarg.stunCh) {
@@ -486,6 +522,7 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                             $scope.comb.dieP();
                         } else {
                             $scope.comb.playersTurn = true;
+                            $scope.comb.fleeMult = 1;
                             $scope.currEn += 2;
                             if ($scope.currEn > $scope.maxEn) {
                                 $scope.currEn = $scope.maxEn;
@@ -507,6 +544,7 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                         $scope.comb.dieM();
                     } else {
                         $scope.comb.playersTurn = true;
+                        $scope.comb.fleeMult = 1;
                         $scope.currEn += 2;
                         if ($scope.currEn > $scope.maxEn) {
                             $scope.currEn = $scope.maxEn;
@@ -517,6 +555,7 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
         } else {
             sandalchest.alert($scope.$parent.intTarg.name + ' is stunned this turn!', function() {
                 $scope.comb.playersTurn = true;
+                $scope.comb.fleeMult = 1;
             });
         }
     }

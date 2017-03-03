@@ -6,23 +6,17 @@ app.controller('merch-cont', function($scope, $http, $q, $timeout, $window, econ
         $scope.merchy.buy = true;
         $scope.merchy.merch = $scope.currNpc;
         $scope.merchy.merch.sez = $scope.merchy.merch.gossip[Math.floor(Math.random() * $scope.merchy.merch.gossip.length)];
-        if (!$scope.merchy.merch.alreadyInfoed) {
 
-            var realInv = econFac.merchInv($scope.merchy.merch.inv).then(function(r) {
-                console.log('THIS NPC HAS:', r)
-                for (var n = 0; n < $scope.merchy.merch.inv.length; n++) {
-                    $scope.merchy.merch.inv[n].item = r.inv[n];
-                }
-                $scope.merchy.merch.alreadyInfoed = true;
-                $scope.$apply();
-            })
-        }
     };
     $scope.merchy.itemForPlayer = null;
+    $scope.acceptQuest= function(){
+        console.log($scope.$parent.name,$scope.merchy.merch.quest.name)
+    }
     $scope.merchy.exchange = function(item, dir, ind) {
         //main sell function
         $scope.moveReady = false;
         angular.element('body').scope().moveReady = false;
+        console.log(item)
         var itemFull = item.item[0].pre + ' ' + item.item[1].name + 's ' + item.item[2].post;
         var itemBaseCost = Math.floor(item.item[1].cost * (10 + item.item[0].cost + item.item[2].cost)) / 10;
         console.log('ITEM DATA TO EXCHANGE', item, 'and dir:', dir)

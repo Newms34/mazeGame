@@ -136,9 +136,10 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
     })();
     $scope.fillCells = function() {
         console.log('cells:', $scope.cells);
-        var promBeasts = [];
-        var promMercs = [];
-        var promMercInvs = [];
+        var promBeasts = [],
+            promMercs = [],
+            promMercInvs = [],
+            promMerchQuests = [];
         for (var i = 0; i < $scope.cells.length; i++) {
             if ($scope.cells[i].has == 'mons') {
                 promBeasts.push(mazeFac.popCell($scope.lvl, $scope.cells[i].id));
@@ -150,34 +151,34 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
         }
         $q.all(promBeasts).then(function(mList) {
             mList.forEach(function(m) {
-                    $scope.cells[$scope.cellNames.indexOf(m.cell)].has = m.mons;
-                })
-                //now merchants
-            $q.all(promMercs).then(function(eList) {
-                eList.forEach(function(r) {
-                    $scope.cells[$scope.cellNames.indexOf(r.id)].has = r.data;
-                    if (r.data.isMerch && r.data.isMerch == true) {
-                        promMercInvs.push(econFac.merchInv(r.data.inv, r.id));
-                    }
-                })
-                $q.all(promMercInvs).then(function(mercInvs) {
-                    var promMerchQuests = [];
-                    mercInvs.forEach(function(inv) {
-                        console.log('INV',inv);
-                        $scope.cells[$scope.cellNames.indexOf(inv.id)].has.inv = inv.inv;
-                        promMerchQuests.push(econFac.getQuests($scope.name,inv.id,$scope.lvl));
-                    })
-                    $q.all(promMerchQuests).then(function(mq){
-                        console.log(mq);
-                        mq.forEach(function(q){
-                            $scope.cells[$scope.cellNames.indexOf(q.id)].has.quest = q.q
-                            console.log('NPC HAS QUEST:',q.q,q.id)
-                        })
-                        // $scope.saveGame(false); //save data, do not reload.
-                    })
-                })
-            })
-        })
+                $scope.cells[$scope.cellNames.indexOf(m.cell)].has = m.mons;
+            });
+            //now merchants
+        });
+        $q.all(promMercs).then(function(eList) {
+            eList.forEach(function(r) {
+                console.log('DATA INTO PROMPMERCINVS', r)
+                $scope.cells[$scope.cellNames.indexOf(r.id)].has = r.data;
+                if (r.data.isMerch && r.data.isMerch == true) {
+                    promMercInvs.push(econFac.merchInv(r.data.inv,r.id));
+                }
+            });
+            $q.all(promMercInvs).then(function(mercInvs) {
+                mercInvs.forEach(function(inv) {
+                    console.log('INV', inv);
+                    $scope.cells[$scope.cellNames.indexOf(inv.id)].has.inv = inv.inv;
+                    promMerchQuests.push(econFac.getQuests($scope.name, inv.id, $scope.lvl));
+                });
+                $q.all(promMerchQuests).then(function(mq) {
+                    console.log(mq);
+                    mq.forEach(function(q) {
+                        $scope.cells[$scope.cellNames.indexOf(q.id)].has.quest = q.q
+                        console.log('NPC HAS QUEST:', q.q, q.id)
+                    });
+                    // $scope.saveGame(false); //save data, do not reload.
+                });
+            });
+        });
     };
 
     $scope.doMaze = function(w, h) {
@@ -506,6 +507,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
         $scope.playerFacing = $scope.roomRot % 360 > 0 ? $scope.roomRot % 360 : 360 + $scope.roomRot % 360;
     }, 50);
     $scope.bomb = function(dir) {
+        //because of the imprecise nature of the mazegen algorith, occasionally walls are unsolvable. this fn allows us to destroy walls, preventing trapped players.
         var x = $scope.playerCell.split('-')[0];
         var y = $scope.playerCell.split('-')[1];
         var otherDir = '';
@@ -1099,6 +1101,7 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
     $scope.currMRegens = [];
     $scope.currMDegens = [];
     $scope.monsStunned = false;
+    $scope.comb.fleeMult = 1; //this is only increased if player fleez.
     $scope.pStunned = false;
     $scope.comb.getAllSkills(); //we reload the skills each time, just in case there's been an update
     $scope.comb.showSkillInf = function() {
@@ -1106,6 +1109,29 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
     }
     $scope.comb.attemptFlee = function() {
         //user attempting to run
+        $scope.comb.fleeMult = 1;
+        //calculate (and cap) the level difference multiplier
+        //this does not change the chance that the user will be able to flee, but rather the damage that occurs if they fail to.
+        if ($scope.$parent.intTarg.lvl / $scope.lvl > 3) {
+            $scope.comb.fleeMult = 4;
+        } else if ($scope.$parent.intTarg.lvl / $scope.lvl < .2) {
+            $scope.comb.fleeMult = 1.2;
+        } else {
+            $scope.comb.fleeMult = 1 + ($scope.$parent.intTarg.lvl / $scope.lvl);
+        }
+        //i may change this flee chance to be more dynamic later, so that it's dependent on something like HP or something.
+        if (Math.random() > .7) {
+            //flee successful!
+            $scope.comb.fleeMult = 1;
+            $scope.comb.flee();
+        } else {
+            //flee unsuccessful.
+            sandalchest.alert('You attempt to flee the ' + $scope.intTarg.name + ', but fail! It attacks!', function(r) {
+                $scope.comb.playersTurn = false;
+                $scope.comb.monsTurn();
+            })
+        }
+
     }
     $scope.comb.wait = function() {
         //user does nothing
@@ -1177,7 +1203,7 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
             allArm = $scope.comb.itemStats[0],
             allAff = $scope.comb.itemStats[2],
             allJunk = $scope.comb.itemStats[3];
-        console.log('WEAP IDS', $scope.$parent.playerItems.weap, 'WEAPS', allWeaps, 'ARMOR', allArm, 'AFFIXES', allAff,'JUNK',allJunk)
+        console.log('WEAP IDS', $scope.$parent.playerItems.weap, 'WEAPS', allWeaps, 'ARMOR', allArm, 'AFFIXES', allAff, 'JUNK', allJunk)
         var playerWeap = $scope.$parent.playerItems.weap[1] != -1 ? [allAff[$scope.$parent.playerItems.weap[0]], allWeaps[$scope.$parent.playerItems.weap[1]], allAff[$scope.$parent.playerItems.weap[2]]] : false;
         console.log(playerWeap[0].pre + ' ' + playerWeap[1].name + ' ' + playerWeap[2].post, playerWeap)
         var playerArmor;
@@ -1307,7 +1333,7 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                 var thePart = partFreqs[Math.floor(Math.random() * partFreqs.length)];
                 //which part was hit, and its armor. 
                 var partHitA = 0;
-                if ($scope.playerItems[thePart] && $scope.playerItems[thePart][1] && $scope.playerItems[thePart][1]>-1){
+                if ($scope.playerItems[thePart] && $scope.playerItems[thePart][1] && $scope.playerItems[thePart][1] > -1) {
                     //this piece exists, is armor, and haz a value.
                     partHitA = allArm[$scope.playerItems[thePart][1]].def;
                 }
@@ -1319,12 +1345,12 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                 //then inventory items' resistance
                 //Note that this only occurs for non-equippable items (i.e., NOT armor or weapons).
                 //in other words, only rings/trinkets
-                console.log('Now running inv item defense',$scope.playerItems.inv)
+                console.log('Now running inv item defense', $scope.playerItems.inv)
                 if ($scope.playerItems.inv && $scope.playerItems.inv.length) {
                     //player has items in inv  
                     console.log('----Checking defense items:----')
                     for (var resd = 0; resd < $scope.playerItems.inv.length; resd++) {
-                        if ($scope.playerItems.inv[resd].lootType==0) {
+                        if ($scope.playerItems.inv[resd].lootType == 0) {
                             console.log('CHECKING DEFENSE ON ITEM:', $scope.playerItems.inv[resd])
                             bonusA += $scope.playerItems.inv[resd].item[1].def || 0;
                         }
@@ -1354,7 +1380,7 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                 dmg = dmg * 1.5
             }
         }
-        return dmg;
+        return $scope.comb.fleeMult * dmg; //we return the total damage, multiplied by the flee multiplier (if any!).
     }
     $scope.comb.freqGen = function(obj) {
         //given an obj of objs, each with a frequency freq, generate an frequency array
@@ -1420,7 +1446,8 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
     }
     $scope.comb.battleEndMsgs = {
         win: ['Onward!', 'To victory!', 'Forward'],
-        lose: ['Retry!', 'I\'ll be back!', 'Another time then...']
+        lose: ['Retry!', 'I\'ll be back!', 'Another time then...'],
+        flee: ['I\'m not a coward!', 'I\'ll be back...', 'Another time then...', 'A close one!']
     }
     $scope.comb.dieP = function() {
         $scope.comb.battleStatus = {
@@ -1439,7 +1466,16 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
             url: './img/assets/Victory.jpg',
             btn: $scope.comb.battleEndMsgs.win[Math.floor(Math.random() * $scope.comb.battleEndMsgs.win.length)]
         };
-        console.log($scope.comb.battleStatus)
+    }
+    $scope.comb.flee = function() {
+        console.log('flee worked!')
+        $scope.comb.battleStatus = {
+            status: true,
+            title: 'Flee!',
+            txt: 'You\'ve successfully fled the ' + $scope.intTarg.name + '.',
+            url: './img/assets/flee.jpg',
+            btn: $scope.comb.battleEndMsgs.flee[Math.floor(Math.random() * $scope.comb.battleEndMsgs.flee.length)]
+        };
     }
     $scope.comb.updateDoTs = function() {
             var a;
@@ -1506,6 +1542,7 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                             $scope.intTarg.currHp = $scope.currHp
                         }
                         $scope.comb.playersTurn = true;
+                        $scope.comb.fleeMult = 1;
                     })
                 } else if (($scope.intTarg.currHp / $scope.intTarg.hp) > .5 && ((-18 / 5) * ($scope.intTarg.currHp / $scope.intTarg.hp) + 3 > Math.random())) {
                     //monster at low hp (<50%), so gets additional % chance to heal
@@ -1517,6 +1554,7 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                             $scope.intTarg.currHp = $scope.currHp
                         }
                         $scope.comb.playersTurn = true;
+                        $scope.comb.fleeMult = 1;
                     })
                 } else {
                     if (Math.random() < $scope.$parent.intTarg.stunCh) {
@@ -1532,6 +1570,7 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                             $scope.comb.dieP();
                         } else {
                             $scope.comb.playersTurn = true;
+                            $scope.comb.fleeMult = 1;
                             $scope.currEn += 2;
                             if ($scope.currEn > $scope.maxEn) {
                                 $scope.currEn = $scope.maxEn;
@@ -1553,6 +1592,7 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                         $scope.comb.dieM();
                     } else {
                         $scope.comb.playersTurn = true;
+                        $scope.comb.fleeMult = 1;
                         $scope.currEn += 2;
                         if ($scope.currEn > $scope.maxEn) {
                             $scope.currEn = $scope.maxEn;
@@ -1563,6 +1603,7 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
         } else {
             sandalchest.alert($scope.$parent.intTarg.name + ' is stunned this turn!', function() {
                 $scope.comb.playersTurn = true;
+                $scope.comb.fleeMult = 1;
             });
         }
     }
@@ -1571,23 +1612,52 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
 app.factory('econFac', function($http, $q) {
     var npcTypes = ['merch', 'ambient', 'quest']
     return {
-        merchInv: function(invArr, id) {
+        merchInv: function(invArr,id) {
             //get all item info from backend 
             return $http.get('/item/allItems/').then(function(d) {
-                var fullInvArr = [];
-                console.log('GETTING ITEM DATA:invArr', invArr)
+                console.log('GETTING ITEM DATA:invArr', invArr, d)
                     //now parse the inventory data, and return the object of that merch's inv
-                for (var i = 0; i < invArr.length; i++) {
-                    if (invArr[i].lootType == 0) {
-                        //armor
-                        fullInvArr.push([d.data[2][invArr[i].item[0]], d.data[0][invArr[i].item[1]], d.data[2][invArr[i].item[2]]]);
+                    //lootTypes: 0 = armor, 1 =weapon, 2 = junk... others?
+                    //array types (not NOT necessarily == lootTypes): [0]armor, [1] weaps, [2]affixes, [3]junk
+                invArr.forEach(function(it) {
+                    if (it.lootType == 0 || it.lootType == 1 && it.item.length == 3) {
+                        //weapon/armor with affixes
+                        //first, we do the affixes.
+                        for (var i = 0; i < d.data[2].length; i++) {
+                            if (it.item[0] == d.data[2][i].num) {
+                                //found the affix!
+                                it.item[0] = angular.copy(d.data[2][i]);
+                            }
+                            if (it.item[2] == d.data[2][i].num) {
+                                //found the affix!
+                                it.item[2] = angular.copy(d.data[2][i]);
+                            }
+                        }
+                        if (it.lootType == 0) {
+                            //armor!
+                            for (var i = 0; i < d.data[0].length; i++) {
+                                if (it.item[1] == d.data[0][i].num) {
+                                    //found the affix!
+                                    it.item[1] = angular.copy(d.data[0][i]);
+                                }
+                            }
+                        } else {
+                            //weap!
+                            for (var i = 0; i < d.data[1].length; i++) {
+                                if (it.item[1] == d.data[1][i].num) {
+                                    //found the affix!
+                                    it.item[1] = angular.copy(d.data[1][i]);
+                                }
+                            }
+                        }
                     } else {
-                        //weap
-                        fullInvArr.push([d.data[2][invArr[i].item[0]], d.data[1][invArr[i].item[1]], d.data[2][invArr[i].item[2]]]);
+                        //should NEVER be here, as merchants do not sell junk. only the highest quality mats. Amazing mats. The best mats. We're gonna make merchanting great again.
+                        throw new Error('FOUND JUNK ' + JSON.stringify(it) + ' in inventory of merch!');
                     }
-                }
+                })
+                console.log('POPULATED MERCH INV',invArr)
                 return {
-                    inv: fullInvArr,
+                    inv: invArr,
                     id: id
                 };
             })
@@ -1605,7 +1675,7 @@ app.factory('econFac', function($http, $q) {
             return $http.get('/quest/npcQ/' + idArr[0] + '/' + idArr[1] + '/' + lvl + '/' + name).then(function(q) {
                 return q.data;
             })
-        }
+        },
     };
 });
 
@@ -1799,23 +1869,17 @@ app.controller('merch-cont', function($scope, $http, $q, $timeout, $window, econ
         $scope.merchy.buy = true;
         $scope.merchy.merch = $scope.currNpc;
         $scope.merchy.merch.sez = $scope.merchy.merch.gossip[Math.floor(Math.random() * $scope.merchy.merch.gossip.length)];
-        if (!$scope.merchy.merch.alreadyInfoed) {
 
-            var realInv = econFac.merchInv($scope.merchy.merch.inv).then(function(r) {
-                console.log('THIS NPC HAS:', r)
-                for (var n = 0; n < $scope.merchy.merch.inv.length; n++) {
-                    $scope.merchy.merch.inv[n].item = r.inv[n];
-                }
-                $scope.merchy.merch.alreadyInfoed = true;
-                $scope.$apply();
-            })
-        }
     };
     $scope.merchy.itemForPlayer = null;
+    $scope.acceptQuest= function(){
+        console.log($scope.$parent.name,$scope.merchy.merch.quest.name)
+    }
     $scope.merchy.exchange = function(item, dir, ind) {
         //main sell function
         $scope.moveReady = false;
         angular.element('body').scope().moveReady = false;
+        console.log(item)
         var itemFull = item.item[0].pre + ' ' + item.item[1].name + 's ' + item.item[2].post;
         var itemBaseCost = Math.floor(item.item[1].cost * (10 + item.item[0].cost + item.item[2].cost)) / 10;
         console.log('ITEM DATA TO EXCHANGE', item, 'and dir:', dir)

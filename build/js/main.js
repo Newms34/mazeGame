@@ -46,9 +46,10 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
     })();
     $scope.fillCells = function() {
         console.log('cells:', $scope.cells);
-        var promBeasts = [];
-        var promMercs = [];
-        var promMercInvs = [];
+        var promBeasts = [],
+            promMercs = [],
+            promMercInvs = [],
+            promMerchQuests = [];
         for (var i = 0; i < $scope.cells.length; i++) {
             if ($scope.cells[i].has == 'mons') {
                 promBeasts.push(mazeFac.popCell($scope.lvl, $scope.cells[i].id));
@@ -60,34 +61,34 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
         }
         $q.all(promBeasts).then(function(mList) {
             mList.forEach(function(m) {
-                    $scope.cells[$scope.cellNames.indexOf(m.cell)].has = m.mons;
-                })
-                //now merchants
-            $q.all(promMercs).then(function(eList) {
-                eList.forEach(function(r) {
-                    $scope.cells[$scope.cellNames.indexOf(r.id)].has = r.data;
-                    if (r.data.isMerch && r.data.isMerch == true) {
-                        promMercInvs.push(econFac.merchInv(r.data.inv, r.id));
-                    }
-                })
-                $q.all(promMercInvs).then(function(mercInvs) {
-                    var promMerchQuests = [];
-                    mercInvs.forEach(function(inv) {
-                        console.log('INV',inv);
-                        $scope.cells[$scope.cellNames.indexOf(inv.id)].has.inv = inv.inv;
-                        promMerchQuests.push(econFac.getQuests($scope.name,inv.id,$scope.lvl));
-                    })
-                    $q.all(promMerchQuests).then(function(mq){
-                        console.log(mq);
-                        mq.forEach(function(q){
-                            $scope.cells[$scope.cellNames.indexOf(q.id)].has.quest = q.q
-                            console.log('NPC HAS QUEST:',q.q,q.id)
-                        })
-                        // $scope.saveGame(false); //save data, do not reload.
-                    })
-                })
-            })
-        })
+                $scope.cells[$scope.cellNames.indexOf(m.cell)].has = m.mons;
+            });
+            //now merchants
+        });
+        $q.all(promMercs).then(function(eList) {
+            eList.forEach(function(r) {
+                console.log('DATA INTO PROMPMERCINVS', r)
+                $scope.cells[$scope.cellNames.indexOf(r.id)].has = r.data;
+                if (r.data.isMerch && r.data.isMerch == true) {
+                    promMercInvs.push(econFac.merchInv(r.data.inv,r.id));
+                }
+            });
+            $q.all(promMercInvs).then(function(mercInvs) {
+                mercInvs.forEach(function(inv) {
+                    console.log('INV', inv);
+                    $scope.cells[$scope.cellNames.indexOf(inv.id)].has.inv = inv.inv;
+                    promMerchQuests.push(econFac.getQuests($scope.name, inv.id, $scope.lvl));
+                });
+                $q.all(promMerchQuests).then(function(mq) {
+                    console.log(mq);
+                    mq.forEach(function(q) {
+                        $scope.cells[$scope.cellNames.indexOf(q.id)].has.quest = q.q
+                        console.log('NPC HAS QUEST:', q.q, q.id)
+                    });
+                    // $scope.saveGame(false); //save data, do not reload.
+                });
+            });
+        });
     };
 
     $scope.doMaze = function(w, h) {
@@ -416,6 +417,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
         $scope.playerFacing = $scope.roomRot % 360 > 0 ? $scope.roomRot % 360 : 360 + $scope.roomRot % 360;
     }, 50);
     $scope.bomb = function(dir) {
+        //because of the imprecise nature of the mazegen algorith, occasionally walls are unsolvable. this fn allows us to destroy walls, preventing trapped players.
         var x = $scope.playerCell.split('-')[0];
         var y = $scope.playerCell.split('-')[1];
         var otherDir = '';
