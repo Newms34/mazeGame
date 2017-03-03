@@ -38,3 +38,21 @@ TO DO:
 3) ADD MOAR LOOTS so we dont keep getting the freakin cook's ring!
 4) BEGIN quest system (?!)
 https://jsfiddle.net/6gw8ygn7/24/show/
+
+
+quest instantiation:
+ - when user reaches a certain lvl. This'll need to be some percentage (or fixed range?) BEFORE the quest's designated level
+ - from merchant. Again, when user reaches appropriate lvl
+
+
+ 107 full
+ 54 unannotated
+ 
+
+ LINE 80 on mainjs is replacing merch cell's has.inv with the data directly from back-end. Need to replace ONLY item data (and thus preserve lootType and number). should begin to alleviate merch NaN issue. should also check how items are 'delivered' once bought, to playerItems.inv
+
+leveling sys: 
+need to designate levels for each spell. 
+should level PURELY be based on dungeon level? or should we gain xp after each fight?
+
+getting 502 err on login!
