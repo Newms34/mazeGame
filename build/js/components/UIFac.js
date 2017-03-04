@@ -2,7 +2,7 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
     return {
         getUIObj: function(whichUI, UIStuff) {
             //get all the data
-            var p = $http.get('/item/' + whichUI).success(function(res) {
+            var p = $http.get('/item/' + whichUI).then(function(res) {
                 return res;
             });
             return p;

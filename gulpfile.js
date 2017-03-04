@@ -2,8 +2,6 @@
 Gulp is a node package that concatenates your files. It basically can convert a whole bunch of files (i.e., your whole js tree structure) into just ONE, minified file. At the time of writing, that reduces the js payload from 22kb to just 7kb. 
 More importantly, it also means our user's browser only needs to fetch ONE file (all.min.js), instead of... however many i create. 
 */
-
-
 // First, we'll just include gulp itself.
 const gulp = require('gulp');
 
@@ -12,11 +10,11 @@ const jshint = require('gulp-jshint');
 const sass = require('gulp-sass');
 const concat = require('gulp-concat');
 const uglify = require('gulp-uglify');
-const gutil = require('gulp-util')
+const gutil = require('gulp-util');
 const rename = require('gulp-rename');
 const kid = require('child_process');
 const ps = require('ps-node');
-const cleany = require('gulp-clean-css')
+const cleany = require('gulp-clean-css');
 const babel = require('gulp-babel');
 const ngAnnotate = require('gulp-ng-annotate');
 

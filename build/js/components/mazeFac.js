@@ -115,8 +115,8 @@ app.factory('mazeFac', function($http) {
             cells = [];
             cellNames = [];
             path = [];
-            cellsDone = 0,
-                didEx = false;
+            cellsDone = 0
+            var didEx = false;
             for (var x = 0; x < mW; x++) {
                 for (var y = 0; y < mH; y++) {
                     var rItem = possRoomConts[Math.floor(Math.random() * possRoomConts.length)];

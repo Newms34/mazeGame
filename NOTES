@@ -56,3 +56,5 @@ need to designate levels for each spell.
 should level PURELY be based on dungeon level? or should we gain xp after each fight?
 
 getting 502 err on login!
+
+seems to not be working with uglify. doesnt save all.min.js?

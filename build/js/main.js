@@ -24,6 +24,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
     $scope.isStunned = false;
     $scope.inCombat = false;
     $scope.merchy = {};
+    $scope.turnSpeed = 0;
     // $scope.possRoomConts = ['loot', 'mons', 'npcs', 'jewl', ' ', 'exit', ' ', ' ', 'mons', 'mons']; //things that could be in a room!
     $scope.name = ''; //actual name. 
     $scope.currSkillNum = 0;
@@ -399,7 +400,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
             });
         });
     };
-    $scope.turnSpeed = 0;
+    
     window.onmousemove = function(e) {
         $scope.$digest();
         var horiz = (e.x || e.clientX) / $(window).width();
@@ -412,6 +413,9 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
             $scope.turnSpeed = 0;
         }
     };
+    $scope.$watch('turnSpeed',function(n,o){
+        console.log('turnSpeed changed from',o,'to',n)
+    })
     $scope.mouseTurnTimer = $interval(function() {
         $scope.roomRot += $scope.turnSpeed;
         $scope.playerFacing = $scope.roomRot % 360 > 0 ? $scope.roomRot % 360 : 360 + $scope.roomRot % 360;
@@ -486,39 +490,39 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
     });
     $scope.travelOkay = true;
     $scope.phoneMovTimer;
-    socket.on('movOut', function(mvOb) {
-        if (mvOb.n == $scope.uName) {
-            var ex = null,
-                ey = null;
-            if (mvOb.x == 'l') {
-                ex = new Event('keydown');
-                ex.which = 65;
-                window.onkeydown(ex);
-            } else if (mvOb.x == 'r') {
-                ex = new Event('keydown');
-                ex.which = 68;
-                window.onkeydown(ex);
-            }
-            //for moving forward and back, we only move every 1.0 seconds.
-            if (mvOb.y == 'f' && $scope.travelOkay) {
-                ey = new Event('keydown');
-                ey.which = 87;
-                window.onkeydown(ey);
-                $scope.travelOkay = false;
-                $scope.phoneMovTimer = $timeout(function() {
-                    $scope.travelOkay = true;
-                }, 1000);
-            } else if (mvOb.y == 'b' && $scope.travelOkay) {
-                ey = new Event('keydown');
-                ey.which = 83;
-                window.onkeydown(ey);
-                $scope.travelOkay = false;
-                $scope.phoneMovTimer = $timeout(function() {
-                    $scope.travelOkay = true;
-                }, 1000);
-            }
-        }
-    });
+    // socket.on('movOut', function(mvOb) {
+    //     if (mvOb.n == $scope.uName) {
+    //         var ex = null,
+    //             ey = null;
+    //         if (mvOb.x == 'l') {
+    //             ex = new Event('keydown');
+    //             ex.which = 65;
+    //             window.onkeydown(ex);
+    //         } else if (mvOb.x == 'r') {
+    //             ex = new Event('keydown');
+    //             ex.which = 68;
+    //             window.onkeydown(ex);
+    //         }
+    //         //for moving forward and back, we only move every 1.0 seconds.
+    //         if (mvOb.y == 'f' && $scope.travelOkay) {
+    //             ey = new Event('keydown');
+    //             ey.which = 87;
+    //             window.onkeydown(ey);
+    //             $scope.travelOkay = false;
+    //             $scope.phoneMovTimer = $timeout(function() {
+    //                 $scope.travelOkay = true;
+    //             }, 1000);
+    //         } else if (mvOb.y == 'b' && $scope.travelOkay) {
+    //             ey = new Event('keydown');
+    //             ey.which = 83;
+    //             window.onkeydown(ey);
+    //             $scope.travelOkay = false;
+    //             $scope.phoneMovTimer = $timeout(function() {
+    //                 $scope.travelOkay = true;
+    //             }, 1000);
+    //         }
+    //     }
+    // });
     $scope.getUIInfo = function(el) {
         var name;
         console.log('getUIInfo:', el)
