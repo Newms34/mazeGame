@@ -6,7 +6,6 @@ app.controller('merch-cont', function($scope, $http, $q, $timeout, $window, econ
         $scope.merchy.buy = true;
         $scope.merchy.merch = $scope.currNpc;
         $scope.merchy.merch.sez = $scope.merchy.merch.gossip[Math.floor(Math.random() * $scope.merchy.merch.gossip.length)];
-
     };
     $scope.merchy.itemForPlayer = null;
     $scope.acceptQuest= function(){
