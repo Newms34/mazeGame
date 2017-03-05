@@ -55,6 +55,8 @@ leveling sys:
 need to designate levels for each spell. 
 should level PURELY be based on dungeon level? or should we gain xp after each fight?
 
-getting 502 err on login!
+RENAME PRIEST TO "CORRUPTED PRIEST"
 
-seems to not be working with uglify. doesnt save all.min.js?
+skill upgrade process: after each fight, you get xp depending on level of monster. This is then used in a level system (linear? logarithmic?). After each level, you get a skill point. You can then use accumulated skill point(s) to buy skills. First tier skills are automatically given. 2nd tier costs 1 pt, 3rd tier costs 2 points, 4th tier... 4 points? yet to decide.
+
+reset game doesnt seem to be working

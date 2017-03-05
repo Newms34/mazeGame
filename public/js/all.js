@@ -104,6 +104,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
     $scope.setActive = false;
     $scope.intTarg;
     $scope.lvl = 1;
+    $scope.playerLvl = 1;
     $scope.playerItems = [];
     $scope.questList = [];
     $scope.doneQuest = [];
@@ -206,7 +207,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
             $scope.currEn = d.data.currEn;
             $scope.isStunned = d.data.isStunned;
             $scope.name = d.data.name;
-
+            $scope.playerLvl = d.data.playerLvl||1;
             econFac.merchInv($scope.playerItems.inv).then(function(r) {
                 for (var ep = 0; ep < r.length; ep++) {
                     console.log('REPLACING', $scope.playerItems.inv[ep].item, 'WITH', r[ep])
@@ -1046,6 +1047,11 @@ app.factory('combatFac', function($http) {
             return $http.get('/item/byLvl/' + mons.lvl).then(function(i) {
                 return i.data;
             })
+        },
+        addXp: function(u,x){
+            return $http.post('/usr/addXp',{xp:x,user:u},function(r){
+                return r;
+            })
         }
     };
 });
@@ -1407,6 +1413,7 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
             txt: ' ',
             url: './img/paper.jpg'
         };
+        var newXp = 0;
         if (vic) {
             combatFac.rollLoot($scope.intTarg).then(function(items) {
                 console.log('FROM ROLL LOOT', items)
@@ -1427,9 +1434,11 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                     iName = items.loot.pre.pre + ' ' + items.loot.base.name + ' ' + items.loot.post.post;
                     $scope.playerItems.inv.push(lootObj)
                 }
-                sandalchest.alert('After killing the ' + $scope.comb.lastDefeated + ', you recieve ' + iName + '!');
+                newXp = 50 * $scope.intTarg.lvl / $scope.playerLvl||1;
+                sandalchest.alert('After killing the ' + $scope.comb.lastDefeated + ', you gain ' + newXp + ' experience and recieve ' + iName + '!');
 
             });
+            //clear cell
             angular.element('body').scope().cells[angular.element('body').scope().cellNames.indexOf(angular.element('body').scope().playerCell)].has = '';
         } else {
             //defeat
@@ -1437,16 +1446,23 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
             angular.element('body').scope().intTarg.currHp = angular.element('body').scope().hp;
             $scope.$parent.intTarg.currHp = $scope.$parent.intTarg.hp;
         }
-        $scope.inCombat = false;
-        angular.element('body').scope().inCombat = false;
-        angular.element('body').scope().intTarg = false;
-        angular.element('body').scope().moveReady = true;
-        angular.element('body').scope().currHp = angular.element('body').scope().maxHp;
-        angular.element('body').scope().currEn = angular.element('body').scope().maxEn;
-        $scope.currHp = $scope.maxHp;
-        $scope.currEn = $scope.maxEn;
-        combatFac.updateBars($scope.maxHp, $scope.currHp, $scope.maxEn, $scope.currEn, $scope.$parent.intTarg.hp, $scope.$parent.intTarg.currHp);
-        angular.element('body').scope().$apply();
+        combatFac.addXp($scope.name,newXp).then(function(s) {
+            $scope.inCombat = false;
+            angular.element('body').scope().inCombat = false;
+            angular.element('body').scope().intTarg = false;
+            angular.element('body').scope().moveReady = true;
+            angular.element('body').scope().currHp = angular.element('body').scope().maxHp;
+            angular.element('body').scope().currEn = angular.element('body').scope().maxEn;
+            if(typeof s.data=='object'){
+                //got new xp (most likely, user won a fight)
+                $scope.currXp = 500-parseInt(s.data.xpTill);
+                $scope.playerLvl = parseInt(s.data.lvl);
+            }
+            $scope.currHp = $scope.maxHp;
+            $scope.currEn = $scope.maxEn;
+            combatFac.updateBars($scope.maxHp, $scope.currHp, $scope.maxEn, $scope.currEn, $scope.$parent.intTarg.hp, $scope.$parent.intTarg.currHp);
+            angular.element('body').scope().$apply();
+        })
     }
     $scope.comb.battleEndMsgs = {
         win: ['Onward!', 'To victory!', 'Forward'],

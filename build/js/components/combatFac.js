@@ -37,6 +37,11 @@ app.factory('combatFac', function($http) {
             return $http.get('/item/byLvl/' + mons.lvl).then(function(i) {
                 return i.data;
             })
+        },
+        addXp: function(u,x){
+            return $http.post('/usr/addXp',{xp:x,user:u},function(r){
+                return r;
+            })
         }
     };
 });

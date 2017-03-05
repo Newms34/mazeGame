@@ -19,24 +19,25 @@ router.post('/reset', function(req, res, next) {
                 var salt = mongoose.model('User').generateSalt();
                 var resUsr = {
                     lvl: 1,
+                    playerLvl: 1,
                     equip: {
-                        gold:100,
-                        head: [-1,-1,-1],
-                        chest: [-1,-1,-1],
-                        hands: [-1,-1,-1],
-                        legs: [-1,-1,-1],
-                        feet: [-1,-1,-1],
-                        weap: [3,0,8],
+                        gold: 100,
+                        head: [-1, -1, -1],
+                        chest: [-1, -1, -1],
+                        hands: [-1, -1, -1],
+                        legs: [-1, -1, -1],
+                        feet: [-1, -1, -1],
+                        weap: [3, 0, 8],
                         inv: []
                     },
                     salt: salt,
                     pass: mongoose.model('User').encryptPassword(pwd, salt),
                     questDone: [],
                     inProg: [],
-                    currentLevel:{
-                        loc:null,
-                        data:[],
-                        names:[]
+                    currentLevel: {
+                        loc: null,
+                        data: [],
+                        names: []
                     },
                     maxHp: 50,
                     currHp: 50,
@@ -57,13 +58,13 @@ router.post('/reset', function(req, res, next) {
 })
 router.post('/save', function(req, res, next) {
     var newData = req.body,
-        un= req.body.name;
+        un = req.body.name;
     console.log('body', req.body, 'sesh', un)
-    console.log('inventory:',req.body.equip.inv)
+    console.log('inventory:', req.body.equip.inv)
     mongoose.model('User').update({ 'name': un }, newData, function(err, usr) {
         mongoose.model('User').findOne({ 'name': un }, function(err, usr) {
             console.log('tried to find user we just saved. Result is', usr, 'err is', err)
-            // console.log('current cell of user:',usr.currentLevel.loc)
+                // console.log('current cell of user:',usr.currentLevel.loc)
             req.session.user = usr;
             res.send(true);
         })
@@ -89,24 +90,25 @@ router.post('/new', function(req, res, next) {
             var newUser = {
                 name: un,
                 lvl: 1,
+                playerLvl: 1,
                 equip: {
-                    gold:100,
-                    head: [-1,-1,-1],
-                    chest: [-1,-1,-1],
-                    hands: [-1,-1,-1],
-                    legs: [-1,-1,-1],
-                    feet: [-1,-1,-1],
-                    weap: [3,0,8],
+                    gold: 100,
+                    head: [-1, -1, -1],
+                    chest: [-1, -1, -1],
+                    hands: [-1, -1, -1],
+                    legs: [-1, -1, -1],
+                    feet: [-1, -1, -1],
+                    weap: [3, 0, 8],
                     inv: []
                 },
                 salt: salt,
                 pass: mongoose.model('User').encryptPassword(pwd, salt),
                 questDone: [],
                 inProg: [],
-                currentLevel:{
-                    loc:null,
-                    data:[],
-                    names:[]
+                currentLevel: {
+                    loc: null,
+                    data: [],
+                    names: []
                 },
                 maxHp: 50,
                 currHp: 50,
@@ -136,11 +138,11 @@ router.get('/nameOkay/:name', function(req, res, next) {
 router.post('/login', function(req, res, next) {
     //notice how there are TWO routes that go to /login. This is OKAY, as long as they're different request types (the other one's GET, this is POST)
     mongoose.model('User').findOne({ 'name': req.body.name }, function(err, usr) {
-        console.log('USER FROM LOGIN:',usr)
-        if (err || !usr || usr==null){
+        console.log('USER FROM LOGIN:', usr)
+        if (err || !usr || usr == null) {
             //most likely, this user doesn't exist.
             res.send('no');
-        }else if (usr.correctPassword(req.body.pwd)) {
+        } else if (usr.correctPassword(req.body.pwd)) {
             //woohoo! correct user!
             //important note here: we must set all this session stuff, etc BEFORE
             //we send the response. As soon as we send the response, the server considers us "done"!
@@ -169,4 +171,27 @@ router.get('/logout', function(req, res, next) {
     req.session.reset();
     res.send('logged')
 })
+router.post('addXp', function(req, res, next) {
+    if (!req.body.xp || req.body.xp == 0) {
+        res.send(0);
+    } else {
+        mongoose.model('User').findOne({ 'name': req.body.user }, function(err, usr) {
+            if (err || usr) {
+                res.send(0);
+            } else {
+                usr.currLvlXp += xp;
+                if (usr.currLvlXp > 500) {
+                    usr.currLvlXp = 0;
+                    usr.playerLvl++;
+                }
+                usr.save(function(r) {
+                    res.send({
+                        lvl: usr.playerLvl,
+                        xpTill: usr.currLvlXp
+                    });
+                });
+            }
 
+        });
+    }
+});

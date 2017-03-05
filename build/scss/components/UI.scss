@@ -49,6 +49,32 @@
             background-repeat: no-repeat;
             text-align: center;
         }
+        #xp-bar-bg {
+            position: absolute;
+            bottom: 5px;
+            width: 98%;
+            height: 15px;
+            background: #666;
+            border: 1px outset #666;
+            left: 1%;
+            & #xp-bar-chan {
+                position: absolute;
+                bottom: 3px;
+                height: 9px;
+                width: 98%;
+                background: #222;
+                border: 1px inset #222;
+                left: 1%;
+                & #xp-bar-chan {
+                    position: absolute;
+                    bottom: 3px;
+                    height: 9px;
+                    width: 0%;
+                    background: #0f0;
+                    left: 0;
+                }
+            }
+        }
     }
 }
 
@@ -75,28 +101,30 @@
 }
 
 $menu-buttons:save savelog logout reset-all reset-level;
-
 .menuGrp {
     width: 100%;
     padding: 10px;
     border-bottom: 2px solid #000;
     .bigButt {
-        line-height:2;
-        margin:1%;
+        line-height: 2;
+        margin: 1%;
         width: 75%;
-        color:#fff;
-        font-size:large;
-        font-weight:bold;
-        transition-duration:.5s;
+        color: #fff;
+        font-size: large;
+        font-weight: bold;
+        transition-duration: .5s;
     }
-    @each $mBtn in $menu-buttons{
-        .#{$mBtn}{
-           background: linear-gradient(rgba(0,0,0,.5),rgba(0,0,0,.5)),url('.././img/assets/#{$mBtn}.jpg');
-           background-attachment:fixed;
-           &:hover{
-                background: linear-gradient(rgba(0,0,0,.01),rgba(0,0,0,.01)),url('.././img/assets/#{$mBtn}.jpg');
-                background-attachment:fixed;
-           }
+    @each $mBtn in $menu-buttons {
+        .#{$mBtn} {
+            background: linear-gradient(rgba(0, 0, 0, .5), rgba(0, 0, 0, .5)),
+            url('.././img/assets/#{$mBtn}.jpg');
+            background-attachment: fixed;
+            &:hover {
+                background: linear-gradient(rgba(0, 0, 0, .01),
+                rgba(0, 0, 0, .01)),
+                url('.././img/assets/#{$mBtn}.jpg');
+                background-attachment: fixed;
+            }
         }
     }
 }

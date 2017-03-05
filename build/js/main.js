@@ -14,6 +14,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
     $scope.setActive = false;
     $scope.intTarg;
     $scope.lvl = 1;
+    $scope.playerLvl = 1;
     $scope.playerItems = [];
     $scope.questList = [];
     $scope.doneQuest = [];
@@ -116,7 +117,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
             $scope.currEn = d.data.currEn;
             $scope.isStunned = d.data.isStunned;
             $scope.name = d.data.name;
-
+            $scope.playerLvl = d.data.playerLvl||1;
             econFac.merchInv($scope.playerItems.inv).then(function(r) {
                 for (var ep = 0; ep < r.length; ep++) {
                     console.log('REPLACING', $scope.playerItems.inv[ep].item, 'WITH', r[ep])

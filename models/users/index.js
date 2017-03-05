@@ -3,7 +3,10 @@ var mongoose = require('mongoose'),
 //we're just testing password encryption here!
 var usrSchema = new mongoose.Schema({
     name: String, //name of the user
-    lvl: Number,
+    lvl: Number, //dungeon lvl
+    playerLvl: { type: Number, default: 1 },
+    currLvlXp: { type: Number, default: 0 },
+    skillPts:Number,
     equip: {
         gold: Number, //how many munneez the user has
         head: [Number],
@@ -12,13 +15,11 @@ var usrSchema = new mongoose.Schema({
         legs: [Number],
         feet: [Number],
         weap: [Number],
-        inv: [
-            {
-                lootType: { type: Number },
-                item: [{ type: Number }],
-                num: { type: Number }
-            }
-        ]
+        inv: [{
+            lootType: { type: Number },
+            item: [{ type: Number }],
+            num: { type: Number }
+        }]
     }, //equip just uses reference ids (nums) for now. may eventually switch this to mongo ids for increased speedibits. Note that each item will have THREE vals: a prefix, the item, and a suffix.
     pass: String,
     salt: String,
@@ -27,11 +28,13 @@ var usrSchema = new mongoose.Schema({
         id: Number,
         status: Number
     }],
-    currentLevel:{
-        loc:String,
-        data:[{}],
-        names:[String]
+    currentLevel: {
+        loc: String,
+        data: [{}],
+        names: [String]
     },
+    prof:Number,
+    skills:[Number],
     maxHp: Number,
     currHp: Number,
     maxEn: Number, //max energy (for skills)
