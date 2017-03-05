@@ -8,7 +8,8 @@ var router = express.Router(),
 module.exports = router;
 router.post('/reset', function(req, res, next) {
     var un = req.body.name,
-        pwd = req.body.pass;
+        pwd = req.body.pass,
+        prof = req.body.prof||1;
     mongoose.model('User').findOne({ 'name': un }, function(err, usr) {
         console.log('usr', usr)
         if (!usr) {
@@ -80,7 +81,8 @@ router.get('/currUsrData', function(req, res, next) {
 router.post('/new', function(req, res, next) {
     //record new user
     var un = req.body.user,
-        pwd = req.body.password;
+        pwd = req.body.password
+        prof = req.body.prof||1;
     mongoose.model('User').findOne({ 'name': un }, function(err, user) {
         if (!user) {
             //this user does not exist yet, so 
@@ -151,7 +153,7 @@ router.post('/login', function(req, res, next) {
         } else {
             res.send('no');
         }
-    })
+    });
 });
 router.get('/chkLog', function(req, res, next) {
     console.log('checking login', req.session)

@@ -8,7 +8,11 @@
     "degen": 0,
     "type": 0,
     "stuns": false,
-    "imgUrl": "./img/assets/Swing.jpg"
+    "imgUrl": "./img/assets/Swing.jpg",
+    "id":0,
+    "prevSkill":0,
+    "skillPts":0,
+    "nextSkill":0
 }, {
     "name": "Bandage",
     "desc": "A weak heal.",
@@ -19,7 +23,11 @@
     "degen": 0,
     "type": 0,
     "stuns": false,
-    "imgUrl": "./img/assets/Bandage.jpg"
+    "imgUrl": "./img/assets/Bandage.jpg",
+    "id":1,
+    "prevSkill":0,
+    "skillPts":0,
+    "nextSkill":0
 }, {
     "name": "Slice",
     "desc": "Twisting your weapon mid-strike creates a jagged wound, bleeding your foe.",
@@ -30,7 +38,11 @@
     "degen": 1,
     "type": 0,
     "stuns": false,
-    "imgUrl": "./img/assets/Slice.jpg"
+    "imgUrl": "./img/assets/Slice.jpg",
+    "id":2,
+    "prevSkill":0,
+    "skillPts":0,
+    "nextSkill":0
 }, {
     "name": "Fireball",
     "desc": "Baby's First Spell. Does minor damage, but sets target on fire.",
@@ -41,7 +53,11 @@
     "degen": 1,
     "type": 1,
     "stuns": false,
-    "imgUrl": "./img/assets/Fireball.jpg"
+    "imgUrl": "./img/assets/Fireball.jpg",
+    "id":3,
+    "prevSkill":0,
+    "skillPts":0,
+    "nextSkill":0
 }, {
     "name": "Holy Beam",
     "desc": "Invoking awesome powers, the priesthood calls down the divine judgement of the Gods. Such devotion is rewarded, as you're healed for a small amount.",
@@ -52,7 +68,11 @@
     "degen": 2,
     "type": 5,
     "stuns": false,
-    "imgUrl": "./img/assets/Holy_Beam.jpg"
+    "imgUrl": "./img/assets/Holy_Beam.jpg",
+    "id":4,
+    "prevSkill":0,
+    "skillPts":0,
+    "nextSkill":0
 }, {
     "name": "Curse",
     "desc": "Calling upon the... less than savory gods, you invoke eldritch energies upon a foe.",
@@ -63,7 +83,11 @@
     "degen": 0,
     "type": 4,
     "stuns": false,
-    "imgUrl": "./img/assets/Curse.jpg"
+    "imgUrl": "./img/assets/Curse.jpg",
+    "id":5,
+    "prevSkill":0,
+    "skillPts":0,
+    "nextSkill":0
 }, {
     "name": "Putrid Curse",
     "desc": "The warlocks would tell you that the natural state of everything is death. They'd also tell you that they're merely speeding up the process",
@@ -74,7 +98,11 @@
     "degen": 3,
     "type": 3,
     "stuns": false,
-    "imgUrl": "./img/assets/Putrid_Curse.jpg"
+    "imgUrl": "./img/assets/Putrid_Curse.jpg",
+    "id":6,
+    "prevSkill":0,
+    "skillPts":0,
+    "nextSkill":0
 }, {
     "name": "Vampiric Bite",
     "desc": "Somehow, you use your weapon in such a way that it steals life. Not sure how that works.",
@@ -85,7 +113,11 @@
     "degen": 1,
     "type": 0,
     "stuns": false,
-    "imgUrl": "./img/assets/Vampiric_Bite.jpg"
+    "imgUrl": "./img/assets/Vampiric_Bite.jpg",
+    "id":7,
+    "prevSkill":0,
+    "skillPts":0,
+    "nextSkill":0
 }, {
     "name": "Uppercut",
     "desc": "Hit your foe with a brutal uppercut, stunning them",
@@ -96,7 +128,11 @@
     "degen": 0,
     "type": 0,
     "stuns": true,
-    "imgUrl": "./img/assets/Uppercut.jpg"
+    "imgUrl": "./img/assets/Uppercut.jpg",
+    "id":8,
+    "prevSkill":0,
+    "skillPts":0,
+    "nextSkill":0
 }, {
     "name": "Taunt",
     "desc": "The mages would have you know that sometimes words are more powerful than simple weapons. Stun your enemy, but deal no damage",
@@ -107,7 +143,11 @@
     "degen": 0,
     "type": 0,
     "stuns": true,
-    "imgUrl": "./img/assets/Taunt.jpg"
+    "imgUrl": "./img/assets/Taunt.jpg",
+    "id":9,
+    "prevSkill":0,
+    "skillPts":0,
+    "nextSkill":0
 }, {
     "name": "Immolate",
     "desc": "Set your foe alight, dealing massive degen damage",
@@ -118,7 +158,11 @@
     "degen": 4,
     "type": 1,
     "stuns": false,
-    "imgUrl": "./img/assets/Immolate.jpg"
+    "imgUrl": "./img/assets/Immolate.jpg",
+    "id":10,
+    "prevSkill":0,
+    "skillPts":0,
+    "nextSkill":0
 }, {
     "name": "Chill",
     "desc": "Invoking the north winds, you chill the very air around a foe, dealing damage.",
@@ -129,7 +173,11 @@
     "degen": 0,
     "type": 2,
     "stuns": false,
-    "imgUrl": "./img/assets/Chill.jpg"
+    "imgUrl": "./img/assets/Chill.jpg",
+    "id":11,
+    "prevSkill":0,
+    "skillPts":0,
+    "nextSkill":0
 }, {
     "name": "Frostbite",
     "desc": "You call forth the very worst of the mountain winds, freezing and degening your foe.",
@@ -140,7 +188,11 @@
     "degen": 1,
     "type": 2,
     "stuns": true,
-    "imgUrl": "./img/assets/Frostbite.jpg"
+    "imgUrl": "./img/assets/Frostbite.jpg",
+    "id":12,
+    "prevSkill":0,
+    "skillPts":0,
+    "nextSkill":0
 }, {
     "name": "Divine Blessing",
     "desc": "The power of the Gods restores you.",
@@ -151,5 +203,9 @@
     "degen": 0,
     "type": 5,
     "stuns": false,
-    "imgUrl": "./img/assets/Divine_Blessing.jpg"
+    "imgUrl": "./img/assets/Divine_Blessing.jpg",
+    "id":13,
+    "prevSkill":0,
+    "skillPts":0,
+    "nextSkill":0
 }]
