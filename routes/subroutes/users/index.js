@@ -4,6 +4,7 @@ var router = express.Router(),
     models = require('../../../models/'),
     async = require('async'),
     mongoose = require('mongoose'),
+    startStats = require('./startStats.js'),
     session = require('client-sessions');
 module.exports = router;
 router.post('/reset', function(req, res, next) {
@@ -11,10 +12,10 @@ router.post('/reset', function(req, res, next) {
         pwd = req.body.pass,
         prof = req.body.prof||1;
     mongoose.model('User').findOne({ 'name': un }, function(err, usr) {
-        console.log('usr', usr)
+        console.log('usr', usr);
         if (!usr) {
-            console.log('no user!')
-            res.send('no')
+            console.log('no user!');
+            res.send('no');
         } else {
             if (usr.correctPassword(pwd)) {
                 var salt = mongoose.model('User').generateSalt();
@@ -47,41 +48,41 @@ router.post('/reset', function(req, res, next) {
                     isStunned: false
                 }
                 mongoose.model('User').update({ 'name': un }, resUsr, function(r) {
-                    console.log('reset!')
-                    res.send('yes')
+                    console.log('reset!');
+                    res.send('yes');
                 })
             } else {
-                console.log('wrong pwd!')
-                res.send('no')
+                console.log('wrong pwd!');
+                res.send('no');
             }
         }
-    })
-})
+    });
+});
 router.post('/save', function(req, res, next) {
     var newData = req.body,
         un = req.body.name;
-    console.log('body', req.body, 'sesh', un)
-    console.log('inventory:', req.body.equip.inv)
+    console.log('body', req.body, 'sesh', un);
+    console.log('inventory:', req.body.equip.inv);
     mongoose.model('User').update({ 'name': un }, newData, function(err, usr) {
         mongoose.model('User').findOne({ 'name': un }, function(err, usr) {
-            console.log('tried to find user we just saved. Result is', usr, 'err is', err)
+            console.log('tried to find user we just saved. Result is', usr, 'err is', err);
                 // console.log('current cell of user:',usr.currentLevel.loc)
             req.session.user = usr;
             res.send(true);
-        })
-    })
-})
+        });
+    });
+});
 router.get('/currUsrData', function(req, res, next) {
     //get current user data so we can update the front-end fields
-    console.log(req.session.user)
+    console.log(req.session.user);
     mongoose.model('User').findOne({ 'name': req.session.user.name }, function(err, usr) {
         res.send(usr);
-    })
-})
+    });
+});
 router.post('/new', function(req, res, next) {
     //record new user
     var un = req.body.user,
-        pwd = req.body.password
+        pwd = req.body.password,
         prof = req.body.prof||1;
     mongoose.model('User').findOne({ 'name': un }, function(err, user) {
         if (!user) {
@@ -122,10 +123,10 @@ router.post('/new', function(req, res, next) {
             mongoose.model('User').create(newUser);
             res.send('saved!')
         } else {
-            res.send('DUPLICATE')
+            res.send('DUPLICATE');
         }
-    })
-})
+    });
+});
 router.get('/nameOkay/:name', function(req, res, next) {
     mongoose.model('User').find({ 'name': req.params.name }, function(err, user) {
         if (!user.length) {
@@ -140,8 +141,8 @@ router.get('/nameOkay/:name', function(req, res, next) {
 router.post('/login', function(req, res, next) {
     //notice how there are TWO routes that go to /login. This is OKAY, as long as they're different request types (the other one's GET, this is POST)
     mongoose.model('User').findOne({ 'name': req.body.name }, function(err, usr) {
-        console.log('USER FROM LOGIN:', usr)
-        if (err || !usr || usr == null) {
+        console.log('USER FROM LOGIN:', usr);
+        if (err || !usr || usr === null) {
             //most likely, this user doesn't exist.
             res.send('no');
         } else if (usr.correctPassword(req.body.pwd)) {
@@ -156,7 +157,7 @@ router.post('/login', function(req, res, next) {
     });
 });
 router.get('/chkLog', function(req, res, next) {
-    console.log('checking login', req.session)
+    console.log('checking login', req.session);
     if (req.session.user) {
         res.send(true);
     } else {
@@ -171,10 +172,10 @@ router.get('/logout', function(req, res, next) {
     */
     console.log('usr sez bai');
     req.session.reset();
-    res.send('logged')
-})
+    res.send('logged');
+});
 router.post('addXp', function(req, res, next) {
-    if (!req.body.xp || req.body.xp == 0) {
+    if (!req.body.xp || req.body.xp === 0) {
         res.send(0);
     } else {
         mongoose.model('User').findOne({ 'name': req.body.user }, function(err, usr) {
