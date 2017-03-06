@@ -10,7 +10,7 @@ module.exports = router;
 router.post('/reset', function(req, res, next) {
     var un = req.body.name,
         pwd = req.body.pass,
-        prof = req.body.prof||1;
+        prof = parseInt(req.body.prof)||1;
     mongoose.model('User').findOne({ 'name': un }, function(err, usr) {
         console.log('usr', usr);
         if (!usr) {
@@ -18,10 +18,12 @@ router.post('/reset', function(req, res, next) {
             res.send('no');
         } else {
             if (usr.correctPassword(pwd)) {
+                var usrSkills = startStats.getSkills(prof);
                 var salt = mongoose.model('User').generateSalt();
                 var resUsr = {
                     lvl: 1,
                     playerLvl: 1,
+                    prof:prof,
                     equip: {
                         gold: 100,
                         head: [-1, -1, -1],
@@ -41,6 +43,7 @@ router.post('/reset', function(req, res, next) {
                         data: [],
                         names: []
                     },
+                    skills:usrSkills,
                     maxHp: 50,
                     currHp: 50,
                     maxEn: 30,
@@ -81,19 +84,22 @@ router.get('/currUsrData', function(req, res, next) {
 });
 router.post('/new', function(req, res, next) {
     //record new user
+    console.log('NEW USER DATA-----:',req.body)
     var un = req.body.user,
         pwd = req.body.password,
-        prof = req.body.prof||1;
+        prof = parseInt(req.body.prof)||1;
     mongoose.model('User').findOne({ 'name': un }, function(err, user) {
         if (!user) {
             //this user does not exist yet, so 
             //go ahead and record their un and pwd
             //then make a new user!
+            var usrSkills = startStats.getSkills(prof);
             var salt = mongoose.model('User').generateSalt();
             var newUser = {
                 name: un,
                 lvl: 1,
                 playerLvl: 1,
+                prof:prof,
                 equip: {
                     gold: 100,
                     head: [-1, -1, -1],
@@ -113,6 +119,7 @@ router.post('/new', function(req, res, next) {
                     data: [],
                     names: []
                 },
+                skills:usrSkills,
                 maxHp: 50,
                 currHp: 50,
                 maxEn: 30,

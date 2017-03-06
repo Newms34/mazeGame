@@ -12,7 +12,7 @@ var skillSchema = new mongoose.Schema({
     imgUrl:String,
     id:Number,//id number of skill
     prevSkill:{type:Number, default:0},//for skill tree. If zero, this is a base skill (and thus has no required prev skill). Otherwise, id of prerequisite skill.
-    nextSkill:{type:Number, default:0},//for skill tree. If zero, this is either a top-level skill, or the next skill has not been created.
+    nextSkills:[Number],//for skill tree. Array of possible next skills user may choose from this skill 
     skillPts:{type:Number, default:0}//number of skill points required to purchase this skill
 },{collection: 'Skill'});
 

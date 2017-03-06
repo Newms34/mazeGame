@@ -60,3 +60,5 @@ RENAME PRIEST TO "CORRUPTED PRIEST"
 skill upgrade process: after each fight, you get xp depending on level of monster. This is then used in a level system (linear? logarithmic?). After each level, you get a skill point. You can then use accumulated skill point(s) to buy skills. First tier skills are automatically given. 2nd tier costs 1 pt, 3rd tier costs 2 points, 4th tier... 4 points? yet to decide.
 
 reset game doesnt seem to be working
+
+NEED TO MAKE ICICLE DO 2x DMG VS STUNNED. Can (should!) we use this effect for other stuff too

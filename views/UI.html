@@ -6,12 +6,13 @@
     <div class='panel-body' style='background:url({{currUIBg}});background-size: cover;' ng-show='currUIPan!="Menu"'>
         <button class='btn btn-primary' title='connect to a phone!' ng-click='inpPhone()'>&#128241;</button>
         <div id='uiBlokCont'>
-            <div class='currUIEl' ng-repeat='UIEl in currUIObjs' ng-show='!UIEl.quest' ng-click='getUIInfo(UIEl)' style='background:linear-gradient(rgba(0,0,0,.3),rgba(0,0,0,.3)),url({{UIEl.imgUrl||"/img/UI/none.jpg"}}); background-size:100% 100%;'>
+            <div class='currUIEl' ng-repeat='UIEl in currUIObjs' ng-show='!UIEl.quest && ((currUIPan=="Skills" && playerSkills.indexOf(UIEl.id)>-1)||(currUIPan!="Skills"))' ng-click='getUIInfo(UIEl)' style='background:linear-gradient(rgba(0,0,0,.3),rgba(0,0,0,.3)),url({{UIEl.imgUrl||"/img/UI/none.jpg"}}); background-size:100% 100%;'>
                 {{currUIPan=='Inventory'?getInvName(UIEl):UIEl.name}}
             </div>
         </div>
         <div id='inv-body-boxes' ng-show='currUIPan=="Inventory"'>
             <div class='body-box' ng-repeat='bb in bodyBoxes' style='left:{{bb.x}}px;top:{{bb.y}}px;background-image:linear-gradient( rgba(0,0,0,.8), rgba(0,0,0,.8) ),url("{{bb.imgUrl}}");'>{{bb.itName}}</div>
+            <div id='xp-bar-bg'></div>
         </div>
     </div>
     <div class='panel-body' style='' ng-show='currUIPan=="Menu"'>

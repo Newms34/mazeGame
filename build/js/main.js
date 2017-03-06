@@ -103,7 +103,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
         $scope.playerCell = '0-0';
         $scope.fillCells();
     };
-
+    
     $scope.getUsrData = function() {
         $http.get('/user/currUsrData').then(function(d) {
             console.log('CURR USR DATA', typeof d, d);
@@ -118,6 +118,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
             $scope.isStunned = d.data.isStunned;
             $scope.name = d.data.name;
             $scope.playerLvl = d.data.playerLvl||1;
+            $scope.playerSkills = d.data.skills;
             econFac.merchInv($scope.playerItems.inv).then(function(r) {
                 for (var ep = 0; ep < r.length; ep++) {
                     console.log('REPLACING', $scope.playerItems.inv[ep].item, 'WITH', r[ep])

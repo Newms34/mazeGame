@@ -1,5 +1,45 @@
 var app = angular.module('mazeGame', ['ngTouch']).controller('log-con', function($scope, $http, $q, $timeout, $window, userFact) {
     $scope.hazLogd = false;
+    $scope.user = {
+        prof: '1'
+    }
+    $scope.profs = [{
+        val: '1',
+        name: 'Warrior',
+        pImg: './img/assets/war.jpg',
+        ico:'./img/assets/warPick.png'
+    }, {
+        val: '2',
+        name: 'Sorcerer',
+        pImg: './img/assets/sorc.jpg',
+        ico:'./img/assets/sorcPick.png'
+    }, {
+        val: '3',
+        name: 'Paladin',
+        pImg: './img/assets/paly.jpg',
+        ico:'./img/assets/palyPick.png'
+    }, {
+        val: '4',
+        name: 'Necromancer',
+        pImg: '/img/assets/necro.jpg',
+        ico:'./img/assets/necroPick.png'
+    }]
+    $scope.profDescs = [{
+        img: 'blank.jpg',
+        txt: 'none'
+    }, {
+        txt: 'What they lack in magical apptitude, warriors more than make up for in their martial expertise. The warrior uses their weapon training to bring swift and steely death to their foes',
+        img: './img/assets/war.jpg'
+    }, {
+        txt: 'The scholarly sorcerer uses their extensive knowledge of the arcane to obliterate their enemies with magical fire, or hinder them with conjured ice and blizzards.',
+        img: './img/assets/sorc.jpg'
+    }, {
+        txt: 'The holy paladins are bastions of the Holy Ones. Using their faith both offensively as a shield and defensively as a weapon, they can both smite their enemies and renew themselves.',
+        img: './img/assets/paly.jpg'
+    }, {
+        txt: 'Masters of the so-called "dark" arts, the necromancers are an oft-maligned lot. However, no one would deny their power - or their usefulness - in turning the minds and even fallen bodies of their foes against them.',
+        img: './img/assets/necro.jpg'
+    }]
     $scope.newUsr = function() {
         //eventually we need to CHECK to see if this user is already taken!
         //for now, we assume not
@@ -10,8 +50,10 @@ var app = angular.module('mazeGame', ['ngTouch']).controller('log-con', function
         } else {
             var userInf = {
                 user: $scope.regForm.username.$viewValue,
-                password: $scope.regForm.pwd.$viewValue
+                password: $scope.regForm.pwd.$viewValue,
+                prof:$scope.user.prof
             };
+            console.log('userInf',userInf)
             $http.post('/user/new', userInf).then(function(res) {
                 if (res.data == 'saved!') {
                     $scope.login(true);
@@ -52,7 +94,7 @@ var app = angular.module('mazeGame', ['ngTouch']).controller('log-con', function
                 if (lRes) {
                     $scope.hazLogd = true;
                     $scope.getNews();
-                }else{
+                } else {
                     sandalchest.alert('Either your username or password is not correct!')
                 }
             });
@@ -66,7 +108,7 @@ var app = angular.module('mazeGame', ['ngTouch']).controller('log-con', function
                 if (lRes) {
                     $scope.hazLogd = true;
                     $scope.getNews();
-                }else{
+                } else {
                     sandalchest.alert('Either your username or password is not correct!');
                 }
             });
@@ -79,13 +121,13 @@ var app = angular.module('mazeGame', ['ngTouch']).controller('log-con', function
         sandalchest.alert('<h3>Password Strength</h3><hr/>Here are a few things to include for a stronger password:<ul><li>A lowercase letter</li><li>An uppercase letter</li><li>A number</li><li>A non alpha-numeric symbol (something like "@" or "$")</li></ul>Longer passwords are also generally better!');
     };
     $scope.upd = [];
-    $scope.getNews=function(){
-        $http.get('/other/news').then(function(res){
+    $scope.getNews = function() {
+        $http.get('/other/news').then(function(res) {
             $scope.upd = res.data.split(/[\n\r]/)
         })
     };
     $scope.getNews(); //REMOVE ME!
-    $scope.parseInt = parseInt;//we're exposing this on the front end so that we can do stuff like <div>{{parseInt(someNum)}}</div>
+    $scope.parseInt = parseInt; //we're exposing this on the front end so that we can do stuff like <div>{{parseInt(someNum)}}</div>
 });
 
 var socket = io();
@@ -193,7 +235,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
         $scope.playerCell = '0-0';
         $scope.fillCells();
     };
-
+    
     $scope.getUsrData = function() {
         $http.get('/user/currUsrData').then(function(d) {
             console.log('CURR USR DATA', typeof d, d);
@@ -208,6 +250,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
             $scope.isStunned = d.data.isStunned;
             $scope.name = d.data.name;
             $scope.playerLvl = d.data.playerLvl||1;
+            $scope.playerSkills = d.data.skills;
             econFac.merchInv($scope.playerItems.inv).then(function(r) {
                 for (var ep = 0; ep < r.length; ep++) {
                     console.log('REPLACING', $scope.playerItems.inv[ep].item, 'WITH', r[ep])

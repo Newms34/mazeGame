@@ -9,18 +9,21 @@
 </head>
 
 <body ng-app='mazeGame' ng-controller='log-con' ng-cloak id='logPage'>
-<br/><br/><br/>
+    <br/>
+    <br/>
+    <br/>
     <div id='goPlay' ng-show='hazLogd' class='col-md-offset-2 col-md-5 panel panel-success cent'>
         <div class='panel-heading'>
             <h3>Go Play!</h3>
         </div>
         <div class='panel-body paperTable'>
             <table class='table '>
-            <thead>
-                <tr>
-                    <th><h4>Latest News</h4></th>
-                </tr>
-            </thead>
+                <thead>
+                    <tr>
+                        <th>
+                            <h4>Latest News</h4></th>
+                    </tr>
+                </thead>
                 <tbody style='text-align:left;'>
                     <tr style='font-style:italic;' ng-repeat='nws in upd track by $index' ng-if='nws.length>0'>
                         <td>{{nws}}</td>
@@ -36,23 +39,33 @@
         <div class='col-md-offset-2 col-md-5 panel panel-info cent' ng-show='isNew'>
             <div class='panel-heading'>
                 <h3>Sign up!</h3></div>
-            <div class='panel-body'>Ready to play? Pick a username and password below!
+            <div class='panel-body'>Ready to play? Pick a profession, username, and password below!
                 <hr/>
                 <form name='regForm' ng-submit='newUsr()'>
-                    <div class="form-group">
-                        <label class="control-label col-sm-4">Pick a name:</label>
-                        <div class="col-md-4 ">
+                    <div class="form-group row">
+                        <label class="control-label col-md-4">Pick a profession:</label>
+                        <div class="col-md-8 ">
+                            <ul class='prof-list'>
+                                <li ng-repeat='p in profs' style='background:linear-gradient(rgba(255,255,255,.7),rgba(255,255,255,.7)),url({{p.pImg}});background-attachment:fixed;background-size:100%;'>
+                                    <input type='radio' name='prof' value='{{p.val}}' ng-model='user.prof'><span style='background:url({{p.ico}}); background-size: contain;'></span>{{p.name}}
+                                </li>
+                                
+                            </ul>
+                        </div>
+                        <div class='col-md-12 prof-desc' style='background:linear-gradient(rgba(0,0,0,.7),rgba(0,0,0,.7)),url({{profDescs[user.prof].img}});background-attachment:fixed;background-size:100% auto;'>{{profDescs[user.prof].txt}}</div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="control-label col-md-4">Pick a name:</label>
+                        <div class="col-md-8 ">
                             <input type='text' name='username' ng-model='user.username' ng-blur='nameCheck()'>
                         </div>
                         <div class='col-md-4'>
                             <div class='regErr' ng-show='dupName'>Uh oh, looks like this name's already taken!</div>
                         </div>
                     </div>
-                    <br/>
-                    <br/>
-                    <div class="form-group">
-                        <label class="control-label col-sm-4">Enter a password:</label>
-                        <div class="col-md-4 ">
+                    <div class="form-group row">
+                        <label class="control-label col-md-4">Enter a password:</label>
+                        <div class="col-md-8 ">
                             <input type="password" name='pwd' ng-model='user.pwd' ng-change='checkPwds()' ng-keyup='checkPwdStr()'>
                         </div>
                         <div class='col-md-4'>
@@ -66,49 +79,46 @@
                             </div>
                         </div>
                     </div>
-                    <br/>
-                    <div class="form-group">
-                        <label class="control-label col-sm-4">Enter your password again:</label>
-                        <div class="col-md-4 ">
+                    <div class="form-group row">
+                        <label class="control-label col-md-4">Enter your password again:</label>
+                        <div class="col-md-8 ">
                             <input type="password" name='pwdTwo' ng-model='user.pwdTwo' ng-change='checkPwds()'>
-                            <br/>
                         </div>
                         <div class='col-md-4' ng-class="{'regErr':passMatch ==false}">
                             <span ng-show='passMatch ==false'>Passwords don't match!</span>
                         </div>
                     </div>
-                    <br/>
                     <button type='submit' class='btn btn-primary btn-lg'>Register</button>
                     <button type='button' ng-click='isNew=false' class='btn btn-info btn-sm pull-right'>I already have an account!</div>
-                </form>
-            </div>
+            </form>
         </div>
-        <div class='col-md-offset-2 col-md-5 panel panel-info cent' ng-show='isNew==false && hazLogd==false'>
-            <div class='panel-heading'>
-                <h3>Log in!</h3></div>
-            <div class='panel-body'>
-                <hr/>
-                <form name='logForm' ng-submit='login()'>
-                    <div class="form-group">
-                        <label class="control-label col-sm-5">Username:</label>
-                        <div class="col-md-7 ">
-                            <input type='text' name='username' ng-model='oldUser.username'>
-                        </div>
+    </div>
+    <div class='col-md-offset-2 col-md-5 panel panel-info cent' ng-show='isNew==false && hazLogd==false'>
+        <div class='panel-heading'>
+            <h3>Log in!</h3></div>
+        <div class='panel-body'>
+            <hr/>
+            <form name='logForm' ng-submit='login()'>
+                <div class="form-group">
+                    <label class="control-label col-sm-5">Username:</label>
+                    <div class="col-md-7 ">
+                        <input type='text' name='username' ng-model='oldUser.username'>
                     </div>
-                    <br/>
-                    <br/>
-                    <div class="form-group">
-                        <label class="control-label col-sm-5">Password:</label>
-                        <div class="col-md-7">
-                            <input type="password" name='pwd' ng-model='oldUser.pwd'>
-                        </div>
+                </div>
+                <br/>
+                <br/>
+                <div class="form-group">
+                    <label class="control-label col-sm-5">Password:</label>
+                    <div class="col-md-7">
+                        <input type="password" name='pwd' ng-model='oldUser.pwd'>
                     </div>
-                    <br/>
-                    <button type='submit' class='btn btn-primary btn-lg'>Login</button>
-                    <button type='button' ng-click='isNew=true' class='btn btn-info btn-sm pull-right'>I don't have an account!</div>
-                </form>
-            </div>
-        </div>
+                </div>
+                <br/>
+                <button type='submit' class='btn btn-primary btn-lg'>Login</button>
+                <button type='button' ng-click='isNew=true' class='btn btn-info btn-sm pull-right'>I don't have an account!</div>
+        </form>
+    </div>
+    </div>
     </div>
     <script src='/socket.io-client/dist/socket.io.js'></script>
     <script src="/jquery/dist/jquery.min.js"></script>
