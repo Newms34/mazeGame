@@ -15,7 +15,7 @@ Dave's Maze Game (I'll probably change that title later) is a dungeon crawler ga
  - **Mongoose** for saying "hi!" to mongodb
  - **ExpressJS** for servers
  - **NodeJS** for JavaScript on the back-end
- - **Socket.IO** for mobile integration (still in development!). This allows you to to use your phone as a contorller
+ - **Socket.IO** for mobile integration (still in development!). This allows you to to use your phone as a controller.
  - **CSS3** Because CSS can do 3D, and CSS really isn't that bad, so stop whining.
  - **A Heck of a Lot of NPM/Bower Modules** Because if someone else has already done it, why rewrite it?
 
@@ -31,7 +31,9 @@ Writing this app takes a lot of time and love.
  - You can help by forking the repo and writing more monsters, weapons, armor, loot, skills, etc., and making a pull request. 
  - If I like your additions, I'll include em! 
  - Take a look at the [models folder](https://github.com/Newms34/mazeGame/tree/master/models) or the [seeds folder](https://github.com/Newms34/mazeGame/tree/master/seeds) to get an example of what the format is! Be aware that as I'm currently developing the profession/skill purchasing system, some information might change without notice.
- - I'm also pretty bad at the whole art thing. Right now, I'm using other people's glorious art as 'placeholders'. However, if you feel like contributing something, feel free. 
+ - I'm also pretty bad at the whole art thing. Right now, I'm using other people's glorious art as 'placeholders'. However, if you feel like contributing something, feel free.
+
+   - On the other hand, if some of this art's yours, and you'd rather I *not* use it, lemme know, and I'll take it down.
 
 ##License:
  Eh, do whatever you want. Seriously. I give you permsission.
