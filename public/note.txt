@@ -1,1 +1,0 @@
-NOTES: This folder holds everything that the browser (client) should be expected to 'see' directly. I actually have gulp generating the files in this folder (see gulpfile.js for more details), so normally we shouldn't modify anything the js/css folders directly (as it'll just get overwritten!)
