@@ -210,3 +210,34 @@ router.post('addXp', function(req, res, next) {
         });
     }
 });
+router.post('buySkill', function(req, res, next) {
+    //note that we simply send a 'status': if the user successfully bought the skill, true; otherwise false.
+    mongoose.model('Skill').find({}, function(skErr, skLst) {
+        if (!req.body.usr || !req.session || req.session.user.name != req.body.usr || !req.body.skill) {
+            //something's missing/incorrect!
+            res.send(false);
+        } else {
+            mongoose.model('User').findOne({ 'name': req.body.usr }, function(uErr, user) {
+                var desiredSkill = null;
+                for (var i=0; i<skLst.length;i++){
+                    if(skLst[i].num==req.body.skill){
+                        desiredSkill=skLst[i];
+                    }
+                }
+                if(user.skills.indexOf(req.body.skill)!=-1||user.skills.indexOf(desiredSkill.prevSkill)==-1||user.skillPts<desiredSkill.skillPts){
+                    /*EITHER:
+                    skill already owned,
+                    previous skill not bought
+                    or not enough points
+                    */
+                    res.send(false);
+                }else{
+                    user.skills.push(desiredSkill.num);
+                    user.save(function(){
+                        res.send(true);
+                    });
+                }
+            });
+        }
+    });
+});
