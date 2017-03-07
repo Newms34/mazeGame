@@ -20,7 +20,7 @@ Dave's Maze Game (I'll probably change that title later) is a dungeon crawler ga
  - **A Heck of a Lot of NPM/Bower Modules** Because if someone else has already done it, why rewrite it?
 
 ##Currently Under Development:
- - I'm always added more stuff like loot, monsters, skills, etc.
+ - I'm always adding more stuff like loot, monsters, skills, etc.
  - A profession system is currently in development. This will allow you to choose from a subset of skills
  - Skill purchasing via leveling up
  - Armor weights (Heavy/Light)
