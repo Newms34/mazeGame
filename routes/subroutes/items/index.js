@@ -5,7 +5,9 @@ var router = express.Router(),
     async = require('async'),
     mongoose = require('mongoose'),
     session = require('client-sessions'),
-    gauss = require('gaussian');
+    gauss = require('gaussian'),
+    q = require('q');
+mongoose.Promise = require('q').Promise;
 module.exports = router;
 var findItemAtLvl = function(l, a) {
     var retArr = [];
@@ -54,7 +56,7 @@ router.get('/getRanMons/:cell', function(req, res, next) {
             }
         }
         var pickedMons = data[probArr[Math.floor(Math.random() * probArr.length)]];
-        while(mons.isBoss){
+        while (mons.isBoss) {
             //cannot select boss (quest-specific) monsters
             mons = possMons[Math.floor(Math.random() * possMons.length)];
         }
@@ -70,7 +72,20 @@ router.get('/Inventory', function(req, res, next) {
         })
     })
 });
-
+router.get('/allUI', function(req, res, next) {
+    var promArr = [];
+    promArr.push(mongoose.model('Armor').find({}).exec())
+    promArr.push(mongoose.model('Weap').find({}).exec())
+    promArr.push(mongoose.model('Affix').find({}).exec())
+    promArr.push(mongoose.model('Junk').find({}).exec())
+    promArr.push(mongoose.model('Quest').find({}).exec())
+    promArr.push(mongoose.model('Skill').find({}).exec())
+    promArr.push(mongoose.model('Mon').find({}).exec())
+    q.all(promArr).then(function(r) {
+        console.log('updating UI with elements')
+        res.send(r)
+    })
+})
 router.get('/allItems/', function(req, res, next) {
     //get all inv items (weapons, armor, affixes, AND junk)
     mongoose.model('Armor').find({}, function(err, dataA) {
@@ -95,25 +110,25 @@ router.get('/byLvl/:lvl', function(req, res, next) {
                 mongoose.model('Junk').find({ "lvl": { $lt: parseInt(req.params.lvl) + 4 } }, function(err, dataJ) {
                     var lootz = { num: parseInt(req.params.lvl) };
                     console.log('to start, lootz is', lootz)
-                    if (Math.random() > 0.5 ) {
+                    if (Math.random() > 0.5) {
                         //half the time, user gets loot
                         lootz.loot = {};
                         //60% of the time, loot is armor. Otherwise, loot is weapon.
                         //I may adjust these nums later, but for now, the slightly higher percentage of armor to weapons is generally because you need more armor than you do weapons.
                         var itemArrNum = Math.random() > 0.4 ? 0 : 1;
-                        var itemArr = itemArrNum && itemArrNum>0 ? dataW : dataA;
+                        var itemArr = itemArrNum && itemArrNum > 0 ? dataW : dataA;
                         var actualLvl = Math.floor(dist.ppf(Math.random()));
                         lootz.type = itemArrNum;
                         //now continue redoing this until we actually get a list of items;
                         while (!findItemAtLvl(actualLvl, itemArr).length) {
                             actualLvl = Math.floor(dist.ppf(Math.random()));
                         }
-                        console.log('lvl of item',actualLvl)
+                        console.log('lvl of item', actualLvl)
                         var lItems = findItemAtLvl(actualLvl, itemArr);
-                        console.log('list of items at level',lItems);
+                        console.log('list of items at level', lItems);
                         //so we should now have an array of item(s) of a normal-distributed random number. Pick one:
                         lootz.loot.base = lItems[Math.floor(Math.random() * lItems.length)];
-                        console.log('chosen base',lootz.loot.base);
+                        console.log('chosen base', lootz.loot.base);
                         //pick a random prefix and suffix
                         lootz.loot.pre = dataP[Math.floor(Math.random() * dataP.length)];
                         lootz.loot.post = dataP[Math.floor(Math.random() * dataP.length)];

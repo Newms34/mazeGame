@@ -44,13 +44,6 @@ quest instantiation:
  - when user reaches a certain lvl. This'll need to be some percentage (or fixed range?) BEFORE the quest's designated level
  - from merchant. Again, when user reaches appropriate lvl
 
-
- 107 full
- 54 unannotated
- 
-
- LINE 80 on mainjs is replacing merch cell's has.inv with the data directly from back-end. Need to replace ONLY item data (and thus preserve lootType and number). should begin to alleviate merch NaN issue. should also check how items are 'delivered' once bought, to playerItems.inv
-
 leveling sys: 
 need to designate levels for each spell. 
 should level PURELY be based on dungeon level? or should we gain xp after each fight?
@@ -62,3 +55,14 @@ skill upgrade process: after each fight, you get xp depending on level of monste
 reset game doesnt seem to be working
 
 NEED TO MAKE ICICLE DO 2x DMG VS STUNNED. Can (should!) we use this effect for other stuff too
+
+
+probly need to rewrite UI panel stuff. Will need to separate it into distinct panels (instead of CurrUIEl stuff).
+
+1 panel for menu
+1 for inventory + xp bar stuff
+1 for quest lists
+1 for CURRENT skills and NEXT skills (tree!)
+1 for beastiary
+
+we can still keep $scope.chInv in main.js, since we'll still need to cycle inventories.
