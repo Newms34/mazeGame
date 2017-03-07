@@ -10,7 +10,7 @@ module.exports = router;
 router.post('/reset', function(req, res, next) {
     var un = req.body.name,
         pwd = req.body.pass,
-        prof = parseInt(req.body.prof)||1;
+        prof = parseInt(req.body.prof) || 1;
     mongoose.model('User').findOne({ 'name': un }, function(err, usr) {
         console.log('usr', usr);
         if (!usr) {
@@ -23,7 +23,7 @@ router.post('/reset', function(req, res, next) {
                 var resUsr = {
                     lvl: 1,
                     playerLvl: 1,
-                    prof:prof,
+                    prof: prof,
                     equip: {
                         gold: 100,
                         head: [-1, -1, -1],
@@ -43,7 +43,7 @@ router.post('/reset', function(req, res, next) {
                         data: [],
                         names: []
                     },
-                    skills:usrSkills,
+                    skills: usrSkills,
                     maxHp: 50,
                     currHp: 50,
                     maxEn: 30,
@@ -69,7 +69,7 @@ router.post('/save', function(req, res, next) {
     mongoose.model('User').update({ 'name': un }, newData, function(err, usr) {
         mongoose.model('User').findOne({ 'name': un }, function(err, usr) {
             console.log('tried to find user we just saved. Result is', usr, 'err is', err);
-                // console.log('current cell of user:',usr.currentLevel.loc)
+            // console.log('current cell of user:',usr.currentLevel.loc)
             req.session.user = usr;
             res.send(true);
         });
@@ -84,10 +84,10 @@ router.get('/currUsrData', function(req, res, next) {
 });
 router.post('/new', function(req, res, next) {
     //record new user
-    console.log('NEW USER DATA-----:',req.body)
+    console.log('NEW USER DATA-----:', req.body)
     var un = req.body.user,
         pwd = req.body.password,
-        prof = parseInt(req.body.prof)||1;
+        prof = parseInt(req.body.prof) || 1;
     mongoose.model('User').findOne({ 'name': un }, function(err, user) {
         if (!user) {
             //this user does not exist yet, so 
@@ -99,7 +99,7 @@ router.post('/new', function(req, res, next) {
                 name: un,
                 lvl: 1,
                 playerLvl: 1,
-                prof:prof,
+                prof: prof,
                 equip: {
                     gold: 100,
                     head: [-1, -1, -1],
@@ -119,7 +119,7 @@ router.post('/new', function(req, res, next) {
                     data: [],
                     names: []
                 },
-                skills:usrSkills,
+                skills: usrSkills,
                 maxHp: 50,
                 currHp: 50,
                 maxEn: 30,
@@ -186,22 +186,58 @@ router.post('addXp', function(req, res, next) {
         res.send(0);
     } else {
         mongoose.model('User').findOne({ 'name': req.body.user }, function(err, usr) {
-            if (err || usr) {
+            if (err || !usr) {
                 res.send(0);
             } else {
-                usr.currLvlXp += xp;
+                usr.currLvlXp += req.body.xp;
+                var didLevel = false;
                 if (usr.currLvlXp > 500) {
                     usr.currLvlXp = 0;
                     usr.playerLvl++;
+                    usr.skillPts++;
+                    didLevel = true;
                 }
                 usr.save(function(r) {
                     res.send({
                         lvl: usr.playerLvl,
-                        xpTill: usr.currLvlXp
+                        xpTill: usr.currLvlXp,
+                        leveled: didLevel,
+                        skillPts: usr.skillPts
                     });
                 });
             }
 
         });
     }
+});
+router.post('buySkill', function(req, res, next) {
+    //note that we simply send a 'status': if the user successfully bought the skill, true; otherwise false.
+    mongoose.model('Skill').find({}, function(skErr, skLst) {
+        if (!req.body.usr || !req.session || req.session.user.name != req.body.usr || !req.body.skill) {
+            //something's missing/incorrect!
+            res.send(false);
+        } else {
+            mongoose.model('User').findOne({ 'name': req.body.usr }, function(uErr, user) {
+                var desiredSkill = null;
+                for (var i = 0; i < skLst.length; i++) {
+                    if (skLst[i].num == req.body.skill) {
+                        desiredSkill = skLst[i];
+                    }
+                }
+                if (user.skills.indexOf(req.body.skill) != -1 || user.skills.indexOf(desiredSkill.prevSkill) == -1 || user.skillPts < desiredSkill.skillPts) {
+                    /*EITHER:
+                    skill already owned,
+                    previous skill not bought
+                    or not enough points
+                    */
+                    res.send(false);
+                } else {
+                    user.skills.push(desiredSkill.num);
+                    user.save(function() {
+                        res.send(true);
+                    });
+                }
+            });
+        }
+    });
 });
