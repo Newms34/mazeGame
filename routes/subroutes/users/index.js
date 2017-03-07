@@ -219,21 +219,21 @@ router.post('buySkill', function(req, res, next) {
         } else {
             mongoose.model('User').findOne({ 'name': req.body.usr }, function(uErr, user) {
                 var desiredSkill = null;
-                for (var i=0; i<skLst.length;i++){
-                    if(skLst[i].num==req.body.skill){
-                        desiredSkill=skLst[i];
+                for (var i = 0; i < skLst.length; i++) {
+                    if (skLst[i].num == req.body.skill) {
+                        desiredSkill = skLst[i];
                     }
                 }
-                if(user.skills.indexOf(req.body.skill)!=-1||user.skills.indexOf(desiredSkill.prevSkill)==-1||user.skillPts<desiredSkill.skillPts){
+                if (user.skills.indexOf(req.body.skill) != -1 || user.skills.indexOf(desiredSkill.prevSkill) == -1 || user.skillPts < desiredSkill.skillPts) {
                     /*EITHER:
                     skill already owned,
                     previous skill not bought
                     or not enough points
                     */
                     res.send(false);
-                }else{
+                } else {
                     user.skills.push(desiredSkill.num);
-                    user.save(function(){
+                    user.save(function() {
                         res.send(true);
                     });
                 }
