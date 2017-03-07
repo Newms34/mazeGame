@@ -1,4 +1,12 @@
 app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
+    var findItem = function(arr,i){
+        for(var j=0; j<arr.length;j++){
+            if (arr[j].num==i){
+                return arr[j];
+            }
+        }
+        return false;
+    };
     return {
         getUIObj: function(whichUI, UIStuff) {
             //get all the data
@@ -6,6 +14,80 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
                 return res;
             });
             return p;
+        },
+        getAllUIs: function(info) {
+            return $http.get('/item/allUI').then(function(els) {
+                //sort UI els
+                //inventory, quests, beastiary (all), skills 
+                var armor = null,
+                    weap = null,
+                    affix = null,
+                    junk = null,
+                    quest = null,
+                    skill = null,
+                    mon = null,
+                    allSkill = [],
+                    itemSlots = ['weap','feet','legs','head','hands','chest'];
+                console.log(els.data);
+                for (var i = 0; i < els.data.length; i++) {
+                    //we use a distinguishing, unique feature of each 'type' of list to separate them into the above lists.
+                    if (els.data[i][0].slot || els.data[i][0].slot === 0) {
+                        //armor
+                        armor = els.data[i];
+                    } else if (els.data[i][0].post) {
+                        //affixes
+                        affix = els.data[i];
+                    } else if (els.data[i][0].cost && els.data[i][0].min) {
+                        //weap
+                        weap = els.data[i];
+                    } else if (els.data[i][0].cost && els.data[i][0].desc) {
+                        //junk
+                        junk = els.data[i];
+                    } else if (els.data[i][0].stunCh || els.data[i][0].stunCh === 0) {
+                        //mons
+                        mon = els.data[i];
+                    } else if (els.data[i][0].burst || els.data[i][0].burst === 0) {
+                        //skill
+                        skill = els.data[i];
+                    } else {
+                        quest = els.data[i];
+                    }
+                }
+                console.log('armor:', armor[0], '\nAffix', affix[0], '\nJunk', junk[0], '\nWeap', weap[0], '\nMon', mon[0], '\nSkill', skill[0], '\nQuest', quest[0])
+                    //now should have all the data in their proper places. now we need to 'populate' the appropriate fields in the given userdata ('info')
+                info.inProg.forEach(function(qId) {
+                    for (i = 0; i < quests.length; i++) {
+                        if (qId == quests[i].id) {
+                            qId = angular.copy(quests[i]);
+                        }
+                    }
+                });
+                info.done.forEach(function(qId) {
+                    for (i = 0; i < quests.length; i++) {
+                        if (qId == quests[i].id) {
+                            qId = angular.copy(quests[i]);
+                        }
+                    }
+                });
+                info.mon=mon;
+                console.log('RAW ITEMS DATA',info.items)
+                //now items!
+                itemSlots.forEach(function(lbl){
+                    if ((info.items[lbl][1] || info.items[lbl][1] === 0) && info.items[lbl][1]!=-1){
+                        //contains a valid item
+                        info.items[lbl][0] = findItem(affix,info.items[lbl][0])
+                        info.items[lbl][2] = findItem(affix,info.items[lbl][2])
+                        if (lbl!='weap'){
+                            //armor
+                            info.items[lbl][1] = findItem(armor,info.items[lbl][1])
+                        }else{
+                            info.items[lbl][1] = findItem(weap,info.items[lbl][1])
+                        }
+                    }
+                })
+
+                return (els);
+            })
         },
         getUIBg: function(which) {
             var UIBgs = {
@@ -150,10 +232,10 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
                 //         throw new Error('item '+JSON.stringify(data.equip.inv[i].item)+' isnt a number!')
                 //     }
                 // }
-                console.log('ITEM:',data.equip.inv[i])
+                console.log('ITEM:', data.equip.inv[i])
                 if (!(data.equip.inv[i].item instanceof Array) && typeof data.equip.inv[i].item == 'object') {
                     //probly a junk item:
-                    data.equip.inv[i].item=[data.equip.inv[i].item.num];
+                    data.equip.inv[i].item = [data.equip.inv[i].item.num];
                 } else {
                     for (var j = 0; j < data.equip.inv[i].item.length; j++) {
                         data.equip.inv[i].item[j] = data.equip.inv[i].item[j].num;
@@ -168,8 +250,8 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
                     });
                 } else if (rel && res) {
                     $window.location.reload();
-                } else{
-                    sandalchest.alert('Saved!','Your game has been saved!')
+                } else {
+                    sandalchest.alert('Saved!', 'Your game has been saved!')
                 }
             });
         },

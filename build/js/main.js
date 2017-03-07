@@ -72,7 +72,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
                 console.log('DATA INTO PROMPMERCINVS', r)
                 $scope.cells[$scope.cellNames.indexOf(r.id)].has = r.data;
                 if (r.data.isMerch && r.data.isMerch == true) {
-                    promMercInvs.push(econFac.merchInv(r.data.inv,r.id));
+                    promMercInvs.push(econFac.merchInv(r.data.inv, r.id));
                 }
             });
             $q.all(promMercInvs).then(function(mercInvs) {
@@ -103,7 +103,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
         $scope.playerCell = '0-0';
         $scope.fillCells();
     };
-    
+
     $scope.getUsrData = function() {
         $http.get('/user/currUsrData').then(function(d) {
             console.log('CURR USR DATA', typeof d, d);
@@ -117,7 +117,8 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
             $scope.currEn = d.data.currEn;
             $scope.isStunned = d.data.isStunned;
             $scope.name = d.data.name;
-            $scope.playerLvl = d.data.playerLvl||1;
+            $scope.playerLvl = d.data.playerLvl || 1;
+            $scope.currXp = d.data.currLvlXp || 0;
             $scope.playerSkills = d.data.skills;
             econFac.merchInv($scope.playerItems.inv).then(function(r) {
                 for (var ep = 0; ep < r.length; ep++) {
@@ -197,6 +198,20 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
     $scope.currUIObjs = []; //we get these from the factory
     $scope.currUIBg = '../img/UI/inv.jpg';
     $scope.currUIPan = $scope.UIPans[$scope.currUINum];
+    $scope.popInv = function() {
+        var playerInfo = {
+            lvl: $scope.playerLvl,
+            done: $scope.doneQuest,
+            inProg: $scope.questList,
+            items:$scope.playerItems,
+            xp: $scope.currXp,
+            skills: $scope.playerSkills
+        };
+        UIFac.getAllUIs(playerInfo).then(function(r){
+            //do stuff with response.
+            console.log(r)
+        })
+    }
     $scope.chInv = function(dir) {
         //UI Cycle function
         if (!dir && $scope.currUINum > 0) {
@@ -402,7 +417,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
             });
         });
     };
-    
+
     window.onmousemove = function(e) {
         $scope.$digest();
         var horiz = (e.x || e.clientX) / $(window).width();
@@ -415,8 +430,8 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
             $scope.turnSpeed = 0;
         }
     };
-    $scope.$watch('turnSpeed',function(n,o){
-        console.log('turnSpeed changed from',o,'to',n)
+    $scope.$watch('turnSpeed', function(n, o) {
+        console.log('turnSpeed changed from', o, 'to', n)
     })
     $scope.mouseTurnTimer = $interval(function() {
         $scope.roomRot += $scope.turnSpeed;

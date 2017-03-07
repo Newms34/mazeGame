@@ -15,7 +15,7 @@
             <div id='xp-bar-bg'></div>
         </div>
     </div>
-    <div class='panel-body' style='' ng-show='currUIPan=="Menu"'>
+    <div class='panel-body' ng-show='currUIPan=="Menu"'>
         <div class="form-group cent">
             <div class="menuGrp">
                 <button ng-click='saveGame();' class='btn bigButt save'>Save</button>
@@ -29,6 +29,11 @@
                 <br/>
                 <button ng-click='reset();' class='btn bigButt reset-all'>Reset Game</button>
             </div>
+        </div>
+    </div>
+    <div class='panel-body' ng-show='currUIPan=="Inventory"'>
+        <div class='container inv-cont'>
+            <div class='currUIEl' ng-repeat='it in invIts'></div>
         </div>
     </div>
 </div>
