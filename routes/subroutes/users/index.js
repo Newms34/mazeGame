@@ -65,7 +65,7 @@ router.post('/save', function(req, res, next) {
     var newData = req.body,
         un = req.body.name;
     console.log('body', req.body, 'sesh', un);
-    console.log('inventory:', req.body.equip.inv);
+    console.log('inventory:', JSON.stringify(req.body.equip));
     mongoose.model('User').update({ 'name': un }, newData, function(err, usr) {
         mongoose.model('User').findOne({ 'name': un }, function(err, usr) {
             console.log('tried to find user we just saved. Result is', usr, 'err is', err);
@@ -181,13 +181,13 @@ router.get('/logout', function(req, res, next) {
     req.session.reset();
     res.send('logged');
 });
-router.post('addXp', function(req, res, next) {
+router.post('/addXp', function(req, res, next) {
     if (!req.body.xp || req.body.xp === 0) {
-        res.send(0);
+        res.send('err');
     } else {
         mongoose.model('User').findOne({ 'name': req.body.user }, function(err, usr) {
             if (err || !usr) {
-                res.send(0);
+                res.send('err');
             } else {
                 usr.currLvlXp += req.body.xp;
                 var didLevel = false;
@@ -210,7 +210,7 @@ router.post('addXp', function(req, res, next) {
         });
     }
 });
-router.post('buySkill', function(req, res, next) {
+router.post('/buySkill', function(req, res, next) {
     //note that we simply send a 'status': if the user successfully bought the skill, true; otherwise false.
     mongoose.model('Skill').find({}, function(skErr, skLst) {
         if (!req.body.usr || !req.session || req.session.user.name != req.body.usr || !req.body.skill) {

@@ -203,15 +203,20 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
             lvl: $scope.playerLvl,
             done: $scope.doneQuest,
             inProg: $scope.questList,
-            items:$scope.playerItems,
+            items: $scope.playerItems,
             xp: $scope.currXp,
-            skills: $scope.playerSkills
+            skills: $scope.playerSkills,
+            chains: []
         };
-        UIFac.getAllUIs(playerInfo).then(function(r){
+        UIFac.getAllUIs(playerInfo).then(function(r) {
             //do stuff with response.
-            console.log(r)
+            console.log('DATA RETURNED', r)
+            $scope.playerSkills = r.skills;
+            $scope.playerItems = r.items;
+            angular.element('#combat-box').scope().comb.monsTurn();
         })
     }
+    $scope.popInv();
     $scope.chInv = function(dir) {
         //UI Cycle function
         if (!dir && $scope.currUINum > 0) {
@@ -430,9 +435,6 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
             $scope.turnSpeed = 0;
         }
     };
-    $scope.$watch('turnSpeed', function(n, o) {
-        console.log('turnSpeed changed from', o, 'to', n)
-    })
     $scope.mouseTurnTimer = $interval(function() {
         $scope.roomRot += $scope.turnSpeed;
         $scope.playerFacing = $scope.roomRot % 360 > 0 ? $scope.roomRot % 360 : 360 + $scope.roomRot % 360;

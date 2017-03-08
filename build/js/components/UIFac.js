@@ -1,12 +1,17 @@
 app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
-    var findItem = function(arr,i){
-        for(var j=0; j<arr.length;j++){
-            if (arr[j].num==i){
+    var findItem = function(arr, i) {
+        for (var j = 0; j < arr.length; j++) {
+            if (arr[j].num == i || arr[j].id==i) {
                 return arr[j];
             }
         }
         return false;
     };
+    var stSkill = function(p, data, owned) {
+        this.data = data;
+        this.p = p;
+        this.owned = owned;
+    }
     return {
         getUIObj: function(whichUI, UIStuff) {
             //get all the data
@@ -27,7 +32,7 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
                     skill = null,
                     mon = null,
                     allSkill = [],
-                    itemSlots = ['weap','feet','legs','head','hands','chest'];
+                    itemSlots = ['weap', 'feet', 'legs', 'head', 'hands', 'chest'];
                 console.log(els.data);
                 for (var i = 0; i < els.data.length; i++) {
                     //we use a distinguishing, unique feature of each 'type' of list to separate them into the above lists.
@@ -69,24 +74,87 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
                         }
                     }
                 });
-                info.mon=mon;
-                console.log('RAW ITEMS DATA',info.items)
-                //now items!
-                itemSlots.forEach(function(lbl){
-                    if ((info.items[lbl][1] || info.items[lbl][1] === 0) && info.items[lbl][1]!=-1){
-                        //contains a valid item
-                        info.items[lbl][0] = findItem(affix,info.items[lbl][0])
-                        info.items[lbl][2] = findItem(affix,info.items[lbl][2])
-                        if (lbl!='weap'){
+                //mon!
+                info.mon = mon;
+                console.log('RAW ITEMS DATA', info.items)
+                    //now items!
+                    //slots
+                itemSlots.forEach(function(lbl) {
+                        if ((info.items[lbl][1] || info.items[lbl][1] === 0) && info.items[lbl][1] != -1) {
+                            //contains a valid item
+                            info.items[lbl][0] = findItem(affix, info.items[lbl][0])
+                            info.items[lbl][2] = findItem(affix, info.items[lbl][2])
+                            if (lbl != 'weap') {
+                                //armor
+                                info.items[lbl][1] = findItem(armor, info.items[lbl][1])
+                            } else {
+                                info.items[lbl][1] = findItem(weap, info.items[lbl][1])
+                            }
+                        }
+                    })
+                    //and inventory!
+                info.items.inv.forEach(function(it) {
+                    //first, we need to determine if this is a weapon, armor, or junk
+                    if (it.lootType == 2 && it.item.length && it.item.length == 1 && typeof it.item[0] == 'number') {
+                        //junk (array length of 1)
+                        it.item[0] = findItem(junk, it.item[0]);
+                    } else if ((it.lootType == 1 || it.lootType == 0) && it.item.length && it.item.length == 3 && typeof it.item[0] == 'number') {
+                        //weap or armor
+                        it.item[0] = findItem(affix, it.item[0]);
+                        it.item[2] = findItem(affix, it.item[2]);
+                        if (it.lootType == 0) {
                             //armor
-                            info.items[lbl][1] = findItem(armor,info.items[lbl][1])
-                        }else{
-                            info.items[lbl][1] = findItem(weap,info.items[lbl][1])
+                            it.item[1] = findItem(armor, it.item[1]);
+                        } else {
+                            //weap
+                            it.item[1] = findItem(weap, it.item[1]);
+                        }
+                    } else {
+                        //do nothing: invalid lootType or not defined
+                    }
+                });
+                console.log('FINAL ITEMS:', info.items)
+                    //now, skill chains
+                    //these are used for the skill purchasing system, by displaying the currently owned skills as well as ones we will be able to eventually buy
+
+                //example: 10 --> 15:
+                //[{fireball,immolate}]
+                var skillChains = [];
+                for (var i = 0; i < skill.length; i++) {
+                    if ((!skill[i].prevSkill || skill[i].prevSkill == 0) && info.skills.indexOf(skill[i].id) > -1) {
+                        //base skill, owned
+                        var newSkillChain = {
+                            skills: [skill[i].id]
+                        };
+                        newSkillChain[skill[i].id] = new stSkill(0, skill[i], true)
+                        skillChains.push(newSkillChain);
+                    }
+                }
+                //we should now have the BASE of all chains. we need to construct the rest of the chains.
+                var skillsLeft = true;
+                while (skillsLeft) {
+                    skillsLeft=false;
+                    for (i = 0; i < skillChains.length; i++) {
+                        for(var j=0;j<skill.length;j++){
+                            //loop thru all skills
+                            if(skillChains[i].skills.indexOf(skill[j].id)<0 && skillChains[i][skill[j].prevSkill]){
+                                console.log('Found another skill!',skill[j])
+                                //this has not yet been recorded in this skill chain, and is a following skill to one we already own.
+                                skillsLeft=true;
+                                skillChains[i].skills.push(skill[j].id);
+                                skillChains[i][skill[j].id] = new stSkill(skill[j].prevSkill,skill[j],info.skills.indexOf(skill[j].id)>-1);
+                            }
                         }
                     }
-                })
+                }
 
-                return (els);
+                console.log('SKILLCHAINZ', JSON.stringify(skillChains))
+                info.chains=skillChains;
+                info.skills= info.skills.map(function(sk){
+                    console.log('skill id',sk,findItem(skill,sk))
+                    return findItem(skill,sk);
+                })
+                return (info);
             })
         },
         getUIBg: function(which) {
@@ -234,6 +302,7 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
                 // }
                 console.log('ITEM:', data.equip.inv[i])
                 if (!(data.equip.inv[i].item instanceof Array) && typeof data.equip.inv[i].item == 'object') {
+                    //item is just a regular object (not array of objs), so
                     //probly a junk item:
                     data.equip.inv[i].item = [data.equip.inv[i].item.num];
                 } else {
@@ -243,6 +312,7 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
                 }
                 console.log('Inventory reducified!:', JSON.stringify(data.equip.inv))
             }
+            console.log('data to save:', data)
             $http.post('/user/save', data).then(function(res) {
                 if (lo && res) {
                     $http.get('/user/logout').then(function(r) {

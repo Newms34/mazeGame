@@ -66,3 +66,5 @@ probly need to rewrite UI panel stuff. Will need to separate it into distinct pa
 1 for beastiary
 
 we can still keep $scope.chInv in main.js, since we'll still need to cycle inventories.
+
+need to, @ some point go thru and remove unused functions. Will have a number of these after UI pan rework

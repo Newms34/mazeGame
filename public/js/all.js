@@ -335,15 +335,20 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
             lvl: $scope.playerLvl,
             done: $scope.doneQuest,
             inProg: $scope.questList,
-            items:$scope.playerItems,
+            items: $scope.playerItems,
             xp: $scope.currXp,
-            skills: $scope.playerSkills
+            skills: $scope.playerSkills,
+            chains: []
         };
-        UIFac.getAllUIs(playerInfo).then(function(r){
+        UIFac.getAllUIs(playerInfo).then(function(r) {
             //do stuff with response.
-            console.log(r)
+            console.log('DATA RETURNED', r)
+            $scope.playerSkills = r.skills;
+            $scope.playerItems = r.items;
+            angular.element('#combat-box').scope().comb.monsTurn();
         })
     }
+    $scope.popInv();
     $scope.chInv = function(dir) {
         //UI Cycle function
         if (!dir && $scope.currUINum > 0) {
@@ -562,9 +567,6 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
             $scope.turnSpeed = 0;
         }
     };
-    $scope.$watch('turnSpeed', function(n, o) {
-        console.log('turnSpeed changed from', o, 'to', n)
-    })
     $scope.mouseTurnTimer = $interval(function() {
         $scope.roomRot += $scope.turnSpeed;
         $scope.playerFacing = $scope.roomRot % 360 > 0 ? $scope.roomRot % 360 : 360 + $scope.roomRot % 360;
@@ -1107,7 +1109,7 @@ app.factory('combatFac', function($http) {
             })
         },
         addXp: function(u,x){
-            return $http.post('/usr/addXp',{xp:x,user:u},function(r){
+            return $http.post('/user/addXp',{xp:x,user:u},function(r){
                 return r;
             })
         }
@@ -1117,7 +1119,6 @@ app.factory('combatFac', function($http) {
 app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combatFac) {
     //this is only in the subfolder because it's a subcomponent of the main controller (main.js)
     $scope.comb = {};
-    $scope.comb.skills;
     $scope.comb.playersTurn = false; //monster goes first!
     $scope.comb.itemStats;
     $scope.comb.attackEffects = [];
@@ -1140,12 +1141,12 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
             $scope.currPDegens = [];
             $scope.currMRegens = [];
             $scope.currMDegens = [];
-            $scope.comb.monsTurn();
+            $scope.popInv();
         });
     };
     $scope.comb.skillCh = function(dir) {
         if (dir) {
-            if ($scope.currSkillNum < $scope.comb.skills.length - 1) {
+            if ($scope.currSkillNum < $scope.$parent.playerSkills.length - 1) {
                 $scope.currSkillNum++;
             } else {
                 $scope.currSkillNum = 0;
@@ -1154,15 +1155,9 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
             if ($scope.currSkillNum > 0) {
                 $scope.currSkillNum--;
             } else {
-                $scope.currSkillNum = $scope.comb.skills.length - 1;
+                $scope.currSkillNum = $scope.$parent.playerSkills.length - 1;
             }
         }
-    }
-    $scope.comb.getAllSkills = function() {
-        $http.get('/item/Skills').then(function(s) {
-            console.log('ALL SKILLS', s.data)
-            $scope.comb.skills = s.data;
-        });
     }
     $scope.currPRegens = [];
     $scope.currPDegens = [];
@@ -1171,9 +1166,8 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
     $scope.monsStunned = false;
     $scope.comb.fleeMult = 1; //this is only increased if player fleez.
     $scope.pStunned = false;
-    $scope.comb.getAllSkills(); //we reload the skills each time, just in case there's been an update
     $scope.comb.showSkillInf = function() {
-        combatFac.getSkillInf($scope.comb.skills, $scope.currSkillNum);
+        combatFac.getSkillInf($scope.$parent.playerSkills, $scope.currSkillNum);
     }
     $scope.comb.attemptFlee = function() {
         //user attempting to run
@@ -1219,7 +1213,7 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
         $scope.intTarg.currHp -= pDmg;
         combatFac.updateBars($scope.maxHp, $scope.currHp, $scope.maxEn, $scope.currEn, $scope.$parent.intTarg.hp, $scope.$parent.intTarg.currHp);
         $scope.comb.updateDoTs();
-        var attackInfoStr = 'You attack for ' + pDmg + ' ' + combatFac.getDmgType($scope.comb.skills[$scope.currSkillNum].type) + ' damage, using ' + $scope.comb.skills[$scope.currSkillNum].name + '!';
+        var attackInfoStr = 'You attack for ' + pDmg + ' ' + combatFac.getDmgType($scope.$parent.playerSkills[$scope.currSkillNum].type) + ' damage, using ' + $scope.$parent.playerSkills[$scope.currSkillNum].name + '!';
         if ($scope.comb.attackEffects.length) {
             //add special effects!
             var novaHit = $scope.comb.attackEffects == 'nova';
@@ -1272,8 +1266,8 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
             allAff = $scope.comb.itemStats[2],
             allJunk = $scope.comb.itemStats[3];
         console.log('WEAP IDS', $scope.$parent.playerItems.weap, 'WEAPS', allWeaps, 'ARMOR', allArm, 'AFFIXES', allAff, 'JUNK', allJunk)
-        var playerWeap = $scope.$parent.playerItems.weap[1] != -1 ? [allAff[$scope.$parent.playerItems.weap[0]], allWeaps[$scope.$parent.playerItems.weap[1]], allAff[$scope.$parent.playerItems.weap[2]]] : false;
-        console.log(playerWeap[0].pre + ' ' + playerWeap[1].name + ' ' + playerWeap[2].post, playerWeap)
+        var playerWeap = $scope.$parent.playerItems.weap;
+        console.log('PLAYER WEAPON:',playerWeap)
         var playerArmor;
         var dtype,
             totalRawD = 0,
@@ -1291,9 +1285,9 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
         }
         //d=direction (to or from player). True = from player (player attacking). False = to player (monster attacking)
         if (d) {
-            if (!$scope.pStunned && $scope.comb.skills[$scope.currSkillNum].energy <= $scope.currEn) {
+            if (!$scope.pStunned && $scope.$parent.playerSkills[$scope.currSkillNum].energy <= $scope.currEn) {
                 //player is attacking monster, so we take the PLAYER'S dmg and the MONSTER'S armor
-                dtype = $scope.comb.skills[$scope.currSkillNum].type;
+                dtype = $scope.$parent.playerSkills[$scope.currSkillNum].type;
                 //note that suffix mod dmg type takes precidence. SO a Firey axe of Ice will do COLD damge, not FIRE
                 if (playerWeap[0].dmgType != -1) {
                     dtype = playerWeap[0].dmgType
@@ -1307,41 +1301,41 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                     weapDmg *= 1.7;
                     $scope.comb.attackEffects.push('brutal');
                 }
-                var skillDmg = $scope.comb.skills[$scope.currSkillNum].burst;
+                var skillDmg = $scope.$parent.playerSkills[$scope.currSkillNum].burst;
                 console.log('ATTACKED USING A SKILL')
-                console.log('SKILL WAS:', $scope.comb.skills[$scope.currSkillNum])
+                console.log('SKILL WAS:', $scope.$parent.playerSkills[$scope.currSkillNum])
                     //for degen/regen, we basically wanna check to see if this particular degen (identified by monster name, skill name, and the -degen or -regen flag) is already in the list
-                if ($scope.comb.skills[$scope.currSkillNum].degen) {
+                if ($scope.$parent.playerSkills[$scope.currSkillNum].degen) {
                     //add monster degen
                     var crueDur = Math.random() < playerWeap[0].crue || Math.random() < playerWeap[2].crue ? 10 : 5;
                     if (crueDur > 5) $scope.comb.attackEffects.push('cruel');
-                    if ($scope.comb.checkDoTDup($scope.currMDegens, $scope.$parent.intTarg.name + '-' + $scope.comb.skills[$scope.currSkillNum].name + '-degen')) {
-                        $scope.currMDegens.push(new $scope.comb.DoT($scope.$parent.intTarg.name + '-' + $scope.comb.skills[$scope.currSkillNum].name + '-degen', $scope.comb.skills[$scope.currSkillNum].degen, crueDur));
+                    if ($scope.comb.checkDoTDup($scope.currMDegens, $scope.$parent.intTarg.name + '-' + $scope.$parent.playerSkills[$scope.currSkillNum].name + '-degen')) {
+                        $scope.currMDegens.push(new $scope.comb.DoT($scope.$parent.intTarg.name + '-' + $scope.$parent.playerSkills[$scope.currSkillNum].name + '-degen', $scope.$parent.playerSkills[$scope.currSkillNum].degen, crueDur));
                     } else {
                         //this particular DoT is already in the list, so reset its duration to 5.
-                        $scope.resetDoTDur('currMDegens', $scope.$parent.intTarg.name + '-' + $scope.comb.skills[$scope.currSkillNum].name + '-degen', crueDur)
+                        $scope.resetDoTDur('currMDegens', $scope.$parent.intTarg.name + '-' + $scope.$parent.playerSkills[$scope.currSkillNum].name + '-degen', crueDur)
                     }
                 }
-                if ($scope.comb.skills[$scope.currSkillNum].regen) {
+                if ($scope.$parent.playerSkills[$scope.currSkillNum].regen) {
                     //add player regen
                     var rejuvDur = Math.random() < playerWeap[0].rejuv || Math.random() < playerWeap[2].rejuv ? 10 : 5;
                     if (rejuvDur > 5) $scope.comb.attackEffects.push('rejuvenating');
-                    if ($scope.comb.checkDoTDup($scope.currPRegens, 'player-' + $scope.comb.skills[$scope.currSkillNum].name + '-regen')) {
-                        $scope.currPRegens.push(new $scope.comb.DoT('player-' + $scope.comb.skills[$scope.currSkillNum].name + '-regen', $scope.comb.skills[$scope.currSkillNum].regen, rejuvDur));
+                    if ($scope.comb.checkDoTDup($scope.currPRegens, 'player-' + $scope.$parent.playerSkills[$scope.currSkillNum].name + '-regen')) {
+                        $scope.currPRegens.push(new $scope.comb.DoT('player-' + $scope.$parent.playerSkills[$scope.currSkillNum].name + '-regen', $scope.$parent.playerSkills[$scope.currSkillNum].regen, rejuvDur));
                     } else {
                         //this particular DoT is already in the list, so reset its duration to 5.
-                        $scope.resetDoTDur('currPRegens', 'player-' + $scope.comb.skills[$scope.currSkillNum].name + '-regen', rejuvDur)
+                        $scope.resetDoTDur('currPRegens', 'player-' + $scope.$parent.playerSkills[$scope.currSkillNum].name + '-regen', rejuvDur)
                     }
                 }
-                if ($scope.comb.skills[$scope.currSkillNum].heal) {
+                if ($scope.$parent.playerSkills[$scope.currSkillNum].heal) {
                     var beneMult = Math.random() < playerWeap[0].bene || Math.random() < playerWeap[2].bene ? 2 : 1;
                     if (rejuvDur > 5) $scope.comb.attackEffects.push('benedictive');
-                    $scope.currHp += $scope.comb.skills[$scope.currSkillNum].heal * beneMult;
+                    $scope.currHp += $scope.$parent.playerSkills[$scope.currSkillNum].heal * beneMult;
                     if ($scope.currHp > $scope.maxHp) {
                         $scope.currHp = $scope.maxHp
                     }
                 }
-                if ($scope.comb.skills[$scope.currSkillNum].stuns || Math.random() < playerWeap[0].stunCh || Math.random() < playerWeap[2].stunCh) {
+                if ($scope.$parent.playerSkills[$scope.currSkillNum].stuns || Math.random() < playerWeap[0].stunCh || Math.random() < playerWeap[2].stunCh) {
                     $scope.monsStunned = true;
                     $scope.comb.attackEffects.push('stunning');
                 }
@@ -1366,10 +1360,10 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                         $scope.currHp = $scope.maxHp
                     }
                 }
-                $scope.currEn -= $scope.comb.skills[$scope.currSkillNum].energy;
+                $scope.currEn -= $scope.$parent.playerSkills[$scope.currSkillNum].energy;
                 return skillDmg + weapDmg + novaDmg;
-            } else if ($scope.comb.skills[$scope.currSkillNum].energy > $scope.currEn) {
-                sandalChest.alert('You don\'t have enough energy to use ' + $scope.comb.skills[$scope.currSkillNum].name + '.')
+            } else if ($scope.$parent.playerSkills[$scope.currSkillNum].energy > $scope.currEn) {
+                sandalChest.alert('You don\'t have enough energy to use ' + $scope.$parent.playerSkills[$scope.currSkillNum].name + '.')
             } else {
                 sandalChest.alert('You\'ve been stunned! You can\'t attack this turn.')
             }
@@ -2052,14 +2046,19 @@ app.factory('socketFac', function ($rootScope) {
   };
 });
 app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
-    var findItem = function(arr,i){
-        for(var j=0; j<arr.length;j++){
-            if (arr[j].num==i){
+    var findItem = function(arr, i) {
+        for (var j = 0; j < arr.length; j++) {
+            if (arr[j].num == i || arr[j].id==i) {
                 return arr[j];
             }
         }
         return false;
     };
+    var stSkill = function(p, data, owned) {
+        this.data = data;
+        this.p = p;
+        this.owned = owned;
+    }
     return {
         getUIObj: function(whichUI, UIStuff) {
             //get all the data
@@ -2080,7 +2079,7 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
                     skill = null,
                     mon = null,
                     allSkill = [],
-                    itemSlots = ['weap','feet','legs','head','hands','chest'];
+                    itemSlots = ['weap', 'feet', 'legs', 'head', 'hands', 'chest'];
                 console.log(els.data);
                 for (var i = 0; i < els.data.length; i++) {
                     //we use a distinguishing, unique feature of each 'type' of list to separate them into the above lists.
@@ -2122,24 +2121,87 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
                         }
                     }
                 });
-                info.mon=mon;
-                console.log('RAW ITEMS DATA',info.items)
-                //now items!
-                itemSlots.forEach(function(lbl){
-                    if ((info.items[lbl][1] || info.items[lbl][1] === 0) && info.items[lbl][1]!=-1){
-                        //contains a valid item
-                        info.items[lbl][0] = findItem(affix,info.items[lbl][0])
-                        info.items[lbl][2] = findItem(affix,info.items[lbl][2])
-                        if (lbl!='weap'){
+                //mon!
+                info.mon = mon;
+                console.log('RAW ITEMS DATA', info.items)
+                    //now items!
+                    //slots
+                itemSlots.forEach(function(lbl) {
+                        if ((info.items[lbl][1] || info.items[lbl][1] === 0) && info.items[lbl][1] != -1) {
+                            //contains a valid item
+                            info.items[lbl][0] = findItem(affix, info.items[lbl][0])
+                            info.items[lbl][2] = findItem(affix, info.items[lbl][2])
+                            if (lbl != 'weap') {
+                                //armor
+                                info.items[lbl][1] = findItem(armor, info.items[lbl][1])
+                            } else {
+                                info.items[lbl][1] = findItem(weap, info.items[lbl][1])
+                            }
+                        }
+                    })
+                    //and inventory!
+                info.items.inv.forEach(function(it) {
+                    //first, we need to determine if this is a weapon, armor, or junk
+                    if (it.lootType == 2 && it.item.length && it.item.length == 1 && typeof it.item[0] == 'number') {
+                        //junk (array length of 1)
+                        it.item[0] = findItem(junk, it.item[0]);
+                    } else if ((it.lootType == 1 || it.lootType == 0) && it.item.length && it.item.length == 3 && typeof it.item[0] == 'number') {
+                        //weap or armor
+                        it.item[0] = findItem(affix, it.item[0]);
+                        it.item[2] = findItem(affix, it.item[2]);
+                        if (it.lootType == 0) {
                             //armor
-                            info.items[lbl][1] = findItem(armor,info.items[lbl][1])
-                        }else{
-                            info.items[lbl][1] = findItem(weap,info.items[lbl][1])
+                            it.item[1] = findItem(armor, it.item[1]);
+                        } else {
+                            //weap
+                            it.item[1] = findItem(weap, it.item[1]);
+                        }
+                    } else {
+                        //do nothing: invalid lootType or not defined
+                    }
+                });
+                console.log('FINAL ITEMS:', info.items)
+                    //now, skill chains
+                    //these are used for the skill purchasing system, by displaying the currently owned skills as well as ones we will be able to eventually buy
+
+                //example: 10 --> 15:
+                //[{fireball,immolate}]
+                var skillChains = [];
+                for (var i = 0; i < skill.length; i++) {
+                    if ((!skill[i].prevSkill || skill[i].prevSkill == 0) && info.skills.indexOf(skill[i].id) > -1) {
+                        //base skill, owned
+                        var newSkillChain = {
+                            skills: [skill[i].id]
+                        };
+                        newSkillChain[skill[i].id] = new stSkill(0, skill[i], true)
+                        skillChains.push(newSkillChain);
+                    }
+                }
+                //we should now have the BASE of all chains. we need to construct the rest of the chains.
+                var skillsLeft = true;
+                while (skillsLeft) {
+                    skillsLeft=false;
+                    for (i = 0; i < skillChains.length; i++) {
+                        for(var j=0;j<skill.length;j++){
+                            //loop thru all skills
+                            if(skillChains[i].skills.indexOf(skill[j].id)<0 && skillChains[i][skill[j].prevSkill]){
+                                console.log('Found another skill!',skill[j])
+                                //this has not yet been recorded in this skill chain, and is a following skill to one we already own.
+                                skillsLeft=true;
+                                skillChains[i].skills.push(skill[j].id);
+                                skillChains[i][skill[j].id] = new stSkill(skill[j].prevSkill,skill[j],info.skills.indexOf(skill[j].id)>-1);
+                            }
                         }
                     }
-                })
+                }
 
-                return (els);
+                console.log('SKILLCHAINZ', JSON.stringify(skillChains))
+                info.chains=skillChains;
+                info.skills= info.skills.map(function(sk){
+                    console.log('skill id',sk,findItem(skill,sk))
+                    return findItem(skill,sk);
+                })
+                return (info);
             })
         },
         getUIBg: function(which) {
@@ -2287,6 +2349,7 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
                 // }
                 console.log('ITEM:', data.equip.inv[i])
                 if (!(data.equip.inv[i].item instanceof Array) && typeof data.equip.inv[i].item == 'object') {
+                    //item is just a regular object (not array of objs), so
                     //probly a junk item:
                     data.equip.inv[i].item = [data.equip.inv[i].item.num];
                 } else {
@@ -2296,6 +2359,7 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
                 }
                 console.log('Inventory reducified!:', JSON.stringify(data.equip.inv))
             }
+            console.log('data to save:', data)
             $http.post('/user/save', data).then(function(res) {
                 if (lo && res) {
                     $http.get('/user/logout').then(function(r) {

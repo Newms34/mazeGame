@@ -39,7 +39,7 @@ app.factory('combatFac', function($http) {
             })
         },
         addXp: function(u,x){
-            return $http.post('/usr/addXp',{xp:x,user:u},function(r){
+            return $http.post('/user/addXp',{xp:x,user:u},function(r){
                 return r;
             })
         }

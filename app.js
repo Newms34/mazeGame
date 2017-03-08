@@ -6,7 +6,7 @@ var express = require('express'),
     bodyParser = require('body-parser'),
     session = require('client-sessions');
 
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.set('view engine', 'html');
 app.set('views', path.join(__dirname, 'views'));

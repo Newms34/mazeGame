@@ -1,7 +1,6 @@
 app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combatFac) {
     //this is only in the subfolder because it's a subcomponent of the main controller (main.js)
     $scope.comb = {};
-    $scope.comb.skills;
     $scope.comb.playersTurn = false; //monster goes first!
     $scope.comb.itemStats;
     $scope.comb.attackEffects = [];
@@ -24,12 +23,12 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
             $scope.currPDegens = [];
             $scope.currMRegens = [];
             $scope.currMDegens = [];
-            $scope.comb.monsTurn();
+            $scope.popInv();
         });
     };
     $scope.comb.skillCh = function(dir) {
         if (dir) {
-            if ($scope.currSkillNum < $scope.comb.skills.length - 1) {
+            if ($scope.currSkillNum < $scope.$parent.playerSkills.length - 1) {
                 $scope.currSkillNum++;
             } else {
                 $scope.currSkillNum = 0;
@@ -38,15 +37,9 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
             if ($scope.currSkillNum > 0) {
                 $scope.currSkillNum--;
             } else {
-                $scope.currSkillNum = $scope.comb.skills.length - 1;
+                $scope.currSkillNum = $scope.$parent.playerSkills.length - 1;
             }
         }
-    }
-    $scope.comb.getAllSkills = function() {
-        $http.get('/item/Skills').then(function(s) {
-            console.log('ALL SKILLS', s.data)
-            $scope.comb.skills = s.data;
-        });
     }
     $scope.currPRegens = [];
     $scope.currPDegens = [];
@@ -55,9 +48,8 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
     $scope.monsStunned = false;
     $scope.comb.fleeMult = 1; //this is only increased if player fleez.
     $scope.pStunned = false;
-    $scope.comb.getAllSkills(); //we reload the skills each time, just in case there's been an update
     $scope.comb.showSkillInf = function() {
-        combatFac.getSkillInf($scope.comb.skills, $scope.currSkillNum);
+        combatFac.getSkillInf($scope.$parent.playerSkills, $scope.currSkillNum);
     }
     $scope.comb.attemptFlee = function() {
         //user attempting to run
@@ -103,7 +95,7 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
         $scope.intTarg.currHp -= pDmg;
         combatFac.updateBars($scope.maxHp, $scope.currHp, $scope.maxEn, $scope.currEn, $scope.$parent.intTarg.hp, $scope.$parent.intTarg.currHp);
         $scope.comb.updateDoTs();
-        var attackInfoStr = 'You attack for ' + pDmg + ' ' + combatFac.getDmgType($scope.comb.skills[$scope.currSkillNum].type) + ' damage, using ' + $scope.comb.skills[$scope.currSkillNum].name + '!';
+        var attackInfoStr = 'You attack for ' + pDmg + ' ' + combatFac.getDmgType($scope.$parent.playerSkills[$scope.currSkillNum].type) + ' damage, using ' + $scope.$parent.playerSkills[$scope.currSkillNum].name + '!';
         if ($scope.comb.attackEffects.length) {
             //add special effects!
             var novaHit = $scope.comb.attackEffects == 'nova';
@@ -156,8 +148,8 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
             allAff = $scope.comb.itemStats[2],
             allJunk = $scope.comb.itemStats[3];
         console.log('WEAP IDS', $scope.$parent.playerItems.weap, 'WEAPS', allWeaps, 'ARMOR', allArm, 'AFFIXES', allAff, 'JUNK', allJunk)
-        var playerWeap = $scope.$parent.playerItems.weap[1] != -1 ? [allAff[$scope.$parent.playerItems.weap[0]], allWeaps[$scope.$parent.playerItems.weap[1]], allAff[$scope.$parent.playerItems.weap[2]]] : false;
-        console.log(playerWeap[0].pre + ' ' + playerWeap[1].name + ' ' + playerWeap[2].post, playerWeap)
+        var playerWeap = $scope.$parent.playerItems.weap;
+        console.log('PLAYER WEAPON:',playerWeap)
         var playerArmor;
         var dtype,
             totalRawD = 0,
@@ -175,9 +167,9 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
         }
         //d=direction (to or from player). True = from player (player attacking). False = to player (monster attacking)
         if (d) {
-            if (!$scope.pStunned && $scope.comb.skills[$scope.currSkillNum].energy <= $scope.currEn) {
+            if (!$scope.pStunned && $scope.$parent.playerSkills[$scope.currSkillNum].energy <= $scope.currEn) {
                 //player is attacking monster, so we take the PLAYER'S dmg and the MONSTER'S armor
-                dtype = $scope.comb.skills[$scope.currSkillNum].type;
+                dtype = $scope.$parent.playerSkills[$scope.currSkillNum].type;
                 //note that suffix mod dmg type takes precidence. SO a Firey axe of Ice will do COLD damge, not FIRE
                 if (playerWeap[0].dmgType != -1) {
                     dtype = playerWeap[0].dmgType
@@ -191,41 +183,41 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                     weapDmg *= 1.7;
                     $scope.comb.attackEffects.push('brutal');
                 }
-                var skillDmg = $scope.comb.skills[$scope.currSkillNum].burst;
+                var skillDmg = $scope.$parent.playerSkills[$scope.currSkillNum].burst;
                 console.log('ATTACKED USING A SKILL')
-                console.log('SKILL WAS:', $scope.comb.skills[$scope.currSkillNum])
+                console.log('SKILL WAS:', $scope.$parent.playerSkills[$scope.currSkillNum])
                     //for degen/regen, we basically wanna check to see if this particular degen (identified by monster name, skill name, and the -degen or -regen flag) is already in the list
-                if ($scope.comb.skills[$scope.currSkillNum].degen) {
+                if ($scope.$parent.playerSkills[$scope.currSkillNum].degen) {
                     //add monster degen
                     var crueDur = Math.random() < playerWeap[0].crue || Math.random() < playerWeap[2].crue ? 10 : 5;
                     if (crueDur > 5) $scope.comb.attackEffects.push('cruel');
-                    if ($scope.comb.checkDoTDup($scope.currMDegens, $scope.$parent.intTarg.name + '-' + $scope.comb.skills[$scope.currSkillNum].name + '-degen')) {
-                        $scope.currMDegens.push(new $scope.comb.DoT($scope.$parent.intTarg.name + '-' + $scope.comb.skills[$scope.currSkillNum].name + '-degen', $scope.comb.skills[$scope.currSkillNum].degen, crueDur));
+                    if ($scope.comb.checkDoTDup($scope.currMDegens, $scope.$parent.intTarg.name + '-' + $scope.$parent.playerSkills[$scope.currSkillNum].name + '-degen')) {
+                        $scope.currMDegens.push(new $scope.comb.DoT($scope.$parent.intTarg.name + '-' + $scope.$parent.playerSkills[$scope.currSkillNum].name + '-degen', $scope.$parent.playerSkills[$scope.currSkillNum].degen, crueDur));
                     } else {
                         //this particular DoT is already in the list, so reset its duration to 5.
-                        $scope.resetDoTDur('currMDegens', $scope.$parent.intTarg.name + '-' + $scope.comb.skills[$scope.currSkillNum].name + '-degen', crueDur)
+                        $scope.resetDoTDur('currMDegens', $scope.$parent.intTarg.name + '-' + $scope.$parent.playerSkills[$scope.currSkillNum].name + '-degen', crueDur)
                     }
                 }
-                if ($scope.comb.skills[$scope.currSkillNum].regen) {
+                if ($scope.$parent.playerSkills[$scope.currSkillNum].regen) {
                     //add player regen
                     var rejuvDur = Math.random() < playerWeap[0].rejuv || Math.random() < playerWeap[2].rejuv ? 10 : 5;
                     if (rejuvDur > 5) $scope.comb.attackEffects.push('rejuvenating');
-                    if ($scope.comb.checkDoTDup($scope.currPRegens, 'player-' + $scope.comb.skills[$scope.currSkillNum].name + '-regen')) {
-                        $scope.currPRegens.push(new $scope.comb.DoT('player-' + $scope.comb.skills[$scope.currSkillNum].name + '-regen', $scope.comb.skills[$scope.currSkillNum].regen, rejuvDur));
+                    if ($scope.comb.checkDoTDup($scope.currPRegens, 'player-' + $scope.$parent.playerSkills[$scope.currSkillNum].name + '-regen')) {
+                        $scope.currPRegens.push(new $scope.comb.DoT('player-' + $scope.$parent.playerSkills[$scope.currSkillNum].name + '-regen', $scope.$parent.playerSkills[$scope.currSkillNum].regen, rejuvDur));
                     } else {
                         //this particular DoT is already in the list, so reset its duration to 5.
-                        $scope.resetDoTDur('currPRegens', 'player-' + $scope.comb.skills[$scope.currSkillNum].name + '-regen', rejuvDur)
+                        $scope.resetDoTDur('currPRegens', 'player-' + $scope.$parent.playerSkills[$scope.currSkillNum].name + '-regen', rejuvDur)
                     }
                 }
-                if ($scope.comb.skills[$scope.currSkillNum].heal) {
+                if ($scope.$parent.playerSkills[$scope.currSkillNum].heal) {
                     var beneMult = Math.random() < playerWeap[0].bene || Math.random() < playerWeap[2].bene ? 2 : 1;
                     if (rejuvDur > 5) $scope.comb.attackEffects.push('benedictive');
-                    $scope.currHp += $scope.comb.skills[$scope.currSkillNum].heal * beneMult;
+                    $scope.currHp += $scope.$parent.playerSkills[$scope.currSkillNum].heal * beneMult;
                     if ($scope.currHp > $scope.maxHp) {
                         $scope.currHp = $scope.maxHp
                     }
                 }
-                if ($scope.comb.skills[$scope.currSkillNum].stuns || Math.random() < playerWeap[0].stunCh || Math.random() < playerWeap[2].stunCh) {
+                if ($scope.$parent.playerSkills[$scope.currSkillNum].stuns || Math.random() < playerWeap[0].stunCh || Math.random() < playerWeap[2].stunCh) {
                     $scope.monsStunned = true;
                     $scope.comb.attackEffects.push('stunning');
                 }
@@ -250,10 +242,10 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                         $scope.currHp = $scope.maxHp
                     }
                 }
-                $scope.currEn -= $scope.comb.skills[$scope.currSkillNum].energy;
+                $scope.currEn -= $scope.$parent.playerSkills[$scope.currSkillNum].energy;
                 return skillDmg + weapDmg + novaDmg;
-            } else if ($scope.comb.skills[$scope.currSkillNum].energy > $scope.currEn) {
-                sandalChest.alert('You don\'t have enough energy to use ' + $scope.comb.skills[$scope.currSkillNum].name + '.')
+            } else if ($scope.$parent.playerSkills[$scope.currSkillNum].energy > $scope.currEn) {
+                sandalChest.alert('You don\'t have enough energy to use ' + $scope.$parent.playerSkills[$scope.currSkillNum].name + '.')
             } else {
                 sandalChest.alert('You\'ve been stunned! You can\'t attack this turn.')
             }
