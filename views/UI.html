@@ -3,8 +3,7 @@
         <button class='btn btn-primary' style='float:left' ng-click='chInv(0)'>&leftarrow;</button> {{currUIPan}}
         <button class='btn btn-primary' style='float:right' ng-click='chInv(1)'>&rightarrow;</button>
     </div>
-    <div class='panel-body' style='background:url({{currUIBg}});background-size: cover;' ng-show='currUIPan!="Menu"'>
-        <button class='btn btn-primary' title='connect to a phone!' ng-click='inpPhone()'>&#128241;</button>
+    <div class='panel-body' style='background:url({{currUIBg}});background-size: cover;' ng-show='currUIPan!="Menu" && currUIPan!="Skills"'>
         <div id='uiBlokCont'>
             <div class='currUIEl' ng-repeat='UIEl in currUIObjs' ng-show='!UIEl.quest && ((currUIPan=="Skills" && playerSkills.indexOf(UIEl.id)>-1)||(currUIPan!="Skills"))' ng-click='getUIInfo(UIEl)' style='background:linear-gradient(rgba(0,0,0,.3),rgba(0,0,0,.3)),url({{UIEl.imgUrl||"/img/UI/none.jpg"}}); background-size:100% 100%;'>
                 {{currUIPan=='Inventory'?getInvName(UIEl):UIEl.name}}
@@ -12,10 +11,10 @@
         </div>
         <div id='inv-body-boxes' ng-show='currUIPan=="Inventory"'>
             <div class='body-box' ng-repeat='bb in bodyBoxes' style='left:{{bb.x}}px;top:{{bb.y}}px;background-image:linear-gradient( rgba(0,0,0,.8), rgba(0,0,0,.8) ),url("{{bb.imgUrl}}");'>{{bb.itName}}</div>
-            <div id='xp-bar-bg'></div>
         </div>
     </div>
     <div class='panel-body' ng-show='currUIPan=="Menu"'>
+        <button class='btn btn-primary' title='connect to a phone!' ng-click='inpPhone()'>&#128241;</button>
         <div class="form-group cent">
             <div class="menuGrp">
                 <button ng-click='saveGame();' class='btn bigButt save'>Save</button>
@@ -31,9 +30,20 @@
             </div>
         </div>
     </div>
-    <div class='panel-body' ng-show='currUIPan=="Inventory"'>
-        <div class='container inv-cont'>
-            <div class='currUIEl' ng-repeat='it in invIts'></div>
+    <div class='panel-body panel-body-dark' ng-show='currUIPan=="Skills"'>
+        <div class='container skill-cont'>
+            <div class='skill-ch' style='left:{{15+(100*$index/skillChains.length)}}%;' ng-repeat='ch in skillChains'>
+                <div class='skill-ch-row' ng-repeat='chr in ch.lvls' style='top:{{100*$index}}px;width:{{(100*ch[chr].length)+10}}px;left:-50px'>
+                    <div class='skill-ch-item' ng-repeat='chi in ch[chr]' ng-class="{'has':chi.owned==true}" style='background:url({{chi.data.imgUrl}});background-size:contain' ng-click='getUIInfo(chi.data)'>
+                        <div class='skill-lbl'>{{chi.data.name}}</div>
+                        <div class='skill-lbl' ng-if='!chi.owned'>Cost: {{chi.data.skillPts}} Points</div>
+                        <div class='row-pointer' ng-if='chr!=0' style='left:0; top:-1.5px;transform:rotateZ({{skillPntrCalcs($index,ch[chr].length).ang}}deg);height:{{skillPntrCalcs($index,ch[chr].length).ht}}px;'></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id='xp-bar-bg'>
+            <div id='xp-bar-chan'><div id='xp-bar-fill' style='width:{{100*(currXp||0)/500}}%;'></div></div>
         </div>
     </div>
 </div>

@@ -135,6 +135,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
                     $scope.playerCell = d.data.currentLevel.loc;
                     $scope.moveReady = true;
                 }
+                $scope.popInv();
             })
         });
     };
@@ -213,10 +214,26 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
             console.log('DATA RETURNED', r)
             $scope.playerSkills = r.skills;
             $scope.playerItems = r.items;
-            angular.element('#combat-box').scope().comb.monsTurn();
+            $scope.skillChains = r.chains;
+            $scope.fullSkills = r.skillsReal;
+            if ($scope.inCombat) {
+                angular.element('#combat-box').scope().comb.monsTurn();
+            }
         })
     }
-    $scope.popInv();
+    $scope.log2=function(n){return Math.log2(n)};
+    $scope.skillPntrCalcs=function(n,len){
+        /*triangle, where:
+        base is 105*index. height is... 95?
+        base is xsin(ang)
+        */
+        var ang = 180 - (Math.atan(105*(len>0 && len%2?n-1:n)/95)*180/Math.PI),
+        ht = 95/(Math.cos(Math.atan(105*(len>0 && len%2?n-1:n)/95))*2);
+        return{
+            ang:ang,
+            ht:ht
+        }
+    };
     $scope.chInv = function(dir) {
         //UI Cycle function
         if (!dir && $scope.currUINum > 0) {

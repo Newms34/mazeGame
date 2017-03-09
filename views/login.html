@@ -47,7 +47,7 @@
                         <div class="col-md-8 ">
                             <ul class='prof-list'>
                                 <li ng-repeat='p in profs' style='background:linear-gradient(rgba(255,255,255,.7),rgba(255,255,255,.7)),url({{p.pImg}});background-attachment:fixed;background-size:100%;'>
-                                    <input type='radio' name='prof' value='{{p.val}}' ng-model='user.prof'><span style='background:url({{p.ico}}); background-size: contain;'></span>{{p.name}}
+                                    <input type='radio' name='prof' value='{{p.val}}' id='prof{{p.val}}' ng-model='user.prof'><label for='prof{{p.val}}' style='background:url({{p.ico}}); background-size: contain;'></label>{{p.name}}
                                 </li>
                                 
                             </ul>

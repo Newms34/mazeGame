@@ -68,3 +68,8 @@ probly need to rewrite UI panel stuff. Will need to separate it into distinct pa
 we can still keep $scope.chInv in main.js, since we'll still need to cycle inventories.
 
 need to, @ some point go thru and remove unused functions. Will have a number of these after UI pan rework
+
+
+https://www.draw.io/#G0B1InMvwUCMHbREk2ZnAzTVpCT00
+
+https://docs.google.com/spreadsheets/d/1pojQLzuZOSipoPisMi3CDh-ySeQqkgkE0xBBMwE_6hU/edit#gid=494119378

@@ -33,6 +33,86 @@
             box-shadow: 0 0 4px #fff;
         }
     }
+    #xp-bar-bg {
+        position: absolute;
+        bottom: 15%;
+        width: 98%;
+        height: 25px;
+        background: #666;
+        border: 1px outset #666;
+        left: 1%;
+        & #xp-bar-chan {
+            position: absolute;
+            top: 10%;
+            height: 75%;
+            width: 98%;
+            background: #222;
+            border: 1px inset #222;
+            left: 1%;
+            & #xp-bar-fill {
+                position: absolute;
+                top: 10%;
+                height: 75%;
+                width: 0%;
+                background: #0f0;
+                box-shadow: 0 0 2px #0f0;
+                left: 0;
+            }
+        }
+    }
+    .skill-ch {
+        position: absolute;
+        .skill-ch-row {
+            position: absolute;
+            .skill-ch-item {
+                display: inline-block;
+                transition-duration: .2s;
+                position: relative;
+                width: 50px;
+                height: 50px;
+                opacity: .5;
+                margin-right: 5px;
+                text-align: center;
+                cursor: pointer;
+                z-index: 1;
+                &:hover {
+                    box-shadow: 0 0 5px 5px #a00;
+                    opacity: .7;
+                }
+                &:hover .skill-lbl {
+                    opacity: 1;
+                }
+                &.has {
+                    opacity: 1;
+                    &:hover {
+                        box-shadow: 0 0 5px 5px #0a0;
+                    }
+                }
+                & .skill-lbl {
+                    font-size: x-small;
+                    color: #fff;
+                    background: #000;
+                    padding: 1px;
+                    transition-duration: .2s;
+                    opacity: 0;
+                }
+                & .row-pointer {
+                    opacity: 1;
+                    height: 100px;
+                    width: 1.5px;
+                    padding: 0px;
+                    margin: 0px;
+                    position: absolute;
+                    transform-origin: 50% 0%;
+                    background: #fff;
+                    z-index: -10;
+                }
+            }
+        }
+    }
+    .panel-body-dark {
+        background: #444;
+    }
     #inv-body-boxes {
         width: 45%;
         height: 95%;
@@ -48,32 +128,6 @@
             background-size: contain;
             background-repeat: no-repeat;
             text-align: center;
-        }
-        #xp-bar-bg {
-            position: absolute;
-            bottom: 5px;
-            width: 98%;
-            height: 15px;
-            background: #666;
-            border: 1px outset #666;
-            left: 1%;
-            & #xp-bar-chan {
-                position: absolute;
-                bottom: 3px;
-                height: 9px;
-                width: 98%;
-                background: #222;
-                border: 1px inset #222;
-                left: 1%;
-                & #xp-bar-chan {
-                    position: absolute;
-                    bottom: 3px;
-                    height: 9px;
-                    width: 0%;
-                    background: #0f0;
-                    left: 0;
-                }
-            }
         }
     }
 }

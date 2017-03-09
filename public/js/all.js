@@ -267,6 +267,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
                     $scope.playerCell = d.data.currentLevel.loc;
                     $scope.moveReady = true;
                 }
+                $scope.popInv();
             })
         });
     };
@@ -345,10 +346,26 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
             console.log('DATA RETURNED', r)
             $scope.playerSkills = r.skills;
             $scope.playerItems = r.items;
-            angular.element('#combat-box').scope().comb.monsTurn();
+            $scope.skillChains = r.chains;
+            $scope.fullSkills = r.skillsReal;
+            if ($scope.inCombat) {
+                angular.element('#combat-box').scope().comb.monsTurn();
+            }
         })
     }
-    $scope.popInv();
+    $scope.log2=function(n){return Math.log2(n)};
+    $scope.skillPntrCalcs=function(n,len){
+        /*triangle, where:
+        base is 105*index. height is... 95?
+        base is xsin(ang)
+        */
+        var ang = 180 - (Math.atan(105*(len>0 && len%2?n-1:n)/95)*180/Math.PI),
+        ht = 95/(Math.cos(Math.atan(105*(len>0 && len%2?n-1:n)/95))*2);
+        return{
+            ang:ang,
+            ht:ht
+        }
+    };
     $scope.chInv = function(dir) {
         //UI Cycle function
         if (!dir && $scope.currUINum > 0) {
@@ -2068,6 +2085,7 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
             return p;
         },
         getAllUIs: function(info) {
+            //function to get all of the items 
             return $http.get('/item/allUI').then(function(els) {
                 //sort UI els
                 //inventory, quests, beastiary (all), skills 
@@ -2127,7 +2145,7 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
                     //now items!
                     //slots
                 itemSlots.forEach(function(lbl) {
-                        if ((info.items[lbl][1] || info.items[lbl][1] === 0) && info.items[lbl][1] != -1) {
+                        if ((info.items[lbl][1] || info.items[lbl][1] === 0) && info.items[lbl][1] != -1 && typeof info.items[lbl]=='number') {
                             //contains a valid item
                             info.items[lbl][0] = findItem(affix, info.items[lbl][0])
                             info.items[lbl][2] = findItem(affix, info.items[lbl][2])
@@ -2138,7 +2156,7 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
                                 info.items[lbl][1] = findItem(weap, info.items[lbl][1])
                             }
                         }
-                    })
+                    });
                     //and inventory!
                 info.items.inv.forEach(function(it) {
                     //first, we need to determine if this is a weapon, armor, or junk
@@ -2194,10 +2212,25 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
                         }
                     }
                 }
-
-                console.log('SKILLCHAINZ', JSON.stringify(skillChains))
-                info.chains=skillChains;
-                info.skills= info.skills.map(function(sk){
+                var skillChainsFin = []
+                for (var i=0;i<skillChains.length;i++){
+                    var newFinCh = {skills:skillChains[i].skills,lvls:[]}
+                    for (var j=0;j<skillChains[i].skills.length;j++){
+                        if(newFinCh.lvls.indexOf(skillChains[i][skillChains[i].skills[j]].data.skillPts)<0){
+                            //lvl not yet recorded
+                            console.log('new lvl!',skillChains[i][skillChains[i].skills[j]].data.skillPts,'skill num',skillChains[i].skills[j],'chain',skillChains[i])
+                            newFinCh.lvls.push(skillChains[i][skillChains[i].skills[j]].data.skillPts);
+                            newFinCh[skillChains[i][skillChains[i].skills[j]].data.skillPts]=[skillChains[i][skillChains[i].skills[j]]]
+                        }else{
+                            newFinCh[skillChains[i][skillChains[i].skills[j]].data.skillPts].push(skillChains[i][skillChains[i].skills[j]])
+                        }
+                    }
+                    skillChainsFin.push(newFinCh);
+                }
+                info.chains=skillChainsFin;
+                console.log('finalChains',skillChainsFin)
+                //replace skills in playersSkills with the actual skill objs (instead of just the number)
+                info.skillsReal= info.skills.map(function(sk){
                     console.log('skill id',sk,findItem(skill,sk))
                     return findItem(skill,sk);
                 })
