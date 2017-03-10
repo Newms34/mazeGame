@@ -221,7 +221,7 @@ router.post('/buySkill', function(req, res, next) {
                 var desiredSkill = null;
                 //note that we actually do this on the front end too, but always good to check here!
                 for (var i = 0; i < skLst.length; i++) {
-                    if (skLst[i].num == req.body.skill) {
+                    if (skLst[i].id == req.body.skill) {
                         desiredSkill = skLst[i];
                     }
                 }
