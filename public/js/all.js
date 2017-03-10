@@ -252,6 +252,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
             $scope.playerLvl = d.data.playerLvl || 1;
             $scope.currXp = d.data.currLvlXp || 0;
             $scope.playerSkills = d.data.skills;
+            $scope.extraSkillPts = d.data.skillPts || 0;
             econFac.merchInv($scope.playerItems.inv).then(function(r) {
                 for (var ep = 0; ep < r.length; ep++) {
                     console.log('REPLACING', $scope.playerItems.inv[ep].item, 'WITH', r[ep])
@@ -353,17 +354,23 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
             }
         })
     }
-    $scope.log2=function(n){return Math.log2(n)};
-    $scope.skillPntrCalcs=function(n,len){
+    $scope.log2 = function(n) {
+        return Math.log2(n)
+    };
+    $scope.skillPntrCalcs = function(n, len) {
         /*triangle, where:
         base is 105*index. height is... 95?
         base is xsin(ang)
         */
-        var ang = 180 - (Math.atan(105*(len>0 && len%2?n-1:n)/95)*180/Math.PI),
-        ht = 95/(Math.cos(Math.atan(105*(len>0 && len%2?n-1:n)/95))*2);
-        return{
-            ang:ang,
-            ht:ht
+        var ang = 180 - (Math.atan(105 * (len > 0 && len % 2 ? n - 1 : n) / 95) * 180 / Math.PI),
+            ht = 95 / (Math.cos(Math.atan(105 * (len > 0 && len % 2 ? n - 1 : n) / 95)) * 2);
+        if(len==1){
+            ang=180;
+            ht=45;
+        }
+        return {
+            ang: ang,
+            ht: ht
         }
     };
     $scope.chInv = function(dir) {
@@ -658,39 +665,39 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
     });
     $scope.travelOkay = true;
     $scope.phoneMovTimer;
-    // socket.on('movOut', function(mvOb) {
-    //     if (mvOb.n == $scope.uName) {
-    //         var ex = null,
-    //             ey = null;
-    //         if (mvOb.x == 'l') {
-    //             ex = new Event('keydown');
-    //             ex.which = 65;
-    //             window.onkeydown(ex);
-    //         } else if (mvOb.x == 'r') {
-    //             ex = new Event('keydown');
-    //             ex.which = 68;
-    //             window.onkeydown(ex);
-    //         }
-    //         //for moving forward and back, we only move every 1.0 seconds.
-    //         if (mvOb.y == 'f' && $scope.travelOkay) {
-    //             ey = new Event('keydown');
-    //             ey.which = 87;
-    //             window.onkeydown(ey);
-    //             $scope.travelOkay = false;
-    //             $scope.phoneMovTimer = $timeout(function() {
-    //                 $scope.travelOkay = true;
-    //             }, 1000);
-    //         } else if (mvOb.y == 'b' && $scope.travelOkay) {
-    //             ey = new Event('keydown');
-    //             ey.which = 83;
-    //             window.onkeydown(ey);
-    //             $scope.travelOkay = false;
-    //             $scope.phoneMovTimer = $timeout(function() {
-    //                 $scope.travelOkay = true;
-    //             }, 1000);
-    //         }
-    //     }
-    // });
+    socket.on('movOut', function(mvOb) {
+        if (mvOb.n == $scope.uName) {
+            var ex = null,
+                ey = null;
+            if (mvOb.x == 'l') {
+                ex = new Event('keydown');
+                ex.which = 65;
+                window.onkeydown(ex);
+            } else if (mvOb.x == 'r') {
+                ex = new Event('keydown');
+                ex.which = 68;
+                window.onkeydown(ex);
+            }
+            //for moving forward and back, we only move every 1.0 seconds.
+            if (mvOb.y == 'f' && $scope.travelOkay) {
+                ey = new Event('keydown');
+                ey.which = 87;
+                window.onkeydown(ey);
+                $scope.travelOkay = false;
+                $scope.phoneMovTimer = $timeout(function() {
+                    $scope.travelOkay = true;
+                }, 1000);
+            } else if (mvOb.y == 'b' && $scope.travelOkay) {
+                ey = new Event('keydown');
+                ey.which = 83;
+                window.onkeydown(ey);
+                $scope.travelOkay = false;
+                $scope.phoneMovTimer = $timeout(function() {
+                    $scope.travelOkay = true;
+                }, 1000);
+            }
+        }
+    });
     $scope.getUIInfo = function(el) {
         var name;
         console.log('getUIInfo:', el)
@@ -733,6 +740,72 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
                 }]
             }
         );
+    };
+    $scope.skillPurchUI = function(data, owned) {
+        var title = `<h3>${data.name}</h3>`,
+            desc = '<p>'+data.desc + '<p id="moreInf" style="display:none;"></p><hr/><table class="table"><tr><td>This skill costs:</td><td>' + data.skillPts + ' pts</td></tr><tr><td>You have:</td><td>' + $scope.extraSkillPts + ' pts</td></tr></table>',
+            opts = {},
+            badAns = ['Nevermind', 'Okay', 'I knew that...', 'Next time, then.', 'I&rsquo;ll return!', 'Another time, then.'],
+            goodAns = ['Gimme that!', 'Do it!', 'I want that!', 'Okay!', 'Buy it!', 'Heck yes!'],
+            nvms = ['Nevermind', 'On second thought...', 'Cancel', 'Actually, nah.', 'Nah', 'Heck no!'];
+        if (owned) {
+            //player already owns this skill, so just an 'okay' button
+            desc += 'You already own this skill!';
+            opts.buttons = [{ text: badAns[Math.floor(Math.random() * badAns.length)], close: true },{
+                    text: 'More Info',
+                    close: false,
+                    click: function() {
+                        if ($('#moreInf').css('display') == 'none') {
+                            UIFac.moreInfo(data);
+                        } else {
+                            UIFac.lessInf();
+                        }
+                        return false;
+                    }
+                }];
+        } else if (!owned && data.skillPts > $scope.extraSkillPts) {
+            //user cannot afford this
+            desc += 'You cannot afford this skill!';
+            opts.buttons = [{ text: badAns[Math.floor(Math.random() * badAns.length)], close: true },{
+                    text: 'More Info',
+                    close: false,
+                    click: function() {
+                        if ($('#moreInf').css('display') == 'none') {
+                            UIFac.moreInfo(data);
+                        } else {
+                            UIFac.lessInf();
+                        }
+                        return false;
+                    }
+                }];
+        } else {
+            //okay to buy!
+            desc += 'Are you sure you want to purchase this skill?';
+            opts.buttons = [{
+                text: goodAns[Math.floor(Math.random() * goodAns.length)],
+                close: true,
+                click: function() {
+                    console.log('User faked buying skill', data.name)
+                    return true;
+                }
+            },{
+                text: nvms[Math.floor(Math.random() * nvms.length)],
+                close: true
+            },{
+                    text: 'More Info',
+                    close: false,
+                    click: function() {
+                        if ($('#moreInf').css('display') == 'none') {
+                            UIFac.moreInfo(data);
+                        } else {
+                            UIFac.lessInf();
+                        }
+                        return false;
+                    }
+                }];
+        }
+        console.log(title,desc,opts)
+        sandalchest.dialog(title,desc,opts);
     };
     $scope.levelDown = function() {
         //TO DO: this needs to be dependent on quest statuses (i.e., certain quests block it). it also needs to send data back to Mongo to update what level the player's on.
@@ -2065,7 +2138,7 @@ app.factory('socketFac', function ($rootScope) {
 app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
     var findItem = function(arr, i) {
         for (var j = 0; j < arr.length; j++) {
-            if (arr[j].num == i || arr[j].id==i) {
+            if (arr[j].num == i || arr[j].id == i) {
                 return arr[j];
             }
         }
@@ -2145,19 +2218,19 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
                     //now items!
                     //slots
                 itemSlots.forEach(function(lbl) {
-                        if ((info.items[lbl][1] || info.items[lbl][1] === 0) && info.items[lbl][1] != -1 && typeof info.items[lbl]=='number') {
-                            //contains a valid item
-                            info.items[lbl][0] = findItem(affix, info.items[lbl][0])
-                            info.items[lbl][2] = findItem(affix, info.items[lbl][2])
-                            if (lbl != 'weap') {
-                                //armor
-                                info.items[lbl][1] = findItem(armor, info.items[lbl][1])
-                            } else {
-                                info.items[lbl][1] = findItem(weap, info.items[lbl][1])
-                            }
+                    if ((info.items[lbl][1] || info.items[lbl][1] === 0) && info.items[lbl][1] != -1 && typeof info.items[lbl] == 'number') {
+                        //contains a valid item
+                        info.items[lbl][0] = findItem(affix, info.items[lbl][0])
+                        info.items[lbl][2] = findItem(affix, info.items[lbl][2])
+                        if (lbl != 'weap') {
+                            //armor
+                            info.items[lbl][1] = findItem(armor, info.items[lbl][1])
+                        } else {
+                            info.items[lbl][1] = findItem(weap, info.items[lbl][1])
                         }
-                    });
-                    //and inventory!
+                    }
+                });
+                //and inventory!
                 info.items.inv.forEach(function(it) {
                     //first, we need to determine if this is a weapon, armor, or junk
                     if (it.lootType == 2 && it.item.length && it.item.length == 1 && typeof it.item[0] == 'number') {
@@ -2198,41 +2271,41 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
                 //we should now have the BASE of all chains. we need to construct the rest of the chains.
                 var skillsLeft = true;
                 while (skillsLeft) {
-                    skillsLeft=false;
+                    skillsLeft = false;
                     for (i = 0; i < skillChains.length; i++) {
-                        for(var j=0;j<skill.length;j++){
+                        for (var j = 0; j < skill.length; j++) {
                             //loop thru all skills
-                            if(skillChains[i].skills.indexOf(skill[j].id)<0 && skillChains[i][skill[j].prevSkill]){
-                                console.log('Found another skill!',skill[j])
-                                //this has not yet been recorded in this skill chain, and is a following skill to one we already own.
-                                skillsLeft=true;
+                            if (skillChains[i].skills.indexOf(skill[j].id) < 0 && skillChains[i][skill[j].prevSkill]) {
+                                console.log('Found another skill!', skill[j])
+                                    //this has not yet been recorded in this skill chain, and is a following skill to one we already own.
+                                skillsLeft = true;
                                 skillChains[i].skills.push(skill[j].id);
-                                skillChains[i][skill[j].id] = new stSkill(skill[j].prevSkill,skill[j],info.skills.indexOf(skill[j].id)>-1);
+                                skillChains[i][skill[j].id] = new stSkill(skill[j].prevSkill, skill[j], info.skills.indexOf(skill[j].id) > -1);
                             }
                         }
                     }
                 }
                 var skillChainsFin = []
-                for (var i=0;i<skillChains.length;i++){
-                    var newFinCh = {skills:skillChains[i].skills,lvls:[]}
-                    for (var j=0;j<skillChains[i].skills.length;j++){
-                        if(newFinCh.lvls.indexOf(skillChains[i][skillChains[i].skills[j]].data.skillPts)<0){
+                for (var i = 0; i < skillChains.length; i++) {
+                    var newFinCh = { skills: skillChains[i].skills, lvls: [] }
+                    for (var j = 0; j < skillChains[i].skills.length; j++) {
+                        if (newFinCh.lvls.indexOf(skillChains[i][skillChains[i].skills[j]].data.skillPts) < 0) {
                             //lvl not yet recorded
-                            console.log('new lvl!',skillChains[i][skillChains[i].skills[j]].data.skillPts,'skill num',skillChains[i].skills[j],'chain',skillChains[i])
+                            console.log('new lvl!', skillChains[i][skillChains[i].skills[j]].data.skillPts, 'skill num', skillChains[i].skills[j], 'chain', skillChains[i])
                             newFinCh.lvls.push(skillChains[i][skillChains[i].skills[j]].data.skillPts);
-                            newFinCh[skillChains[i][skillChains[i].skills[j]].data.skillPts]=[skillChains[i][skillChains[i].skills[j]]]
-                        }else{
+                            newFinCh[skillChains[i][skillChains[i].skills[j]].data.skillPts] = [skillChains[i][skillChains[i].skills[j]]]
+                        } else {
                             newFinCh[skillChains[i][skillChains[i].skills[j]].data.skillPts].push(skillChains[i][skillChains[i].skills[j]])
                         }
                     }
                     skillChainsFin.push(newFinCh);
                 }
-                info.chains=skillChainsFin;
-                console.log('finalChains',skillChainsFin)
-                //replace skills in playersSkills with the actual skill objs (instead of just the number)
-                info.skillsReal= info.skills.map(function(sk){
-                    console.log('skill id',sk,findItem(skill,sk))
-                    return findItem(skill,sk);
+                info.chains = skillChainsFin;
+                console.log('finalChains', skillChainsFin)
+                    //replace skills in playersSkills with the actual skill objs (instead of just the number)
+                info.skillsReal = info.skills.map(function(sk) {
+                    console.log('skill id', sk, findItem(skill, sk))
+                    return findItem(skill, sk);
                 })
                 return (info);
             })
@@ -2249,6 +2322,7 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
         moreInfo: function(el) {
             var dmgTypes = ['Physical', 'Fire', 'Ice', 'Poison', 'Dark', 'Holy'];
             var addStuff = '<ul class="moreInfList">';
+            var hasPic = false;
             //first, determine which type of item it is. Each inv el type has certain fields unique to that type
             console.log(el, !!el.item, el.item);
             if (el.item && (el.item[1].slot || el.item[1].slot == 0)) {
@@ -2314,7 +2388,10 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
                 })
             } else if (el.energy || el.energy === 0) {
                 //skill
-                addStuff += '<li>Damage Type:' + combatFac.getDmgType(el.type) + '</li>';
+                hasPic=true;
+                if ((el.burst && el.burst > 0)||(el.degen && el.degen>0)) {
+                    addStuff += '<li>Damage Type:' + combatFac.getDmgType(el.type) + '</li>';
+                }
                 addStuff += '<li>Energy:' + el.energy + '</li>';
                 addStuff += el.heal ? '<li>Heal (burst):' + el.heal + ' hp</li>' : '';
                 addStuff += el.regen ? '<li>Heal (regeneration):' + el.regen + ' hp/turn</li>' : '';
@@ -2332,7 +2409,7 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
                 addStuff += '<li>Cost:' + el.item[1].cost + ' coins</li>';
             } else {
                 //monster
-                var isMons = true;
+                hasPic = true;
                 addStuff += '<li>Level:' + el.lvl + '</li>';
                 addStuff += '<li>Hp:' + el.hp + ' hp</li>';
                 addStuff += '<li>Dmg:' + el.min + '-' + el.max + ' hp</li>';
@@ -2351,7 +2428,7 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
             if (!el.giver && el.giver != 0) {
                 addStuff += '</ul>';
                 $('#moreInf').html(addStuff);
-                if (isMons) {
+                if (hasPic) {
                     $('#moreInf').css({
                         'background': 'linear-gradient(rgba(241,241,212,.4),rgba(241,241,212,.4)),url(' + el.imgUrl + ')',
                         'background-size': 'contain',

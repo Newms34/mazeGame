@@ -1,3 +1,7 @@
+.btn-stone{
+    width:auto!important;
+    min-width:20%;
+}
 #UI {
     position: absolute;
     background: #bbb;
@@ -54,12 +58,17 @@
                 top: 10%;
                 height: 75%;
                 width: 0%;
-                background: #0f0;
-                box-shadow: 0 0 2px #0f0;
+                background: #0a0;
+                box-shadow: 0 0 2px #0a0;
                 left: 0;
+                color:#fff;
             }
         }
     }
+    .skillCostTbl{
+        font-size:smaller;
+    }
+
     .skill-ch {
         position: absolute;
         .skill-ch-row {

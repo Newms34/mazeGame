@@ -120,6 +120,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
             $scope.playerLvl = d.data.playerLvl || 1;
             $scope.currXp = d.data.currLvlXp || 0;
             $scope.playerSkills = d.data.skills;
+            $scope.extraSkillPts = d.data.skillPts || 0;
             econFac.merchInv($scope.playerItems.inv).then(function(r) {
                 for (var ep = 0; ep < r.length; ep++) {
                     console.log('REPLACING', $scope.playerItems.inv[ep].item, 'WITH', r[ep])
@@ -221,17 +222,23 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
             }
         })
     }
-    $scope.log2=function(n){return Math.log2(n)};
-    $scope.skillPntrCalcs=function(n,len){
+    $scope.log2 = function(n) {
+        return Math.log2(n)
+    };
+    $scope.skillPntrCalcs = function(n, len) {
         /*triangle, where:
         base is 105*index. height is... 95?
         base is xsin(ang)
         */
-        var ang = 180 - (Math.atan(105*(len>0 && len%2?n-1:n)/95)*180/Math.PI),
-        ht = 95/(Math.cos(Math.atan(105*(len>0 && len%2?n-1:n)/95))*2);
-        return{
-            ang:ang,
-            ht:ht
+        var ang = 180 - (Math.atan(105 * (len > 0 && len % 2 ? n - 1 : n) / 95) * 180 / Math.PI),
+            ht = 95 / (Math.cos(Math.atan(105 * (len > 0 && len % 2 ? n - 1 : n) / 95)) * 2);
+        if(len==1){
+            ang=180;
+            ht=45;
+        }
+        return {
+            ang: ang,
+            ht: ht
         }
     };
     $scope.chInv = function(dir) {
@@ -526,39 +533,39 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
     });
     $scope.travelOkay = true;
     $scope.phoneMovTimer;
-    // socket.on('movOut', function(mvOb) {
-    //     if (mvOb.n == $scope.uName) {
-    //         var ex = null,
-    //             ey = null;
-    //         if (mvOb.x == 'l') {
-    //             ex = new Event('keydown');
-    //             ex.which = 65;
-    //             window.onkeydown(ex);
-    //         } else if (mvOb.x == 'r') {
-    //             ex = new Event('keydown');
-    //             ex.which = 68;
-    //             window.onkeydown(ex);
-    //         }
-    //         //for moving forward and back, we only move every 1.0 seconds.
-    //         if (mvOb.y == 'f' && $scope.travelOkay) {
-    //             ey = new Event('keydown');
-    //             ey.which = 87;
-    //             window.onkeydown(ey);
-    //             $scope.travelOkay = false;
-    //             $scope.phoneMovTimer = $timeout(function() {
-    //                 $scope.travelOkay = true;
-    //             }, 1000);
-    //         } else if (mvOb.y == 'b' && $scope.travelOkay) {
-    //             ey = new Event('keydown');
-    //             ey.which = 83;
-    //             window.onkeydown(ey);
-    //             $scope.travelOkay = false;
-    //             $scope.phoneMovTimer = $timeout(function() {
-    //                 $scope.travelOkay = true;
-    //             }, 1000);
-    //         }
-    //     }
-    // });
+    socket.on('movOut', function(mvOb) {
+        if (mvOb.n == $scope.uName) {
+            var ex = null,
+                ey = null;
+            if (mvOb.x == 'l') {
+                ex = new Event('keydown');
+                ex.which = 65;
+                window.onkeydown(ex);
+            } else if (mvOb.x == 'r') {
+                ex = new Event('keydown');
+                ex.which = 68;
+                window.onkeydown(ex);
+            }
+            //for moving forward and back, we only move every 1.0 seconds.
+            if (mvOb.y == 'f' && $scope.travelOkay) {
+                ey = new Event('keydown');
+                ey.which = 87;
+                window.onkeydown(ey);
+                $scope.travelOkay = false;
+                $scope.phoneMovTimer = $timeout(function() {
+                    $scope.travelOkay = true;
+                }, 1000);
+            } else if (mvOb.y == 'b' && $scope.travelOkay) {
+                ey = new Event('keydown');
+                ey.which = 83;
+                window.onkeydown(ey);
+                $scope.travelOkay = false;
+                $scope.phoneMovTimer = $timeout(function() {
+                    $scope.travelOkay = true;
+                }, 1000);
+            }
+        }
+    });
     $scope.getUIInfo = function(el) {
         var name;
         console.log('getUIInfo:', el)
@@ -601,6 +608,72 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
                 }]
             }
         );
+    };
+    $scope.skillPurchUI = function(data, owned) {
+        var title = `<h3>${data.name}</h3>`,
+            desc = '<p>'+data.desc + '<p id="moreInf" style="display:none;"></p><hr/><table class="table"><tr><td>This skill costs:</td><td>' + data.skillPts + ' pts</td></tr><tr><td>You have:</td><td>' + $scope.extraSkillPts + ' pts</td></tr></table>',
+            opts = {},
+            badAns = ['Nevermind', 'Okay', 'I knew that...', 'Next time, then.', 'I&rsquo;ll return!', 'Another time, then.'],
+            goodAns = ['Gimme that!', 'Do it!', 'I want that!', 'Okay!', 'Buy it!', 'Heck yes!'],
+            nvms = ['Nevermind', 'On second thought...', 'Cancel', 'Actually, nah.', 'Nah', 'Heck no!'];
+        if (owned) {
+            //player already owns this skill, so just an 'okay' button
+            desc += 'You already own this skill!';
+            opts.buttons = [{ text: badAns[Math.floor(Math.random() * badAns.length)], close: true },{
+                    text: 'More Info',
+                    close: false,
+                    click: function() {
+                        if ($('#moreInf').css('display') == 'none') {
+                            UIFac.moreInfo(data);
+                        } else {
+                            UIFac.lessInf();
+                        }
+                        return false;
+                    }
+                }];
+        } else if (!owned && data.skillPts > $scope.extraSkillPts) {
+            //user cannot afford this
+            desc += 'You cannot afford this skill!';
+            opts.buttons = [{ text: badAns[Math.floor(Math.random() * badAns.length)], close: true },{
+                    text: 'More Info',
+                    close: false,
+                    click: function() {
+                        if ($('#moreInf').css('display') == 'none') {
+                            UIFac.moreInfo(data);
+                        } else {
+                            UIFac.lessInf();
+                        }
+                        return false;
+                    }
+                }];
+        } else {
+            //okay to buy!
+            desc += 'Are you sure you want to purchase this skill?';
+            opts.buttons = [{
+                text: goodAns[Math.floor(Math.random() * goodAns.length)],
+                close: true,
+                click: function() {
+                    console.log('User faked buying skill', data.name)
+                    return true;
+                }
+            },{
+                text: nvms[Math.floor(Math.random() * nvms.length)],
+                close: true
+            },{
+                    text: 'More Info',
+                    close: false,
+                    click: function() {
+                        if ($('#moreInf').css('display') == 'none') {
+                            UIFac.moreInfo(data);
+                        } else {
+                            UIFac.lessInf();
+                        }
+                        return false;
+                    }
+                }];
+        }
+        console.log(title,desc,opts)
+        sandalchest.dialog(title,desc,opts);
     };
     $scope.levelDown = function() {
         //TO DO: this needs to be dependent on quest statuses (i.e., certain quests block it). it also needs to send data back to Mongo to update what level the player's on.
