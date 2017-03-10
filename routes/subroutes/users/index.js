@@ -219,6 +219,7 @@ router.post('/buySkill', function(req, res, next) {
         } else {
             mongoose.model('User').findOne({ 'name': req.body.usr }, function(uErr, user) {
                 var desiredSkill = null;
+                //note that we actually do this on the front end too, but always good to check here!
                 for (var i = 0; i < skLst.length; i++) {
                     if (skLst[i].num == req.body.skill) {
                         desiredSkill = skLst[i];
@@ -228,7 +229,8 @@ router.post('/buySkill', function(req, res, next) {
                     /*EITHER:
                     skill already owned,
                     previous skill not bought
-                    or not enough points
+                    or not enough points.
+                    Note that checking the previous skill also prevents classes from buying skills outside their skillset, so a necro for example can't buy skill id 10 (fireball)
                     */
                     res.send(false);
                 } else {

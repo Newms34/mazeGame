@@ -45,16 +45,12 @@ quest instantiation:
  - from merchant. Again, when user reaches appropriate lvl
 
 leveling sys: 
-need to designate levels for each spell. 
-should level PURELY be based on dungeon level? or should we gain xp after each fight?
-
-RENAME PRIEST TO "CORRUPTED PRIEST"
 
 skill upgrade process: after each fight, you get xp depending on level of monster. This is then used in a level system (linear? logarithmic?). After each level, you get a skill point. You can then use accumulated skill point(s) to buy skills. First tier skills are automatically given. 2nd tier costs 1 pt, 3rd tier costs 2 points, 4th tier... 4 points? yet to decide.
 
-reset game doesnt seem to be working
+reset game doesnt seem to be working. functions are all there... why is dialog not being triggered?
 
-NEED TO MAKE ICICLE DO 2x DMG VS STUNNED. Can (should!) we use this effect for other stuff too
+NEED TO MAKE ICICLE DO 2x DMG VS STUNNED. Can (should!) we use this effect for other stuff too? What about other effects? PROFESSION based effects?
 
 
 probly need to rewrite UI panel stuff. Will need to separate it into distinct panels (instead of CurrUIEl stuff).
@@ -73,3 +69,6 @@ need to, @ some point go thru and remove unused functions. Will have a number of
 https://www.draw.io/#G0B1InMvwUCMHbREk2ZnAzTVpCT00
 
 https://docs.google.com/spreadsheets/d/1pojQLzuZOSipoPisMi3CDh-ySeQqkgkE0xBBMwE_6hU/edit#gid=494119378
+..where is cook's ring used? is it like d2 charms, that it has effect if in inv?
+
+do we want imgUrls for all bosses or just essentials?

@@ -13,6 +13,11 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
         this.owned = owned;
     }
     return {
+        buySkill:function(data,usr){
+            return $http.post('/user/buySkill/',{usr:usr,skill:data.id},function(r){
+                return r.data;
+            })
+        },
         getUIObj: function(whichUI, UIStuff) {
             //get all the data
             var p = $http.get('/item/' + whichUI).then(function(res) {

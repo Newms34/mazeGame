@@ -177,15 +177,13 @@ https.get({
                         if (resp.confirm.toLowerCase() == 'y' || resp.confirm.toLowerCase() == 'yes') {
                             console.log('SAVING', boss, quest)
                             boss.save(function(errBS) {
-                                if (errBS) console.log('uh oh! problem saving boss:', errBS)
+                                if (errBS) console.log('uh oh! problem saving boss:', errBS);
                                 quest.save(function(errQS) {
                                     if (errQS) console.log('uh oh! problem saving quest:', errQS)
                                     process.exit(0);
 
                                 });
                             });
-
-                            // mongoose.model('Boss').create(boss);
                         } else {
                             process.exit(0);
                         }

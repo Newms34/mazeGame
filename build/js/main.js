@@ -232,9 +232,9 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
         */
         var ang = 180 - (Math.atan(105 * (len > 0 && len % 2 ? n - 1 : n) / 95) * 180 / Math.PI),
             ht = 95 / (Math.cos(Math.atan(105 * (len > 0 && len % 2 ? n - 1 : n) / 95)) * 2);
-        if(len==1){
-            ang=180;
-            ht=45;
+        if (len == 1) {
+            ang = 180;
+            ht = 45;
         }
         return {
             ang: ang,
@@ -611,7 +611,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
     };
     $scope.skillPurchUI = function(data, owned) {
         var title = `<h3>${data.name}</h3>`,
-            desc = '<p>'+data.desc + '<p id="moreInf" style="display:none;"></p><hr/><table class="table"><tr><td>This skill costs:</td><td>' + data.skillPts + ' pts</td></tr><tr><td>You have:</td><td>' + $scope.extraSkillPts + ' pts</td></tr></table>',
+            desc = '<p>' + data.desc + '<p id="moreInf" style="display:none;"></p><hr/><table class="table"><tr><td>This skill costs:</td><td>' + data.skillPts + ' pts</td></tr><tr><td>You have:</td><td>' + $scope.extraSkillPts + ' pts</td></tr></table>',
             opts = {},
             badAns = ['Nevermind', 'Okay', 'I knew that...', 'Next time, then.', 'I&rsquo;ll return!', 'Another time, then.'],
             goodAns = ['Gimme that!', 'Do it!', 'I want that!', 'Okay!', 'Buy it!', 'Heck yes!'],
@@ -619,33 +619,33 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
         if (owned) {
             //player already owns this skill, so just an 'okay' button
             desc += 'You already own this skill!';
-            opts.buttons = [{ text: badAns[Math.floor(Math.random() * badAns.length)], close: true },{
-                    text: 'More Info',
-                    close: false,
-                    click: function() {
-                        if ($('#moreInf').css('display') == 'none') {
-                            UIFac.moreInfo(data);
-                        } else {
-                            UIFac.lessInf();
-                        }
-                        return false;
+            opts.buttons = [{ text: badAns[Math.floor(Math.random() * badAns.length)], close: true }, {
+                text: 'More Info',
+                close: false,
+                click: function() {
+                    if ($('#moreInf').css('display') == 'none') {
+                        UIFac.moreInfo(data);
+                    } else {
+                        UIFac.lessInf();
                     }
-                }];
+                    return false;
+                }
+            }];
         } else if (!owned && data.skillPts > $scope.extraSkillPts) {
             //user cannot afford this
             desc += 'You cannot afford this skill!';
-            opts.buttons = [{ text: badAns[Math.floor(Math.random() * badAns.length)], close: true },{
-                    text: 'More Info',
-                    close: false,
-                    click: function() {
-                        if ($('#moreInf').css('display') == 'none') {
-                            UIFac.moreInfo(data);
-                        } else {
-                            UIFac.lessInf();
-                        }
-                        return false;
+            opts.buttons = [{ text: badAns[Math.floor(Math.random() * badAns.length)], close: true }, {
+                text: 'More Info',
+                close: false,
+                click: function() {
+                    if ($('#moreInf').css('display') == 'none') {
+                        UIFac.moreInfo(data);
+                    } else {
+                        UIFac.lessInf();
                     }
-                }];
+                    return false;
+                }
+            }];
         } else {
             //okay to buy!
             desc += 'Are you sure you want to purchase this skill?';
@@ -654,26 +654,32 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
                 close: true,
                 click: function() {
                     console.log('User faked buying skill', data.name)
-                    return true;
+                    UIFac.buySkill(data, $scope.name).then(function(r) {
+                        if (r) {
+                            console.log('Bought skill', data.name)
+                            $scope.getUsrData();//refresh data, since we bought a new skill (and thus need to refresh the skill db.)
+                            return true;
+                        }
+                    })
                 }
-            },{
+            }, {
                 text: nvms[Math.floor(Math.random() * nvms.length)],
                 close: true
-            },{
-                    text: 'More Info',
-                    close: false,
-                    click: function() {
-                        if ($('#moreInf').css('display') == 'none') {
-                            UIFac.moreInfo(data);
-                        } else {
-                            UIFac.lessInf();
-                        }
-                        return false;
+            }, {
+                text: 'More Info',
+                close: false,
+                click: function() {
+                    if ($('#moreInf').css('display') == 'none') {
+                        UIFac.moreInfo(data);
+                    } else {
+                        UIFac.lessInf();
                     }
-                }];
+                    return false;
+                }
+            }];
         }
-        console.log(title,desc,opts)
-        sandalchest.dialog(title,desc,opts);
+        console.log(title, desc, opts)
+        sandalchest.dialog(title, desc, opts);
     };
     $scope.levelDown = function() {
         //TO DO: this needs to be dependent on quest statuses (i.e., certain quests block it). it also needs to send data back to Mongo to update what level the player's on.
