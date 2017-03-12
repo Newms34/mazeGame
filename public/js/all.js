@@ -785,7 +785,6 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
                 text: goodAns[Math.floor(Math.random() * goodAns.length)],
                 close: true,
                 click: function() {
-                    console.log('User faked buying skill', data.name)
                     UIFac.buySkill(data, $scope.name).then(function(r) {
                         if (r) {
                             console.log('Bought skill', data.name)
@@ -1530,11 +1529,11 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
             dmg = dmg / 3;
         } else {
             if (playerWeap[0].defChanges[combatFac.getDmgType(dtype)] == 1 || playerWeap[2].defChanges[combatFac.getDmgType(dtype)] == 1) {
-                //resistance from weapon mods
+                //resistance from weapon mods. Divide output dmg by 3
                 dmg = dmg / 3
             }
             if (playerWeap[0].defChanges[combatFac.getDmgType(dtype)] == -1 || playerWeap[2].defChanges[combatFac.getDmgType(dtype)] == -1) {
-                //negative resistance (vulnerability) from weapon mods
+                //negative resistance (vulnerability) from weapon mods. mulyiply output dmg by 1.5
                 dmg = dmg * 1.5
             }
         }

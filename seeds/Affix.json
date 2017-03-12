@@ -13,12 +13,12 @@
     "bene": 0,
     "rejuv": 0,
     "defChanges":{
-        "phys": 0,
-        "fire": 0,
-        "ice": 0,
-        "pois": 0,
-        "dark": 0,
-        "holy": 0
+        "Physical": 0,
+        "Fire": 0,
+        "Ice": 0,
+        "Poison": 0,
+        "Dark": 0,
+        "Holy": 0
     },
     "num": 0,
     "cost": 2
@@ -37,12 +37,12 @@
     "bene": 0,
     "rejuv": 0,
     "defChanges":{
-        "phys": 0,
-        "fire": 0,
-        "ice": 0,
-        "pois": 0,
-        "dark": 0,
-        "holy": 0
+        "Physical": 0,
+        "Fire": 0,
+        "Ice": 0,
+        "Poison": 0,
+        "Dark": 0,
+        "Holy": 0
     },
     "num": 1,
     "cost": 2
@@ -61,12 +61,12 @@
     "bene": 0,
     "rejuv": 0,
     "defChanges":{
-        "phys": 0,
-        "fire": 0,
-        "ice": 0,
-        "pois": 0,
-        "dark": 0,
-        "holy": 0
+        "Physical": 0,
+        "Fire": 0,
+        "Ice": 0,
+        "Poison": 0,
+        "Dark": 0,
+        "Holy": 0
     },
     "num": 2,
     "cost": 2
@@ -85,12 +85,12 @@
     "bene": 0,
     "rejuv": 0,
     "defChanges":{
-        "phys": 0,
-        "fire": 0,
-        "ice": 0,
-        "pois": 0,
-        "dark": 0,
-        "holy": 0
+        "Physical": 0,
+        "Fire": 0,
+        "Ice": 0,
+        "Poison": 0,
+        "Dark": 0,
+        "Holy": 0
     },
     "num": 3,
     "cost": 2
@@ -109,12 +109,12 @@
     "bene": 0,
     "rejuv": 0,
     "defChanges":{
-        "phys": 0,
-        "fire": 0,
-        "ice": 0,
-        "pois": 0,
-        "dark": 0,
-        "holy": 0
+        "Physical": 0,
+        "Fire": 0,
+        "Ice": 0,
+        "Poison": 0,
+        "Dark": 0,
+        "Holy": 0
     },
     "num": 4,
     "cost": 2
@@ -133,12 +133,12 @@
     "bene": 0,
     "rejuv": 0,
     "defChanges":{
-        "phys": 0,
-        "fire": 0,
-        "ice": 0,
-        "pois": 0,
-        "dark": 0,
-        "holy": 0
+        "Physical": 0,
+        "Fire": 0,
+        "Ice": 0,
+        "Poison": 0,
+        "Dark": 0,
+        "Holy": 0
     },
     "num": 5,
     "cost": 2
@@ -157,12 +157,12 @@
     "bene": 0,
     "rejuv": 0,
     "defChanges":{
-        "phys": 0,
-        "fire": 0,
-        "ice": 0,
-        "pois": 0,
-        "dark": 0,
-        "holy": 0
+        "Physical": 0,
+        "Fire": 0,
+        "Ice": 0,
+        "Poison": 0,
+        "Dark": 0,
+        "Holy": 0
     },
     "num": 6,
     "cost": 2
@@ -181,12 +181,12 @@
     "bene": 0,
     "rejuv": 0,
     "defChanges":{
-        "phys": 0,
-        "fire": 0,
-        "ice": 0,
-        "pois": 0,
-        "dark": 0,
-        "holy": 0
+        "Physical": 0,
+        "Fire": 0,
+        "Ice": 0,
+        "Poison": 0,
+        "Dark": 0,
+        "Holy": 0
     },
     "num": 7,
     "cost": 2
@@ -205,12 +205,12 @@
     "bene": 0,
     "rejuv": 0,
     "defChanges":{
-        "phys": 0,
-        "fire": 0,
-        "ice": 0,
-        "pois": 0,
-        "dark": 0,
-        "holy": 0
+        "Physical": 0,
+        "Fire": 0,
+        "Ice": 0,
+        "Poison": 0,
+        "Dark": 0,
+        "Holy": 0
     },
     "num": 8,
     "cost": 1
@@ -229,12 +229,12 @@
     "bene": 0,
     "rejuv": 0,
     "defChanges":{
-        "phys": 0,
-        "fire": 0,
-        "ice": 0,
-        "pois": 0,
-        "dark": 0,
-        "holy": 0
+        "Physical": 0,
+        "Fire": 0,
+        "Ice": 0,
+        "Poison": 0,
+        "Dark": 0,
+        "Holy": 0
     },
     "num": 9,
     "cost": 1
@@ -253,12 +253,12 @@
     "bene": 0,
     "rejuv": 0,
     "defChanges":{
-        "phys": 0,
-        "fire": 0,
-        "ice": 0,
-        "pois": 0,
-        "dark": 0,
-        "holy": 0
+        "Physical": 0,
+        "Fire": 0,
+        "Ice": 0,
+        "Poison": 0,
+        "Dark": 0,
+        "Holy": 0
     },
     "num": 10,
     "cost": 1
@@ -277,12 +277,12 @@
     "bene": 0.2,
     "rejuv": 0,
     "defChanges":{
-        "phys": 0,
-        "fire": 0,
-        "ice": 0,
-        "pois": 0,
-        "dark": 0,
-        "holy": 0
+        "Physical": 0,
+        "Fire": 0,
+        "Ice": 0,
+        "Poison": 0,
+        "Dark": 0,
+        "Holy": 0
     },
     "num": 11,
     "cost": 1
@@ -301,12 +301,12 @@
     "bene": 0,
     "rejuv": 0.2,
     "defChanges":{
-        "phys": 0,
-        "fire": 0,
-        "ice": 0,
-        "pois": 0,
-        "dark": 0,
-        "holy": 0
+        "Physical": 0,
+        "Fire": 0,
+        "Ice": 0,
+        "Poison": 0,
+        "Dark": 0,
+        "Holy": 0
     },
     "num": 12,
     "cost":1
@@ -325,12 +325,12 @@
     "bene": 0,
     "rejuv": 0,
     "defChanges":{
-        "phys": 1,
-        "fire": -1,
-        "ice": -1,
-        "pois": 0,
-        "dark": 0,
-        "holy": 0
+        "Physical": 1,
+        "Fire": -1,
+        "Ice": -1,
+        "Poison": 0,
+        "Dark": 0,
+        "Holy": 0
     },
     "num": 13,
     "cost": 3
@@ -349,12 +349,12 @@
     "bene": 0,
     "rejuv": 0,
     "defChanges":{
-        "phys": 0,
-        "fire": -1,
-        "ice": 1,
-        "pois": -1,
-        "dark": 0,
-        "holy": 0
+        "Physical": 0,
+        "Fire": -1,
+        "Ice": 1,
+        "Poison": -1,
+        "Dark": 0,
+        "Holy": 0
     },
     "num": 14,
     "cost": 3
@@ -373,12 +373,12 @@
     "bene": 0,
     "rejuv": 0,
     "defChanges":{
-        "phys": -1,
-        "fire": 1,
-        "ice": -1,
-        "pois": 0,
-        "dark": 0,
-        "holy": 0
+        "Physical": -1,
+        "Fire": 1,
+        "Ice": -1,
+        "Poison": 0,
+        "Dark": 0,
+        "Holy": 0
     },
     "num": 15,
     "cost": 3
@@ -397,12 +397,12 @@
     "bene": 0,
     "rejuv": 0,
     "defChanges":{
-        "phys": -1,
-        "fire": 0,
-        "ice": 0,
-        "pois": 1,
-        "dark": 0,
-        "holy": -1
+        "Physical": -1,
+        "Fire": 0,
+        "Ice": 0,
+        "Poison": 1,
+        "Dark": 0,
+        "Holy": -1
     },
     "num": 16,
     "cost": 3
@@ -421,12 +421,12 @@
     "bene": 0,
     "rejuv": 0,
     "defChanges":{
-        "phys": 0,
-        "fire": -1,
-        "ice": 0,
-        "pois": 0,
-        "dark": 1,
-        "holy": -1
+        "Physical": 0,
+        "Fire": -1,
+        "Ice": 0,
+        "Poison": 0,
+        "Dark": 1,
+        "Holy": -1
     },
     "num": 17,
     "cost": 3
@@ -445,12 +445,12 @@
     "bene": 0,
     "rejuv": 0,
     "defChanges":{
-        "phys": 0,
-        "fire": 0,
-        "ice": 0,
-        "pois": -1,
-        "dark": -1,
-        "holy": 1
+        "Physical": 0,
+        "Fire": 0,
+        "Ice": 0,
+        "Poison": -1,
+        "Dark": -1,
+        "Holy": 1
     },
     "num": 18,
     "cost": 3
@@ -469,12 +469,12 @@
     "bene": 0,
     "rejuv": 0,
     "defChanges":{
-        "phys": 0,
-        "fire": 0,
-        "ice": 0,
-        "pois": 0,
-        "dark": 0,
-        "holy": 0
+        "Physical": 0,
+        "Fire": 0,
+        "Ice": 0,
+        "Poison": 0,
+        "Dark": 0,
+        "Holy": 0
     },
     "num": 19,
     "cost": 1
@@ -493,12 +493,12 @@
     "bene": 0,
     "rejuv": 0,
     "defChanges":{
-        "phys": 0,
-        "fire": 0,
-        "ice": 0,
-        "pois": 0,
-        "dark": 0,
-        "holy": 0
+        "Physical": 0,
+        "Fire": 0,
+        "Ice": 0,
+        "Poison": 0,
+        "Dark": 0,
+        "Holy": 0
     },
     "num": 20,
     "cost": 3
@@ -517,12 +517,12 @@
     "bene": 0,
     "rejuv": 0,
     "defChanges":{
-        "phys": 0,
-        "fire": 0,
-        "ice": 0,
-        "pois": 0,
-        "dark": 0,
-        "holy": 0
+        "Physical": 0,
+        "Fire": 0,
+        "Ice": 0,
+        "Poison": 0,
+        "Dark": 0,
+        "Holy": 0
     },
     "num": 21,
     "cost": 3
@@ -541,12 +541,12 @@
     "bene": 0,
     "rejuv": 0,
     "defChanges":{
-        "phys": 0,
-        "fire": 0,
-        "ice": 0,
-        "pois": 0,
-        "dark": 0,
-        "holy": 0
+        "Physical": 0,
+        "Fire": 0,
+        "Ice": 0,
+        "Poison": 0,
+        "Dark": 0,
+        "Holy": 0
     },
     "num": 22,
     "cost": 3
@@ -565,12 +565,12 @@
     "bene": 0,
     "rejuv": 0,
     "defChanges":{
-        "phys": 0,
-        "fire": 0,
-        "ice": 0,
-        "pois": 0,
-        "dark": 0,
-        "holy": 0
+        "Physical": 0,
+        "Fire": 0,
+        "Ice": 0,
+        "Poison": 0,
+        "Dark": 0,
+        "Holy": 0
     },
     "num": 23,
     "cost": 3
@@ -589,12 +589,12 @@
     "bene": 0,
     "rejuv": 0,
     "defChanges":{
-        "phys": 0,
-        "fire": 0,
-        "ice": 0,
-        "pois": 0,
-        "dark": 0,
-        "holy": 0
+        "Physical": 0,
+        "Fire": 0,
+        "Ice": 0,
+        "Poison": 0,
+        "Dark": 0,
+        "Holy": 0
     },
     "num": 24,
     "cost": 3

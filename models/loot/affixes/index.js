@@ -13,12 +13,12 @@ var affSchema = new mongoose.Schema({
     bene: Number,
     rejuv: Number,
     defChanges: {
-        phys: Number, //these ones are either -1 (more dmg taken), 0 (no effect, default), or 1 (less dmg taken)
-        fire: Number,
-        ice: Number,
-        pois: Number,
-        dark: Number,
-        holy:Number
+        Physical: Number, //these ones are either -1 (more dmg taken), 0 (no effect, default), or 1 (less dmg taken)
+        Fire: Number,
+        Ice: Number,
+        Poison: Number,
+        Dark: Number,
+        Holy:Number
     },
     description:String,
     num:Number,
