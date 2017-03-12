@@ -653,7 +653,6 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
                 text: goodAns[Math.floor(Math.random() * goodAns.length)],
                 close: true,
                 click: function() {
-                    console.log('User faked buying skill', data.name)
                     UIFac.buySkill(data, $scope.name).then(function(r) {
                         if (r) {
                             console.log('Bought skill', data.name)

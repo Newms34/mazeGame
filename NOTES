@@ -69,6 +69,11 @@ need to, @ some point go thru and remove unused functions. Will have a number of
 https://www.draw.io/#G0B1InMvwUCMHbREk2ZnAzTVpCT00
 
 https://docs.google.com/spreadsheets/d/1pojQLzuZOSipoPisMi3CDh-ySeQqkgkE0xBBMwE_6hU/edit#gid=494119378
-..where is cook's ring used? is it like d2 charms, that it has effect if in inv?
+..where is cook's ring used? is it like d2 charms, that it has effect if in inv? THINK SO
 
 do we want imgUrls for all bosses or just essentials?
+
+Skill purchasing now works or at least should!
+
+FIX INVENTORY?:
+A lot of items are returning undefined in the inventory UI. Should console.log em out and see what's being returned.
