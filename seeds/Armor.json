@@ -236,7 +236,7 @@
     "res": [0],
     "cost": 34,
     "itemLvl": 13,
-    "slot": 1,
+    "slot": 4,
     "imgUrl": "",
     "num": 19,
     "heavy": true
@@ -247,7 +247,7 @@
     "res": [0],
     "cost": 34,
     "itemLvl": 13,
-    "slot": 1,
+    "slot": 3,
     "imgUrl": "",
     "num": 19,
     "heavy": true
@@ -258,7 +258,7 @@
     "res": [0],
     "cost": 34,
     "itemLvl": 13,
-    "slot": 1,
+    "slot": 2,
     "imgUrl": "",
     "num": 19,
     "heavy": true
@@ -269,7 +269,7 @@
     "res": [0],
     "cost": 34,
     "itemLvl": 13,
-    "slot": 1,
+    "slot": 0,
     "imgUrl": "",
     "num": 19,
     "heavy": true
