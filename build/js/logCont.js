@@ -1,44 +1,32 @@
 var app = angular.module('mazeGame', ['ngTouch']).controller('log-con', function($scope, $http, $q, $timeout, $window, userFact) {
     $scope.hazLogd = false;
     $scope.user = {
-        prof: '1'
+        prof: '0'
     }
-    $scope.profs = [{
-        val: '1',
-        name: 'Warrior',
-        pImg: './img/assets/war.jpg',
-        ico:'./img/assets/warPick.png'
-    }, {
-        val: '2',
-        name: 'Sorcerer',
-        pImg: './img/assets/sorc.jpg',
-        ico:'./img/assets/sorcPick.png'
-    }, {
-        val: '3',
-        name: 'Paladin',
-        pImg: './img/assets/paly.jpg',
-        ico:'./img/assets/palyPick.png'
-    }, {
-        val: '4',
-        name: 'Necromancer',
-        pImg: '/img/assets/necro.jpg',
-        ico:'./img/assets/necroPick.png'
-    }]
     $scope.profDescs = [{
-        img: 'blank.jpg',
-        txt: 'none'
-    }, {
+        name:'Warrior',
         txt: 'What they lack in magical apptitude, warriors more than make up for in their martial expertise. The warrior uses their weapon training to bring swift and steely death to their foes',
-        img: './img/assets/war.jpg'
+        img: './img/assets/war.jpg',
+        ico:'./img/assets/warPick.png',
+        skill:"Berserker's Fury - Chance to do extra damage on attack."
     }, {
+        name:'Sorcerer',
         txt: 'The scholarly sorcerer uses their extensive knowledge of the arcane to obliterate their enemies with magical fire, or hinder them with conjured ice and blizzards.',
-        img: './img/assets/sorc.jpg'
+        img: './img/assets/sorc.jpg',
+        ico:'./img/assets/sorcPick.png',
+        skill:"Elemental Mastery - Additional damage versus foes with degen"
     }, {
+        name:'Paladin',
         txt: 'The holy paladins are bastions of the Holy Ones. Using their faith both offensively as a shield and defensively as a weapon, they can both smite their enemies and renew themselves.',
-        img: './img/assets/paly.jpg'
+        img: './img/assets/paly.jpg',
+        ico:'./img/assets/palyPick.png',
+        skill:"Righteous Fury - Heal or regen for a small amount on attack"
     }, {
+        name:'Necromancer',
         txt: 'Masters of the so-called "dark" arts, the necromancers are an oft-maligned lot. However, no one would deny their power - or their usefulness - in turning the minds and even fallen bodies of their foes against them.',
-        img: './img/assets/necro.jpg'
+        img: './img/assets/necro.jpg',
+        ico:'./img/assets/necroPick.png',
+        skill:"Soul Siphon - steal some health on attack"
     }]
     $scope.newUsr = function() {
         //eventually we need to CHECK to see if this user is already taken!
@@ -51,7 +39,7 @@ var app = angular.module('mazeGame', ['ngTouch']).controller('log-con', function
             var userInf = {
                 user: $scope.regForm.username.$viewValue,
                 password: $scope.regForm.pwd.$viewValue,
-                prof:$scope.user.prof
+                prof:$scope.user.prof+1
             };
             console.log('userInf',userInf)
             $http.post('/user/new', userInf).then(function(res) {

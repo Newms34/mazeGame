@@ -46,13 +46,17 @@
                         <label class="control-label col-md-4">Pick a profession:</label>
                         <div class="col-md-8 ">
                             <ul class='prof-list'>
-                                <li ng-repeat='p in profs' style='background:linear-gradient(rgba(255,255,255,.7),rgba(255,255,255,.7)),url({{p.pImg}});background-attachment:fixed;background-size:100%;'>
-                                    <input type='radio' name='prof' value='{{p.val}}' id='prof{{p.val}}' ng-model='user.prof'><label for='prof{{p.val}}' style='background:url({{p.ico}}); background-size: contain;'></label>{{p.name}}
+                                <li ng-repeat='p in profDescs' style='background:{{!p.hovering?"linear-gradient(rgba(255,255,255,.6),rgba(255,255,255,.6)),":""}}url({{p.img}});background-attachment:fixed;background-size:100%;' ng-click='user.prof=$index' ng-mouseenter='p.hovering=true' ng-mouseout='p.hovering=false'>
+                                    <div style='background:url({{p.ico}}); background-size: contain;'></div> {{p.name}}
                                 </li>
-                                
                             </ul>
                         </div>
-                        <div class='col-md-12 prof-desc' style='background:linear-gradient(rgba(0,0,0,.7),rgba(0,0,0,.7)),url({{profDescs[user.prof].img}});background-attachment:fixed;background-size:100% auto;'>{{profDescs[user.prof].txt}}</div>
+                        <div class='col-md-12 prof-desc' style='background:linear-gradient(rgba(0,0,0,.7),rgba(0,0,0,.7)),url({{profDescs[user.prof].img}});background-attachment:fixed;background-size:100% auto;'>
+                            <h4>{{profDescs[user.prof].name}}</h4> {{profDescs[user.prof].txt}}
+                            <hr>
+                            Special skill: <br/>
+                            {{profDescs[user.prof].skill}}
+                        </div>
                     </div>
                     <div class="form-group row">
                         <label class="control-label col-md-4">Pick a name:</label>

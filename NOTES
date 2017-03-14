@@ -77,3 +77,27 @@ Skill purchasing now works or at least should!
 
 FIX INVENTORY?:
 A lot of items are returning undefined in the inventory UI. Should console.log em out and see what's being returned.
+
+can (should) we use letsencrypt?
+
+new possible skill fx:
+dmg vs stun
+crit (% extra dmg)
+heal on hit (paly only)
+double-attack? 
+
+possible prof skills:
+WAR:
+-crit (+dmg) chance
+-double attack
+
+SORC:
+-dmg vs active degen (PER degen?)
+
+NECRO:
+-lifesteal
+
+PALY:
+-heal on hit
+
+how do we make them feel DIFFERENT?!

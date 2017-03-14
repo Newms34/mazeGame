@@ -1,8 +1,4 @@
-Weapon effects!
-Loot drops!
-Inventory system (WIP)!
-Merchants!
-Buying and Selling!
-Meaningless NPC Quotes!
-Pretty pictures!
+New profession system: Pick a warrior, sorcerer, paladin, or necromancer!
+Buy skills! Level up!
+Quests! For now, just random ones.
 NOTE: If your login info didn't work, chances are I wiped the server. I gotta do this whenever I make a change to the User model, so sorry!
