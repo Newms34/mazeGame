@@ -7,7 +7,8 @@
     "itemLvl": 0,
     "slot": 0,
     "imgUrl": "",
-    "num": 0
+    "num": 0,
+    "heavy": false
 }, {
     "name": "Tattered Shirt",
     "def": 1,
@@ -17,7 +18,8 @@
     "itemLvl": 0,
     "slot": 1,
     "imgUrl": "",
-    "num": 1
+    "num": 1,
+    "heavy": false
 }, {
     "name": "Tattered Pants",
     "def": 1,
@@ -27,7 +29,8 @@
     "itemLvl": 0,
     "slot": 2,
     "imgUrl": "",
-    "num": 2
+    "num": 2,
+    "heavy": false
 }, {
     "name": "Worn Gloves",
     "def": 1,
@@ -37,7 +40,8 @@
     "itemLvl": 0,
     "slot": 3,
     "imgUrl": "",
-    "num": 3
+    "num": 3,
+    "heavy": false
 }, {
     "name": "Farmer's Boots",
     "def": 1,
@@ -47,7 +51,8 @@
     "itemLvl": 0,
     "slot": 4,
     "imgUrl": "",
-    "num": 4
+    "num": 4,
+    "heavy": false
 }, {
     "name": "Cook's Ring",
     "def": 1,
@@ -57,7 +62,8 @@
     "itemLvl": 2,
     "slot": 5,
     "imgUrl": "",
-    "num": 5
+    "num": 5,
+    "heavy": false
 }, {
     "name": "Boiled Leather Cuirass",
     "def": 8,
@@ -67,7 +73,8 @@
     "itemLvl": 5,
     "slot": 1,
     "imgUrl": "",
-    "num": 6
+    "num": 6,
+    "heavy": true
 }, {
     "name": "Boiled Leather Leggings",
     "def": 7,
@@ -77,7 +84,8 @@
     "itemLvl": 5,
     "slot": 2,
     "imgUrl": "",
-    "num": 7
+    "num": 7,
+    "heavy": true
 }, {
     "name": "Weekend Shirt",
     "def": 3,
@@ -87,7 +95,8 @@
     "itemLvl": 1,
     "slot": 1,
     "imgUrl": "",
-    "num": 8
+    "num": 8,
+    "heavy": false
 }, {
     "name": "Parachute Pants",
     "def": 2,
@@ -97,105 +106,171 @@
     "itemLvl": 1,
     "slot": 2,
     "imgUrl": "",
-    "num": 9
+    "num": 9,
+    "heavy": false
 }, {
     "name": "Gardening Gloves",
     "def": 2,
     "desc": "These aren't exactly designed for fighting monsters. Unless by 'monsters', you mean weeds, and by 'fighting', you mean tending Grandma's veggie patch.",
-    "res":[],
+    "res": [],
     "cost": 15,
     "itemLvl": 1,
-    "slot":3,
+    "slot": 3,
     "imgUrl": "",
-    "num":10
+    "num": 10,
+    "heavy": false
 }, {
     "name": "Sneakers from the Back of the Closet",
     "def": 2,
     "desc": "You know, that pair that you haven't seen in years. Really comfy, but also really weak.",
-    "res":[],
+    "res": [],
     "cost": 15,
     "itemLvl": 1,
-    "slot":4,
+    "slot": 4,
     "imgUrl": "",
-    "num":11
+    "num": 11,
+    "heavy": false
 }, {
     "name": "Mets Hat",
     "def": 2,
     "desc": "Show your support for the New York Mets! Keep the sun out of your face! Protect against pretty much nothing!",
-    "res":[],
+    "res": [],
     "cost": 15,
     "itemLvl": 1,
-    "slot":0,
+    "slot": 0,
     "imgUrl": "",
-    "num":12
+    "num": 12,
+    "heavy": false
 }, {
     "name": "Hardened Leather Skullcap",
     "def": 10,
     "desc": "A mid-level helmet, this skullcap will protect you from minor boo-boos.",
-    "res":[],
+    "res": [],
     "cost": 20,
     "itemLvl": 7,
-    "slot":0,
+    "slot": 0,
     "imgUrl": "",
-    "num":13
+    "num": 13,
+    "heavy": true
 }, {
     "name": "Hardened Leather Breastplate",
     "def": 15,
     "desc": "Not nearly as protective as metal armor, but a lot more comfy.",
-    "res":[],
+    "res": [],
     "cost": 25,
     "itemLvl": 7,
-    "slot":1,
+    "slot": 1,
     "imgUrl": "",
-    "num":14
+    "num": 14,
+    "heavy": true
 }, {
     "name": "Hardened Leather Leggings",
     "def": 12,
     "desc": "They chafe a bit. They also protect your sensitive areas a bit, so that's good.",
-    "res":[],
+    "res": [],
     "cost": 22,
     "itemLvl": 7,
-    "slot":2,
+    "slot": 2,
     "imgUrl": "",
-    "num":15
+    "num": 15,
+    "heavy": true
 }, {
     "name": "Hardened Leather Bracers",
     "def": 10,
     "desc": "Via a complex curing process involving many nasty chemicals, the original cow hide is transformed into something that makes digging the weeds a lot easier.",
-    "res":[],
+    "res": [],
     "cost": 21,
     "itemLvl": 7,
-    "slot":3,
+    "slot": 3,
     "imgUrl": "",
-    "num":16
+    "num": 16,
+    "heavy": true
 }, {
     "name": "Hardened Leather Greaves",
     "def": 10,
     "desc": "They kinda smell after a while.",
-    "res":[],
+    "res": [],
     "cost": 21,
     "itemLvl": 7,
-    "slot":4,
+    "slot": 4,
     "imgUrl": "",
-    "num":17
+    "num": 17,
+    "heavy": true
 }, {
     "name": "Cleric Robes",
     "def": 14,
     "desc": "So holy you can feel the self-righteousness oozing off of them.",
-    "res":[1,5],
+    "res": [1, 5],
     "cost": 34,
     "itemLvl": 9,
-    "slot":1,
+    "slot": 1,
     "imgUrl": "",
-    "num":18
+    "num": 18,
+    "heavy": false
 }, {
     "name": "Robes of the Damned",
     "def": 14,
     "desc": "Damn, these are nice robes!",
-    "res":[3,4],
+    "res": [3, 4],
     "cost": 34,
     "itemLvl": 9,
-    "slot":1,
+    "slot": 1,
     "imgUrl": "",
-    "num":19
+    "num": 19,
+    "heavy": false
+}, {
+    "name": "Steel Brigandine",
+    "def": 14,
+    "desc": "Made from tempered steel, it makes you feel all nice and safe.",
+    "res": [0],
+    "cost": 34,
+    "itemLvl": 13,
+    "slot": 1,
+    "imgUrl": "",
+    "num": 19,
+    "heavy": true
+}, {
+    "name": "Steel Greaves",
+    "def": 14,
+    "desc": "Large, metal boots certainly don't make you stealthy. But who needs stealthy when you've got large, metal boots?",
+    "res": [0],
+    "cost": 34,
+    "itemLvl": 13,
+    "slot": 1,
+    "imgUrl": "",
+    "num": 19,
+    "heavy": true
+}, {
+    "name": "Steel Gauntlets",
+    "def": 14,
+    "desc": "The tempered steel of these gauntlets provides important protection against crushed fingers, but also makes drawing rude things on your enemy after battle much more difficult.",
+    "res": [0],
+    "cost": 34,
+    "itemLvl": 13,
+    "slot": 1,
+    "imgUrl": "",
+    "num": 19,
+    "heavy": true
+}, {
+    "name": "Steel Chauses",
+    "def": 14,
+    "desc": "Because getting kicked in the groin is really just not that fun",
+    "res": [0],
+    "cost": 34,
+    "itemLvl": 13,
+    "slot": 1,
+    "imgUrl": "",
+    "num": 19,
+    "heavy": true
+}, {
+    "name": "Steel Cervelliere",
+    "def": 14,
+    "desc": "The decision not to use facial protection is a trade off: much higher visibility and breathability, but also a much higher chance of getting decked in the face.",
+    "res": [0],
+    "cost": 34,
+    "itemLvl": 13,
+    "slot": 1,
+    "imgUrl": "",
+    "num": 19,
+    "heavy": true
 }]
