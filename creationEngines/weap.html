@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Weapon Creation Engine</title>
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <style type="text/css">
+    html,
+    body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+    }
+    
+    textarea {
+        width: 100%;
+        height: 100px;
+    }
+    
+    input[type=text],
+    input[type=number] {
+        width: 100%;
+    }
+    
+    .thin {
+        max-width: 50px;
+    }
+    
+    tr.success th {
+        height: 100%;
+        cursor: pointer;
+    }
+    
+    tr.success th:hover {
+        background: #a1d38d!important;
+    }
+    </style>
+</head>
+
+<body ng-app='weapApp' ng-controller='weapCon'>
+    <h3>Weapon Creation Engine</h3>
+    <textarea ng-model='objTxt' ng-blur='parseWeaps()'></textarea>
+    <hr>
+    <table class='table'>
+        <thead>
+            <tr class='success'>
+                <th ng-click='chSort("name")'><span ng-if='sortCol=="name" && !sortRev'>&#9660;</span><span ng-if='sortCol=="name" && sortRev'>&#9650;</span>Name</th>
+                
+                <th ng-click='chSort("desc")'><span ng-if='sortCol=="desc" && !sortRev'>&#9660;</span><span ng-if='sortCol=="desc" && sortRev'>&#9650;</span>Description</th>
+                <th ng-click='chSort("min")'><span ng-if='sortCol=="min" && !sortRev'>&#9660;</span><span ng-if='sortCol=="min" && sortRev'>&#9650;</span>Min Dmg</th>
+                <th ng-click='chSort("max")'><span ng-if='sortCol=="max" && !sortRev'>&#9660;</span><span ng-if='sortCol=="max" && sortRev'>&#9650;</span>Max Dmg</th>
+                <th ng-click='chSort("def")'><span ng-if='sortCol=="def" && !sortRev'>&#9660;</span><span ng-if='sortCol=="def" && sortRev'>&#9650;</span>Defense</th>
+                <th ng-click='chSort("cost")'><span ng-if='sortCol=="cost" && !sortRev'>&#9660;</span><span ng-if='sortCol=="cost" && sortRev'>&#9650;</span>Cost</th>
+                <th ng-click='chSort("itemLvl")'><span ng-if='sortCol=="itemLvl" && !sortRev'>&#9660;</span><span ng-if='sortCol=="itemLvl" && sortRev'>&#9650;</span>Item Level</th>
+                <th ng-click='chSort("imgUrl")'><span ng-if='sortCol=="imgUrl" && !sortRev'>&#9660;</span><span ng-if='sortCol=="imgUrl" && sortRev'>&#9650;</span>Image</th>
+                <th ng-click='chSort("num")'><span ng-if='sortCol=="num" && !sortRev'>&#9660;</span><span ng-if='sortCol=="num" && sortRev'>&#9650;</span>Number</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat='w in weaps|orderBy:sortCol:sortRev'>
+                <td>
+                    <input type="text" ng-model='w.name'>
+                </td>
+                <td>
+                    <textarea ng-model='w.desc'></textarea>
+                </td>
+                <td class='thin'>
+                    <input type="number" ng-model='w.min'>
+                </td>
+                <td class='thin'>
+                    <input type="number" ng-model='w.max'>
+                </td>
+                <td class='thin'>
+                    <input type="number" ng-model='w.def'>
+                </td>
+                <td class='thin'>
+                    <input type="number" ng-model='w.cost'>
+                </td>
+                <td class='thin'>
+                    <input type="number" ng-model='w.itemLvl'>
+                </td>
+                <td>
+                    <input type="text" ng-model='w.imgUrl'>
+                </td>
+                <td>{{$index}}</td>
+            </tr>
+            <tr>
+                <td colspan='10'>
+                    <button class='btn btn-primary' style='width:100%;' ng-click='newWeap();'>+ Add Weapon</button>
+            </tr>
+            <tr>
+                <td colspan='10'>
+                    <button class='btn btn-warning' style='width:100%;' ng-click='recChanges();'>Record Changes</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.1/angular.min.js"></script>
+    <script>
+    var app = angular.module('weapApp', []).controller('weapCon', function($scope) {
+        $scope.weaps = [];
+        $scope.dmgTypes = ['Physical', 'Fire', 'Ice', 'Poison', 'Dark', 'Holy'];
+        $scope.parseWeaps = function() {
+            console.log(JSON.parse($scope.objTxt));
+            try {
+                $scope.weaps = JSON.parse($scope.objTxt);
+                $scope.$digest();
+            } catch (e) {
+
+            }
+        };
+        $scope.newWeap = function() {
+            $scope.weaps.push({
+                "name": "Blank Weapon",
+                "def": 1,
+                "desc": "This weapon isn't very descriptive...",
+                "max": 0,
+                "min": 1,
+                "itemLvl": 1,
+                "cost": 1,
+                "imgUrl": "",
+                "num": $scope.weaps.length
+            })
+        }
+        $scope.sortCol = 'num';
+        $scope.sortRev = false;
+        $scope.chSort = function(col) {
+            if (col == $scope.sortCol) {
+                $scope.sortRev = !$scope.sortRev;
+            } else {
+                $scope.sortCol = col;
+            }
+        }
+        $scope.recChanges = function() {
+            
+            $scope.objTxt = JSON.stringify($scope.weaps)
+        }
+    });
+    </script>
+</body>
+
+</html>

@@ -6,7 +6,6 @@
     "cost": 2,
     "itemLvl": 0,
     "slot": 0,
-    "imgUrl": "",
     "num": 0,
     "heavy": false
 }, {
@@ -17,7 +16,6 @@
     "cost": 2,
     "itemLvl": 0,
     "slot": 1,
-    "imgUrl": "",
     "num": 1,
     "heavy": false
 }, {
@@ -28,7 +26,6 @@
     "cost": 2,
     "itemLvl": 0,
     "slot": 2,
-    "imgUrl": "",
     "num": 2,
     "heavy": false
 }, {
@@ -39,7 +36,6 @@
     "cost": 2,
     "itemLvl": 0,
     "slot": 3,
-    "imgUrl": "",
     "num": 3,
     "heavy": false
 }, {
@@ -50,7 +46,6 @@
     "cost": 2,
     "itemLvl": 0,
     "slot": 4,
-    "imgUrl": "",
     "num": 4,
     "heavy": false
 }, {
@@ -61,7 +56,6 @@
     "cost": 8,
     "itemLvl": 2,
     "slot": 5,
-    "imgUrl": "",
     "num": 5,
     "heavy": false
 }, {
@@ -72,7 +66,6 @@
     "cost": 17,
     "itemLvl": 5,
     "slot": 1,
-    "imgUrl": "",
     "num": 6,
     "heavy": true
 }, {
@@ -83,7 +76,6 @@
     "cost": 15,
     "itemLvl": 5,
     "slot": 2,
-    "imgUrl": "",
     "num": 7,
     "heavy": true
 }, {
@@ -94,7 +86,6 @@
     "cost": 15,
     "itemLvl": 1,
     "slot": 1,
-    "imgUrl": "",
     "num": 8,
     "heavy": false
 }, {
@@ -105,7 +96,6 @@
     "cost": 15,
     "itemLvl": 1,
     "slot": 2,
-    "imgUrl": "",
     "num": 9,
     "heavy": false
 }, {
@@ -116,7 +106,6 @@
     "cost": 15,
     "itemLvl": 1,
     "slot": 3,
-    "imgUrl": "",
     "num": 10,
     "heavy": false
 }, {
@@ -127,7 +116,6 @@
     "cost": 15,
     "itemLvl": 1,
     "slot": 4,
-    "imgUrl": "",
     "num": 11,
     "heavy": false
 }, {
@@ -138,7 +126,6 @@
     "cost": 15,
     "itemLvl": 1,
     "slot": 0,
-    "imgUrl": "",
     "num": 12,
     "heavy": false
 }, {
@@ -149,7 +136,6 @@
     "cost": 20,
     "itemLvl": 7,
     "slot": 0,
-    "imgUrl": "",
     "num": 13,
     "heavy": true
 }, {
@@ -160,7 +146,6 @@
     "cost": 25,
     "itemLvl": 7,
     "slot": 1,
-    "imgUrl": "",
     "num": 14,
     "heavy": true
 }, {
@@ -171,7 +156,6 @@
     "cost": 22,
     "itemLvl": 7,
     "slot": 2,
-    "imgUrl": "",
     "num": 15,
     "heavy": true
 }, {
@@ -182,7 +166,6 @@
     "cost": 21,
     "itemLvl": 7,
     "slot": 3,
-    "imgUrl": "",
     "num": 16,
     "heavy": true
 }, {
@@ -193,7 +176,6 @@
     "cost": 21,
     "itemLvl": 7,
     "slot": 4,
-    "imgUrl": "",
     "num": 17,
     "heavy": true
 }, {
@@ -204,7 +186,6 @@
     "cost": 34,
     "itemLvl": 9,
     "slot": 1,
-    "imgUrl": "",
     "num": 18,
     "heavy": false
 }, {
@@ -215,7 +196,6 @@
     "cost": 34,
     "itemLvl": 9,
     "slot": 1,
-    "imgUrl": "",
     "num": 19,
     "heavy": false
 }, {
@@ -226,8 +206,7 @@
     "cost": 34,
     "itemLvl": 13,
     "slot": 1,
-    "imgUrl": "",
-    "num": 19,
+    "num": 20,
     "heavy": true
 }, {
     "name": "Steel Greaves",
@@ -237,8 +216,7 @@
     "cost": 34,
     "itemLvl": 13,
     "slot": 4,
-    "imgUrl": "",
-    "num": 19,
+    "num": 21,
     "heavy": true
 }, {
     "name": "Steel Gauntlets",
@@ -248,8 +226,7 @@
     "cost": 34,
     "itemLvl": 13,
     "slot": 3,
-    "imgUrl": "",
-    "num": 19,
+    "num": 22,
     "heavy": true
 }, {
     "name": "Steel Chauses",
@@ -259,8 +236,7 @@
     "cost": 34,
     "itemLvl": 13,
     "slot": 2,
-    "imgUrl": "",
-    "num": 19,
+    "num": 23,
     "heavy": true
 }, {
     "name": "Steel Cervelliere",
@@ -270,7 +246,6 @@
     "cost": 34,
     "itemLvl": 13,
     "slot": 0,
-    "imgUrl": "",
-    "num": 19,
+    "num": 24,
     "heavy": true
 }]

@@ -241,6 +241,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
             $scope.currXp = d.data.currLvlXp || 0;
             $scope.playerSkills = d.data.skills;
             $scope.extraSkillPts = d.data.skillPts || 0;
+            $scope.prof = d.data.prof||1;
             econFac.merchInv($scope.playerItems.inv).then(function(r) {
                 for (var ep = 0; ep < r.length; ep++) {
                     console.log('REPLACING', $scope.playerItems.inv[ep].item, 'WITH', r[ep])
@@ -1518,12 +1519,17 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
         } else {
             if (playerWeap[0].defChanges[combatFac.getDmgType(dtype)] == 1 || playerWeap[2].defChanges[combatFac.getDmgType(dtype)] == 1) {
                 //resistance from weapon mods. Divide output dmg by 3
-                dmg = dmg / 3
+                dmg /= 3;
             }
             if (playerWeap[0].defChanges[combatFac.getDmgType(dtype)] == -1 || playerWeap[2].defChanges[combatFac.getDmgType(dtype)] == -1) {
                 //negative resistance (vulnerability) from weapon mods. mulyiply output dmg by 1.5
-                dmg = dmg * 1.5
+                dmg *= 1.5;
             }
+        }
+        if ($scope.$parent.prof==1 || $scope.$parent.prof==3){
+            //heavy armor dmg reduction
+            console.log('Char has HEAVY ARMOR! Reduction in dmg');
+            dmg*=0.9;
         }
         return $scope.comb.fleeMult * dmg; //we return the total damage, multiplied by the flee multiplier (if any!).
     }

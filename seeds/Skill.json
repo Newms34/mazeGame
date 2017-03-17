@@ -29,6 +29,21 @@
     "skillPts":1,
     "nextSkills":[]
 },{
+    "name": "Dead Skill",
+    "desc": "Does Nothing!.",
+    "energy": 0,
+    "heal": 0,
+    "regen": 0,
+    "burst": 0,
+    "degen": 0,
+    "type": 0,
+    "stuns": false,
+    "imgUrl": "./img/assets/Blank_Skill.jpg",
+    "id":3,
+    "prevSkill":0,
+    "skillPts":0,
+    "nextSkills":[5,6]
+},{
     "name": "Swing",
     "desc": "The most basic of attacks. No special features, this is a threat to only the weakest of foes.",
     "energy": 1,

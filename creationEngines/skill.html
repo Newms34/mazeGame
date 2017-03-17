@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Skill Creation Engine</title>
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <style type="text/css">
+    html,
+    body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+    }
+    
+    textarea {
+        width: 100%;
+        height: 100px;
+    }
+    
+    #pSkl {
+        width: 20%;
+    }
+    
+    input[type=text],
+    input[type=number] {
+        width: 100%;
+    }
+    
+    .thin {
+        max-width: 50px;
+    }
+    
+    tr.success th {
+        height: 100%;
+        cursor: pointer;
+    }
+    
+    tr.success th:hover {
+        background: #a1d38d!important;
+    }
+    
+    td img {
+        width: 60px;
+        height: 60px;
+    }
+    </style>
+</head>
+
+<body ng-app='skillApp' ng-controller='skillCon'>
+    <h3>Skill Creation Engine</h3>
+    <textarea ng-model='objTxt' ng-blur='parseSkills()'></textarea>
+    <hr>
+    <table class='table table-bordered'>
+        <thead>
+            <tr class='success'>
+                <th ng-click='chSort("name")'><span ng-if='sortCol=="name" && !sortRev'>&#9660;</span><span ng-if='sortCol=="name" && sortRev'>&#9650;</span>Name</th>
+                <th ng-click='chSort("name")'><span ng-if='sortCol=="name" && !sortRev'>&#9660;</span><span ng-if='sortCol=="name" && sortRev'>&#9650;</span>Description</th>
+                <th ng-click='chSort("name")'><span ng-if='sortCol=="name" && !sortRev'>&#9660;</span><span ng-if='sortCol=="name" && sortRev'>&#9650;</span>Energy</th>
+                <th ng-click='chSort("name")'><span ng-if='sortCol=="name" && !sortRev'>&#9660;</span><span ng-if='sortCol=="name" && sortRev'>&#9650;</span>Burst Heal</th>
+                <th ng-click='chSort("name")'><span ng-if='sortCol=="name" && !sortRev'>&#9660;</span><span ng-if='sortCol=="name" && sortRev'>&#9650;</span>Regen</th>
+                <th ng-click='chSort("name")'><span ng-if='sortCol=="name" && !sortRev'>&#9660;</span><span ng-if='sortCol=="name" && sortRev'>&#9650;</span>Burst Damage</th>
+                <th ng-click='chSort("name")'><span ng-if='sortCol=="name" && !sortRev'>&#9660;</span><span ng-if='sortCol=="name" && sortRev'>&#9650;</span>Degen</th>
+                <th ng-click='chSort("name")'><span ng-if='sortCol=="name" && !sortRev'>&#9660;</span><span ng-if='sortCol=="name" && sortRev'>&#9650;</span>Damage Type</th>
+                <th ng-click='chSort("name")'><span ng-if='sortCol=="name" && !sortRev'>&#9660;</span><span ng-if='sortCol=="name" && sortRev'>&#9650;</span>Stuns?</th>
+                <th ng-click='chSort("name")'><span ng-if='sortCol=="name" && !sortRev'>&#9660;</span><span ng-if='sortCol=="name" && sortRev'>&#9650;</span>Image</th>
+                <th ng-click='chSort("name")'><span ng-if='sortCol=="name" && !sortRev'>&#9660;</span><span ng-if='sortCol=="name" && sortRev'>&#9650;</span>Id</th>
+                <th ng-click='chSort("name")'><span ng-if='sortCol=="name" && !sortRev'>&#9660;</span><span ng-if='sortCol=="name" && sortRev'>&#9650;</span>Previous Skill</th>
+                <th ng-click='chSort("name")'><span ng-if='sortCol=="name" && !sortRev'>&#9660;</span><span ng-if='sortCol=="name" && sortRev'>&#9650;</span>Next Skills</th>
+                <th ng-click='chSort("name")'><span ng-if='sortCol=="name" && !sortRev'>&#9660;</span><span ng-if='sortCol=="name" && sortRev'>&#9650;</span>Skill Point Cost</th>
+                <th ng-click='chSort("name")'><span ng-if='sortCol=="name" && !sortRev'>&#9660;</span><span ng-if='sortCol=="name" && sortRev'>&#9650;</span>Extra Effects</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat='s in skills|orderBy:sortCol:sortRev'>
+                <td>
+                    <input type="text" ng-model='s.name'>
+                </td>
+                <td>
+                    <textarea ng-model='s.desc'></textarea>
+                </td>
+                <td class='thin'>
+                    <input type="number" ng-model='s.energy'>
+                </td>
+                <td class='thin'>
+                    <input type="number" ng-model='s.heal'>
+                </td>
+                <td class='thin'>
+                    <input type="number" ng-model='s.regen'>
+                </td>
+                <td class='thin'>
+                    <input type="number" ng-model='s.burst'>
+                </td>
+                <td class='thin'>
+                    <input type="number" ng-model='s.degen'>
+                </td>
+                <td>
+                    <div class='col-md-3'>
+                        <input type="number" max="{{dmgTypes.length-1}}" ng-model='s.type'>
+                    </div>
+                    <div class='col-md-6'>{{dmgTypes[s.type]}}</div>
+                </td>
+                <td>
+                    Stuns:
+                    <input type="checkBox" ng-model='s.stuns'>
+                </td>
+                <td>
+                    <input type="text" ng-model='s.imgUrl'>
+                    <img src="../public{{s.imgUrl.slice(1)}}">
+                </td>
+                <td class='thin'>
+                    {{s.id}}
+                </td>
+                <td>
+                    <input type="number" ng-model='s.prevSkill' ng-change='updateNextSkills(s.prevSkill,s.id)'>
+                </td>
+                <td>
+                    <h5>Next Skills:</h5>
+                    <div ng-repeat='ns in s.nextSkills'> - {{skills[ns-1].name}}</div>
+                </td>
+                <td class='thin'>
+                    {{s.skillPts}}
+                </td>
+                <td>
+                    Additional Effects:<hr>
+                    <input type="checkBox" ng-model='s.extraFx.dmgVsStun'> Damage vs Stunned 
+                    <br/>
+                    <input type="checkBox" ng-model='s.extraFx.protection'> Protection
+                    <br/>
+                    <input type="checkBox" ng-model='s.extraFx.dmgVsDegen'> Damage vs Degen
+                    <br/>
+                    <input type="checkBox" ng-model='s.extraFx.critChance'> Chance for Crit
+                    <br/>
+                </td>
+            </tr>
+            <tr>
+                <td colspan='10'>
+                    <button class='btn btn-primary' style='width:100%;' ng-click='newSkill();'>+ Add Skill</button>
+            </tr>
+            <tr>
+                <td colspan='10'>
+                    <button class='btn btn-warning' style='width:100%;' ng-click='recChanges();'>Record Changes</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.1/angular.min.js"></script>
+    <script src="../bower_components/bootbox.js/bootbox.js"></script>
+    <script>
+    var skillNameList = [];
+    var app = angular.module('skillApp', []).controller('skillCon', function($scope) {
+        $scope.updateNextSkills=function(prev,curr){
+            for (var i=0;i<$scope.skills.length;i++){
+                if($scope.skills[i].nextSkills.indexOf(curr)>-1){
+                    //if this skill exists in this (other) skill, remove it!
+                    $scope.skills[i].nextSkills.splice($scope.skills[i].nextSkills.indexOf(curr),1);
+                }
+            }
+            //now should NOT be in any nextSkill lists;
+            $scope.findSkill(prev).nextSkills.push(curr);
+            //and finally skill pts
+            $scope.findSkill(curr).skillPts = $scope.getSkillPts($scope.findSkill(prev))
+        };
+        $scope.findSkill = function(sn){
+            for (var i=0;i<$scope.skills.length;i++){
+                if($scope.skills[i].id==sn){
+                    return $scope.skills[i];
+                }
+            }
+        }
+        $scope.skills = []
+
+        $scope.slots = [{
+            lbl: '\uD83C\uDFA9 Head',
+            num: 0
+        }, {
+            lbl: '\uD83D\uDC55 Chest',
+            num: 1
+        }, {
+            lbl: '\uD83D\uDC56 Pants',
+            num: 2
+        }, {
+            lbl: '\u261E Gloves',
+            num: 3
+        }, {
+            lbl: '\uD83D\uDC62 Boots',
+            num: 4
+        }, {
+            lbl: '\uD83D\uDC8D None',
+            num: 5
+        }]
+        $scope.dmgTypes = ['Physical', 'Fire', 'Ice', 'Poison', 'Dark', 'Holy'];
+        $scope.resists = [{
+            lbl: 'Physical',
+            num: 0
+        }, {
+            lbl: 'Fire',
+            num: 1
+        }, {
+            lbl: 'Ice',
+            num: 2
+        }, {
+            lbl: 'Poison',
+            num: 3
+        }, {
+            lbl: 'Dark',
+            num: 4
+        }, {
+            lbl: 'Holy',
+            num: 5
+        }];
+        $scope.profs = ['general', 'warrior', 'sorcerer', 'necromancer', 'paladin'];
+        $scope.parseSkills = function() {
+            console.log(JSON.parse($scope.objTxt));
+            try {
+                $scope.skills = JSON.parse($scope.objTxt);
+                $scope.skills.forEach(function(s) {
+                    s.resTemp = {
+                        Fire: s.res.indexOf(1) > -1,
+                        Physical: s.res.indexOf(0) > -1,
+                        Poison: s.res.indexOf(3) > -1,
+                        Ice: s.res.indexOf(2) > -1,
+                        Dark: s.res.indexOf(4) > -1,
+                        Holy: s.res.indexOf(5) > -1
+                    }
+                })
+                $scope.$digest();
+            } catch (e) {
+
+            }
+        };
+        $scope.getSkillPts = function(ps) {
+            console.log('----PS-----',ps)
+            if (ps <= 0) {
+                return 1;
+            } else {
+                console.log(Math.log2($scope.findSkill(ps).skillPts))
+                return Math.pow(2, (Math.log2($scope.findSkill(ps).skillPts))+1);
+            }
+        };
+        $scope.newSkill = function() {
+            var prevSkill = -1,
+                spn = '#pSklName';
+            skillNameList = [];
+            $scope.skills.forEach(function(s) {
+                skillNameList.push(s.name + ':' + s.skillPts + (s.skillPts !== 1 ? 'pts' : 'pt'));
+            })
+            bootbox.dialog({
+                title: 'Pick Previous Skill',
+                message: 'Every skill must start with a previous skill. Pick that skill here:<br/><input id="pSkl" type="number" min="0" max="' + ($scope.skills.length - 1) + '" value="0" onchange="$(\'' + spn + '\').html(skillNameList[this.value])"> <span id="pSklName">Bandage:0 pts</span>',
+                buttons: {
+                    pik: {
+                        label: 'Okay',
+                        className: 'btn-success',
+                        callback: function() {
+                            prevSkill = parseInt($('#pSkl').val())
+                            $scope.skills.push({
+                                "name": "Blank Skill",
+                                "desc": "A blank skill! Needs a description.",
+                                "energy": 5,
+                                "heal": 0,
+                                "regen": 0,
+                                "burst": 0,
+                                "degen": 0,
+                                "type": 0,
+                                "stuns": false,
+                                "imgUrl": './img/assets/Blank_Skill.jpg',
+                                "id": $scope.skills.length,
+                                "prevSkill": prevSkill,
+                                "nextSkills": [],
+                                "skillPts": $scope.getSkillPts(prevSkill),
+                                "extraFx": {
+                                    dmgVsStun: false,
+                                    protection: false,
+                                    dmgVsDegen: false,
+                                    critChance: false
+                                }
+                            })
+                            $scope.$digest();
+                        }
+                    }
+                },
+            })
+        }
+        $scope.sortCol = 'num';
+        $scope.sortRev = false;
+        $scope.chSort = function(col) {
+            if (col == $scope.sortCol) {
+                $scope.sortRev = !$scope.sortRev;
+            } else {
+                $scope.sortCol = col;
+            }
+        }
+        $scope.recChanges = function() {
+            var outArr = []
+            $scope.skills.forEach(function(ar) {
+                var outObj = angular.copy(ar);
+                if (ar.resTemp) {
+                    //has (new?) rezzes
+                    outObj.res = [];
+                    for (var rez in ar.resTemp) {
+                        if (ar.resTemp[rez]) {
+                            outObj.res.push($scope.dmgTypes.indexOf(rez))
+                        }
+                    }
+                    delete outObj.resTemp;
+                }
+                outArr.push(outObj)
+            })
+            $scope.objTxt = JSON.stringify(outArr)
+        }
+    });
+    </script>
+</body>
+
+</html>

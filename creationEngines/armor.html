@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Armor Creation Engine</title>
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <style type="text/css">
+    html,
+    body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+    }
+    
+    textarea {
+        width: 100%;
+        height: 100px;
+    }
+    
+    input[type=text],
+    input[type=number] {
+        width: 100%;
+    }
+    
+    .thin {
+        max-width: 50px;
+    }
+    
+    tr.success th {
+        height: 100%;
+        cursor: pointer;
+    }
+    
+    tr.success th:hover {
+        background: #a1d38d!important;
+    }
+    </style>
+</head>
+
+<body ng-app='armorApp' ng-controller='armorCon'>
+    <h3>Armor Creation Engine</h3>
+    <textarea ng-model='objTxt' ng-blur='parseArmors()'></textarea>
+    <hr>
+    <table class='table'>
+        <thead>
+            <tr class='success'>
+                <th ng-click='chSort("name")'><span ng-if='sortCol=="name" && !sortRev'>&#9660;</span><span ng-if='sortCol=="name" && sortRev'>&#9650;</span>Name</th>
+                <th ng-click='chSort("def")'><span ng-if='sortCol=="def" && !sortRev'>&#9660;</span><span ng-if='sortCol=="def" && sortRev'>&#9650;</span>Defense</th>
+                <th ng-click='chSort("desc")'><span ng-if='sortCol=="desc" && !sortRev'>&#9660;</span><span ng-if='sortCol=="desc" && sortRev'>&#9650;</span>Description</th>
+                <th ng-click='chSort("res")'><span ng-if='sortCol=="res" && !sortRev'>&#9660;</span><span ng-if='sortCol=="res" && sortRev'>&#9650;</span>Resistance(s)</th>
+                <th ng-click='chSort("cost")'><span ng-if='sortCol=="cost" && !sortRev'>&#9660;</span><span ng-if='sortCol=="cost" && sortRev'>&#9650;</span>Cost</th>
+                <th ng-click='chSort("itemLvl")'><span ng-if='sortCol=="itemLvl" && !sortRev'>&#9660;</span><span ng-if='sortCol=="itemLvl" && sortRev'>&#9650;</span>Level</th>
+                <th ng-click='chSort("slot")'><span ng-if='sortCol=="slot" && !sortRev'>&#9660;</span><span ng-if='sortCol=="slot" && sortRev'>&#9650;</span>Slot</th>
+                <th ng-click='chSort("num")'><span ng-if='sortCol=="num" && !sortRev'>&#9660;</span><span ng-if='sortCol=="num" && sortRev'>&#9650;</span>Number</th>
+                <th ng-click='chSort("heavy")'><span ng-if='sortCol=="heavy" && !sortRev'>&#9660;</span><span ng-if='sortCol=="heavy" && sortRev'>&#9650;</span>Heavy?</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat='a in armors|orderBy:sortCol:sortRev'>
+                <td>
+                    <input type="text" ng-model='a.name'>
+                </td>
+                <td class='thin'>
+                    <input type="number" ng-model='a.def'>
+                </td>
+                <td>
+                    <textarea ng-model='a.desc'></textarea>
+                </td>
+                <td class='info'>
+                    <div ng-repeat='r in resists'>
+                        <input type="checkbox" checked='{{a.res.indexOf(r.num)>-1}}' ng-model='a.resTemp[r.lbl]'>{{r.lbl}}</div>
+                </td>
+                <td class='thin'>
+                    <input type="number" ng-model='a.cost'>
+                </td>
+                <td class='thin'>
+                    <input type="number" ng-model='a.itemLvl'>
+                </td>
+                <td>
+                    <select ng-options='slt.num as slt.lbl for slt in slots' ng-model='a.slot'></select>
+                </td>
+                <td>{{$index}}</td>
+                <td>
+                    <input type="checkbox" name='heavyStat{{a.num}}' ng-model='a.heavy' value='true' checked='{{a.heavy}}'> is heavy
+                </td>
+            </tr>
+            <tr>
+                <td colspan='10'>
+                    <button class='btn btn-primary' style='width:100%;' ng-click='newArm();'>+ Add Armor</button>
+            </tr>
+            <tr>
+                <td colspan='10'>
+                    <button class='btn btn-warning' style='width:100%;' ng-click='recChanges();'>Record Changes</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.1/angular.min.js"></script>
+    <script>
+    var app = angular.module('armorApp', []).controller('armorCon', function($scope) {
+        $scope.armors = [];
+        $scope.slots = [{
+            lbl: '\uD83C\uDFA9 Head',
+            num: 0
+        }, {
+            lbl: '\uD83D\uDC55 Chest',
+            num: 1
+        }, {
+            lbl: '\uD83D\uDC56 Pants',
+            num: 2
+        }, {
+            lbl: '\u261E Gloves',
+            num: 3
+        }, {
+            lbl: '\uD83D\uDC62 Boots',
+            num: 4
+        }, {
+            lbl: '\uD83D\uDC8D None',
+            num: 5
+        }]
+        $scope.dmgTypes = ['Physical', 'Fire', 'Ice', 'Poison', 'Dark', 'Holy'];
+        $scope.resists = [{
+            lbl: 'Physical',
+            num: 0
+        }, {
+            lbl: 'Fire',
+            num: 1
+        }, {
+            lbl: 'Ice',
+            num: 2
+        }, {
+            lbl: 'Poison',
+            num: 3
+        }, {
+            lbl: 'Dark',
+            num: 4
+        }, {
+            lbl: 'Holy',
+            num: 5
+        }];
+        $scope.parseArmors = function() {
+            console.log(JSON.parse($scope.objTxt));
+            try {
+                $scope.armors = JSON.parse($scope.objTxt);
+                $scope.armors.forEach(function(a) {
+                    a.resTemp = {
+                        Fire: a.res.indexOf(1) > -1,
+                        Physical: a.res.indexOf(0) > -1,
+                        Poison: a.res.indexOf(3) > -1,
+                        Ice: a.res.indexOf(2) > -1,
+                        Dark: a.res.indexOf(4) > -1,
+                        Holy: a.res.indexOf(5) > -1
+                    }
+                })
+                $scope.$digest();
+            } catch (e) {
+
+            }
+        };
+        $scope.newArm = function() {
+            $scope.armors.push({
+                "name": "Blank Armor",
+                "def": 1,
+                "desc": "A blank piece of armor! This needs a description.",
+                "res": [],
+                "cost": 5,
+                "itemLvl": 1,
+                "slot": 1,
+                "num": $scope.armors.length,
+                "heavy": false
+            })
+        }
+        $scope.sortCol = 'num';
+        $scope.sortRev = false;
+        $scope.chSort = function(col) {
+            if (col == $scope.sortCol) {
+                $scope.sortRev = !$scope.sortRev;
+            } else {
+                $scope.sortCol = col;
+            }
+        }
+        $scope.recChanges = function() {
+            var outArr = []
+            $scope.armors.forEach(function(ar) {
+                var outObj = angular.copy(ar);
+                if (ar.resTemp) {
+                    //has (new?) rezzes
+                    outObj.res = [];
+                    for (var rez in ar.resTemp) {
+                        if (ar.resTemp[rez]) {
+                            outObj.res.push($scope.dmgTypes.indexOf(rez))
+                        }
+                    }
+                    delete outObj.resTemp;
+                }
+                outArr.push(outObj)
+            })
+            $scope.objTxt = JSON.stringify(outArr)
+        }
+    });
+    </script>
+</body>
+
+</html>
