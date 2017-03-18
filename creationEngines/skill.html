@@ -112,6 +112,7 @@
                 </td>
                 <td>
                     <input type="number" ng-model='s.prevSkill' ng-change='updateNextSkills(s.prevSkill,s.id)'>
+                    {{skills[s.prevSkill]?skills[s.prevSkill].name:'(base skill)'}}
                 </td>
                 <td>
                     <h5>Next Skills:</h5>
@@ -232,11 +233,11 @@
         };
         $scope.getSkillPts = function(ps) {
             console.log('----PS-----',ps)
-            if (ps <= 0) {
+            if (ps == -1) {
                 return 1;
             } else {
                 console.log(Math.log2($scope.findSkill(ps).skillPts))
-                return Math.pow(2, (Math.log2($scope.findSkill(ps).skillPts))+1);
+                return Math.pow(2, (Math.log2($scope.findSkill(ps).skillPts)+1));
             }
         };
         $scope.newSkill = function() {

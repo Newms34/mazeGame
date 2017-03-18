@@ -9,10 +9,10 @@
     "type": 0,
     "stuns": false,
     "imgUrl": "./img/assets/Bandage.jpg",
-    "id":1,
-    "prevSkill":0,
+    "id":0,
+    "prevSkill":-1,
     "skillPts":0,
-    "nextSkills":[2]
+    "nextSkills":[1]
 },{
     "name": "Tend Wounds",
     "desc": "You take a break from combat to tend your wounds.",
@@ -24,25 +24,10 @@
     "type": 0,
     "stuns": false,
     "imgUrl": "./img/assets/Tend_Wounds.jpg",
-    "id":2,
-    "prevSkill":1,
+    "id":1,
+    "prevSkill":0,
     "skillPts":1,
     "nextSkills":[]
-},{
-    "name": "Dead Skill",
-    "desc": "Does Nothing!.",
-    "energy": 0,
-    "heal": 0,
-    "regen": 0,
-    "burst": 0,
-    "degen": 0,
-    "type": 0,
-    "stuns": false,
-    "imgUrl": "./img/assets/Blank_Skill.jpg",
-    "id":3,
-    "prevSkill":0,
-    "skillPts":0,
-    "nextSkills":[5,6]
 },{
     "name": "Swing",
     "desc": "The most basic of attacks. No special features, this is a threat to only the weakest of foes.",
@@ -54,10 +39,10 @@
     "type": 0,
     "stuns": false,
     "imgUrl": "./img/assets/Swing.jpg",
-    "id":4,
-    "prevSkill":0,
+    "id":2,
+    "prevSkill":-1,
     "skillPts":0,
-    "nextSkills":[5,6]
+    "nextSkills":[3,4]
 },{
     "name": "Taunt",
     "desc": "The mages would have you know that sometimes words are more powerful than weapons. Stun your enemy, but deal no damage.",
@@ -69,10 +54,10 @@
     "type": 0,
     "stuns": true,
     "imgUrl": "./img/assets/Taunt.jpg",
-    "id":5,
-    "prevSkill":4,
+    "id":3,
+    "prevSkill":2,
     "skillPts":1,
-    "nextSkills":[7]
+    "nextSkills":[5]
 },{
     "name": "Slice",
     "desc": "Twisting your weapon mid-strike creates a jagged wound, bleeding your foe.",
@@ -84,10 +69,10 @@
     "type": 0,
     "stuns": false,
     "imgUrl": "./img/assets/Slice.jpg",
-    "id":6,
-    "prevSkill":4,
+    "id":4,
+    "prevSkill":2,
     "skillPts":1,
-    "nextSkills":[8]
+    "nextSkills":[6]
 },{
     "name": "Uppercut",
     "desc": "Hit your foe with a brutal uppercut, stunning them.",
@@ -99,10 +84,10 @@
     "type": 0,
     "stuns": true,
     "imgUrl": "./img/assets/Uppercut.jpg",
-    "id":7,
-    "prevSkill":5,
+    "id":5,
+    "prevSkill":3,
     "skillPts":2,
-    "nextSkills":[9]
+    "nextSkills":[7]
 },{
     "name": "Lacerate",
     "desc": "Use your warrior's training to hit a vital artery, bleeding your foe.",
@@ -114,8 +99,8 @@
     "type": 0,
     "stuns": false,
     "imgUrl": "./img/assets/Lacerate.jpg",
-    "id":8,
-    "prevSkill":6,
+    "id":6,
+    "prevSkill":4,
     "skillPts":2,
     "nextSkills":[]
 },{
@@ -129,8 +114,8 @@
     "type": 0,
     "stuns": true,
     "imgUrl": "./img/assets/Juggernaut_Strike.jpg",
-    "id":9,
-    "prevSkill":7,
+    "id":7,
+    "prevSkill":5,
     "skillPts":4,
     "nextSkills":[]
 },{
@@ -144,10 +129,10 @@
     "type": 1,
     "stuns": false,
     "imgUrl": "./img/assets/Fireball.jpg",
-    "id":10,
-    "prevSkill":0,
+    "id":8,
+    "prevSkill":-1,
     "skillPts":1,
-    "nextSkills":[11]
+    "nextSkills":[9]
 },{
     "name": "Immolate",
     "desc": "Set your foe alight, dealing massive degen damage.",
@@ -159,10 +144,10 @@
     "type": 1,
     "stuns": false,
     "imgUrl": "./img/assets/Immolate.jpg",
-    "id":11,
-    "prevSkill":10,
+    "id":9,
+    "prevSkill":8,
     "skillPts":1,
-    "nextSkills":[12]
+    "nextSkills":[10]
 },{
     "name": "Fireblast",
     "desc": "Blasts your foe with scorching flames.",
@@ -174,10 +159,10 @@
     "type": 1,
     "stuns": false,
     "imgUrl": "./img/assets/Fireblast.jpg",
-    "id":12,
-    "prevSkill":11,
+    "id":10,
+    "prevSkill":9,
     "skillPts":2,
-    "nextSkills":[13,14]
+    "nextSkills":[11,12]
 },{
     "name": "Inferno",
     "desc": "Summon the very fiercest of flames around your foe, scorching them.",
@@ -189,8 +174,8 @@
     "type": 1,
     "stuns": false,
     "imgUrl": "./img/assets/Inferno.jpg",
-    "id":13,
-    "prevSkill":12,
+    "id":11,
+    "prevSkill":10,
     "skillPts":4,
     "nextSkills":[]
 },{
@@ -204,8 +189,8 @@
     "type": 1,
     "stuns": false,
     "imgUrl": "./img/assets/Meteor.jpg",
-    "id":14,
-    "prevSkill":12,
+    "id":12,
+    "prevSkill":10,
     "skillPts":4,
     "nextSkills":[]
 },{
@@ -219,10 +204,10 @@
     "type": 2,
     "stuns": false,
     "imgUrl": "./img/assets/Chill.jpg",
-    "id":15,
-    "prevSkill":0,
+    "id":13,
+    "prevSkill":-1,
     "skillPts":0,
-    "nextSkills":[16]
+    "nextSkills":[14]
 },{
     "name": "Icy Blast",
     "desc": "Blast your foe with ice. Heal yourself for a small amount.",
@@ -234,13 +219,13 @@
     "type": 2,
     "stuns": false,
     "imgUrl": "./img/assets/Icy_Blast.jpg",
-    "id":16,
-    "prevSkill":15,
+    "id":14,
+    "prevSkill":13,
     "skillPts":1,
-    "nextSkills":[17]
+    "nextSkills":[15]
 },{
     "name": "Frostbite",
-    "desc": "Utilizing your mastery over the arcane, you call down a meteor to obliterate your foe.",
+    "desc": "You call forth the very worst of the mountain winds, freezing and degening your foe.",
     "energy": 7,
     "heal": 0,
     "regen": 0,
@@ -249,8 +234,8 @@
     "type": 2,
     "stuns": true,
     "imgUrl": "./img/assets/Frostbite.jpg",
-    "id":17,
-    "prevSkill":16,
+    "id":15,
+    "prevSkill":14,
     "skillPts":2,
     "nextSkills":[]
 },{
@@ -264,10 +249,10 @@
     "type": 4,
     "stuns": false,
     "imgUrl": "./img/assets/Curse.jpg",
-    "id":18,
-    "prevSkill":0,
+    "id":16,
+    "prevSkill":-1,
     "skillPts":0,
-    "nextSkills":[19,21,23]
+    "nextSkills":[17,19,21]
 },{
     "name": "Contaminate",
     "desc": "Toss a flask of nasty chemicals at your foe, poisoning them and causing moderate degen.",
@@ -279,10 +264,10 @@
     "type": 3,
     "stuns": false,
     "imgUrl": "./img/assets/Contaminate.jpg",
-    "id":19,
-    "prevSkill":18,
+    "id":17,
+    "prevSkill":16,
     "skillPts":1,
-    "nextSkills":[20]
+    "nextSkills":[18]
 },{
     "name": "Putrid Curse",
     "desc": "The warlocks would tell you that the natural state of everything is death. They'd also tell you that they're merely speeding up the process.",
@@ -294,8 +279,8 @@
     "type": 3,
     "stuns": false,
     "imgUrl": "./img/assets/Putrid_Curse.jpg",
-    "id":20,
-    "prevSkill":19,
+    "id":18,
+    "prevSkill":17,
     "skillPts":2,
     "nextSkills":[]
 },{
@@ -309,10 +294,10 @@
     "type": 4,
     "stuns": true,
     "imgUrl": "./img/assets/Frighten.jpg",
-    "id":21,
-    "prevSkill":18,
+    "id":19,
+    "prevSkill":16,
     "skillPts":1,
-    "nextSkills":[22]
+    "nextSkills":[20]
 },{
     "name": "Terrify",
     "desc": "There are some things that the mortal mind is not meant to see. Terrify your enemy, stunning them and using their fear to feed your lifeforce.",
@@ -324,8 +309,8 @@
     "type": 4,
     "stuns": true,
     "imgUrl": "./img/assets/Terrify.jpg",
-    "id":22,
-    "prevSkill":21,
+    "id":20,
+    "prevSkill":19,
     "skillPts":2,
     "nextSkills":[]
 },{
@@ -339,10 +324,10 @@
     "type": 4,
     "stuns": false,
     "imgUrl": "./img/assets/Vampiric_Bite.jpg",
-    "id":23,
-    "prevSkill":18,
+    "id":21,
+    "prevSkill":16,
     "skillPts":1,
-    "nextSkills":[24]
+    "nextSkills":[22]
 },{
     "name": "Rip Life",
     "desc": "Your mastery of the vampiric arts allows you to siphon your enemy's lifeforce, adding it to your own.",
@@ -354,8 +339,8 @@
     "type": 4,
     "stuns": false,
     "imgUrl": "./img/assets/Rip_Life.jpg",
-    "id":24,
-    "prevSkill":23,
+    "id":22,
+    "prevSkill":21,
     "skillPts":2,
     "nextSkills":[]
 },{
@@ -369,10 +354,10 @@
     "type": 5,
     "stuns": false,
     "imgUrl": "./img/assets/Smite.jpg",
-    "id":25,
-    "prevSkill":0,
+    "id":23,
+    "prevSkill":-1,
     "skillPts":0,
-    "nextSkills":[27]
+    "nextSkills":[25]
 },{
     "name": "Divine Blessing",
     "desc": "The power of the Gods restores you and smites your enemies.",
@@ -384,10 +369,10 @@
     "type": 5,
     "stuns": false,
     "imgUrl": "./img/assets/Divine_Blessing.jpg",
-    "id":26,
-    "prevSkill":0,
+    "id":24,
+    "prevSkill":-1,
     "skillPts":0,
-    "nextSkills":[29,30]
+    "nextSkills":[27,28]
 },{
     "name": "Censor",
     "desc": "Call the power of the heavens to silence your enemy, stunning them and dealing damage. Your conviction renews you slightly.",
@@ -399,10 +384,10 @@
     "type": 5,
     "stuns": true,
     "imgUrl": "./img/assets/Censor.jpg",
-    "id":27,
-    "prevSkill":25,
+    "id":25,
+    "prevSkill":23,
     "skillPts":1,
-    "nextSkills":[28]
+    "nextSkills":[26]
 },{
     "name": "Divine Hammer",
     "desc": "Your faith allows you to conjure an ethereal hammer to strike your enemies, healing you and stunning them",
@@ -414,8 +399,8 @@
     "type": 5,
     "stuns": true,
     "imgUrl": "./img/assets/Divine_Hammer.jpg",
-    "id":28,
-    "prevSkill":27,
+    "id":26,
+    "prevSkill":25,
     "skillPts":2,
     "nextSkills":[]
 },{
@@ -429,10 +414,10 @@
     "type": 5,
     "stuns": false,
     "imgUrl": "./img/assets/Cleanse.jpg",
-    "id":29,
-    "prevSkill":26,
+    "id":27,
+    "prevSkill":24,
     "skillPts":1,
-    "nextSkills":[31]
+    "nextSkills":[29]
 },{
     "name": "Divine Judgement",
     "desc": "Call down the wrath of the divines to smite your foe, burning them in the process.",
@@ -444,10 +429,10 @@
     "type": 5,
     "stuns": false,
     "imgUrl": "./img/assets/Divine_Judgement.jpg",
-    "id":30,
-    "prevSkill":26,
+    "id":28,
+    "prevSkill":24,
     "skillPts":1,
-    "nextSkills":[32]
+    "nextSkills":[30]
 },{
     "name": "Restore",
     "desc": "Your conviction heals and restores you. Removes 2 degen effects from you.",
@@ -459,8 +444,8 @@
     "type": 5,
     "stuns": false,
     "imgUrl": "./img/assets/Restore.jpg",
-    "id":31,
-    "prevSkill":29,
+    "id":29,
+    "prevSkill":27,
     "skillPts":2,
     "nextSkills":[]
 },{
@@ -474,8 +459,8 @@
     "type": 5,
     "stuns": false,
     "imgUrl": "./img/assets/Divine_Shockwave.jpg",
-    "id":32,
-    "prevSkill":30,
+    "id":30,
+    "prevSkill":28,
     "skillPts":2,
     "nextSkills":[]
 }]

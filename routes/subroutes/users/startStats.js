@@ -7,22 +7,22 @@ startFns.getSkills = function(prof){
 	if(prof>=profs.length || profs<1){
 		return false;
 	}
-	var retSkills = [1,2]
+	var retSkills = [0]
 	switch(prof){
 		case 1:
 			//Warrior
-			retSkills = retSkills.concat([4])
+			retSkills = retSkills.concat([2])
 			break;
 		case 2: 
 			//Sorc
-			retSkills = retSkills.concat([10,15])
+			retSkills = retSkills.concat([8,13])
 			break;
 		case 3:
 			//Paly
-			retSkills = retSkills.concat([25,26])
+			retSkills = retSkills.concat([23,24])
 			break;
 		default:
-			retSkills = retSkills.concat([18])
+			retSkills = retSkills.concat([16])
 			//necro
 
 	}

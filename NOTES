@@ -96,6 +96,8 @@ SORC:
 
 NECRO:
 -lifesteal
+-sacrifice skills (self damage for major dmg boost)
+-self-degen
 
 PALY:
 -heal on hit
