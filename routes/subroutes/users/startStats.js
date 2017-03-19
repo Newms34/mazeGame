@@ -32,7 +32,10 @@ startFns.getSkills = function(prof){
 startFns.getEquip = function(prof){
 	if(prof>=profs.length || profs<1){
 		return false;
+	}else{
+		//here, we'll wanna randomly equip lvl 1 armor on the user. User will NOT get a full set, but approximately 50% of the armor. 
+		//heavy: 25 head, 36 pants, 37 chest, 39 boots, 41 gloves
+		//light: 0 head, 1/8 chest, 2 pants, 3/42 gloves, 4 boots
 	}
 	//return initial armor/weaps for this prof.
-
 };

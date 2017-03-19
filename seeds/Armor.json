@@ -4,7 +4,7 @@
     "desc": "Itchy and filthy, it offers almost no protection",
     "res": [],
     "cost": 2,
-    "itemLvl": 0,
+    "itemLvl": 1,
     "slot": 0,
     "num": 0,
     "heavy": false
@@ -13,8 +13,8 @@
     "def": 1,
     "desc": "A standard-issue peasant shirt",
     "res": [],
-    "cost": 2,
-    "itemLvl": 0,
+    "cost": 4,
+    "itemLvl": 1,
     "slot": 1,
     "num": 1,
     "heavy": false
@@ -23,18 +23,18 @@
     "def": 1,
     "desc": "Not comfy. Not protective.",
     "res": [],
-    "cost": 2,
-    "itemLvl": 0,
+    "cost": 4,
+    "itemLvl": 1,
     "slot": 2,
     "num": 2,
     "heavy": false
 }, {
     "name": "Worn Gloves",
     "def": 1,
-    "desc": "The gloves of a worker. They offer little-to-know actual defense.",
+    "desc": "The gloves of a worker. They offer little-to-no actual defense.",
     "res": [],
     "cost": 2,
-    "itemLvl": 0,
+    "itemLvl": 1,
     "slot": 3,
     "num": 3,
     "heavy": false
@@ -44,7 +44,7 @@
     "desc": "Farmers don't normally fight horrific monsters, so these aren't exactly reassuring.",
     "res": [],
     "cost": 2,
-    "itemLvl": 0,
+    "itemLvl": 1,
     "slot": 4,
     "num": 4,
     "heavy": false
@@ -54,7 +54,7 @@
     "desc": "A cook's best friend, this little trinket offers defense against not checking your stovetop before touching it.",
     "res": [1],
     "cost": 8,
-    "itemLvl": 2,
+    "itemLvl": 1,
     "slot": 5,
     "num": 5,
     "heavy": false
@@ -90,11 +90,11 @@
     "heavy": false
 }, {
     "name": "Parachute Pants",
-    "def": 2,
+    "def": 3,
     "desc": "The 1980's called. They want their pants back.",
     "res": [],
-    "cost": 15,
-    "itemLvl": 1,
+    "cost": 6,
+    "itemLvl": 4,
     "slot": 2,
     "num": 9,
     "heavy": false
@@ -114,7 +114,7 @@
     "desc": "You know, that pair that you haven't seen in years. Really comfy, but also really weak.",
     "res": [],
     "cost": 15,
-    "itemLvl": 1,
+    "itemLvl": 3,
     "slot": 4,
     "num": 11,
     "heavy": false
@@ -244,8 +244,238 @@
     "desc": "The decision not to use facial protection is a trade off: much higher visibility and breathability, but also a much higher chance of getting decked in the face.",
     "res": [0],
     "cost": 34,
-    "itemLvl": 13,
+    "itemLvl": 8,
     "slot": 0,
     "num": 24,
     "heavy": true
+}, {
+    "name": "Nasal Helmet",
+    "def": 10,
+    "desc": "Rather uncomfortable, the Nasal Helmet is a primitive helmet that provides no real benefits.",
+    "res": [],
+    "cost": 5,
+    "itemLvl": 1,
+    "slot": 0,
+    "num": 25,
+    "heavy": true
+}, {
+    "name": "Splint Helmet",
+    "def": 12,
+    "desc": "Made of overlapping strips of iron on a leather base, this is actually rather effective at keeping your noggin working.",
+    "res": [],
+    "cost": 12,
+    "itemLvl": 5,
+    "slot": 0,
+    "num": 26,
+    "heavy": true
+}, {
+    "name": "Cloth cap",
+    "def": 4,
+    "desc": "Surprisingly, a simple cloth cap does offer some protection against damage. Not much though.",
+    "res": [],
+    "cost": 5,
+    "itemLvl": 4,
+    "slot": 0,
+    "num": 27,
+    "heavy": false
+}, {
+    "name": "Silk Armor Cap",
+    "def": 10,
+    "desc": "The intricate weave of a silk cap provides much protection against small arrows. Not much against large hammers, however.",
+    "res": [],
+    "cost": 12,
+    "itemLvl": 7,
+    "slot": 0,
+    "num": 28,
+    "heavy": false
+}, {
+    "name": "Ring of the Defender",
+    "def": 1,
+    "desc": "Somehow, wearing this tiny trinket on your finger provides protection against physical damage.",
+    "res": [0],
+    "cost": 12,
+    "itemLvl": 3,
+    "slot": 5,
+    "num": 29,
+    "heavy": false
+}, {
+    "name": "Ring of the Cryomancer",
+    "def": 1,
+    "desc": "Stop crying. It's not that cold.",
+    "res": [2],
+    "cost": 8,
+    "itemLvl": 1,
+    "slot": 5,
+    "num": 30,
+    "heavy": false
+}, {
+    "name": "Ring of the Guardian",
+    "def": 1,
+    "desc": "This glowy little ring just makes you feel better. How nice.",
+    "res": [4],
+    "cost": 8,
+    "itemLvl": 1,
+    "slot": 5,
+    "num": 31,
+    "heavy": false
+}, {
+    "name": "Cook's Necklace",
+    "def": 1,
+    "desc": "Pro-tip: If this thing is on fire, you're probably too close to the stove.",
+    "res": [1],
+    "cost": 8,
+    "itemLvl": 1,
+    "slot": 5,
+    "num": 32,
+    "heavy": true
+}, {
+    "name": "Defender's Necklace",
+    "def": 1,
+    "desc": "Priestly wards imbue this otherwise unremarkable necklace, providing extra protection against physical damage",
+    "res": [0],
+    "cost": 12,
+    "itemLvl": 3,
+    "slot": 5,
+    "num": 33,
+    "heavy": true
+}, {
+    "name": "Cryomancer's Necklace",
+    "def": 1,
+    "desc": "The coldest of attacks won't quite be as threatening while you wear this. Also, it's pretty stylish.",
+    "res": [2],
+    "cost": 8,
+    "itemLvl": 1,
+    "slot": 5,
+    "num": 34,
+    "heavy": true
+}, {
+    "name": "Light-Imbued Necklace",
+    "def": 1,
+    "desc": "As guardians of the light, the paladins wear these tiny trinkets as symbols of their fight against the darkness.",
+    "res": [4],
+    "cost": 8,
+    "itemLvl": 1,
+    "slot": 5,
+    "num": 35,
+    "heavy": true
+}, {
+    "name": "Splint Leg Guards",
+    "def": 5,
+    "desc": "The small pieces of armor that make up these leggings may not seem like much, but sometimes 'not much' is all you need between you and an enemy.",
+    "res": [],
+    "cost": 8,
+    "itemLvl": 1,
+    "slot": 2,
+    "num": 36,
+    "heavy": true
+}, {
+    "name": "Rough Splint Mail",
+    "def": 5,
+    "desc": "The most basic of heavy armors, this provides only moderate defense.",
+    "res": [],
+    "cost": 8,
+    "itemLvl": 1,
+    "slot": 1,
+    "num": 37,
+    "heavy": true
+}, {
+    "name": "Boiled Leather Boots",
+    "def": 8,
+    "desc": "These have a slight foul odor, but they protect your feet!",
+    "res": [],
+    "cost": 13,
+    "itemLvl": 5,
+    "slot": 4,
+    "num": 38,
+    "heavy": true
+}, {
+    "name": "Rough Leather Boots",
+    "def": 6,
+    "desc": "These offer only the most basic defense against getting your toes trod on.",
+    "res": [],
+    "cost": 5,
+    "itemLvl": 1,
+    "slot": 4,
+    "num": 39,
+    "heavy": true
+}, {
+    "name": "Boiled Leather Gloves",
+    "def": 8,
+    "desc": "While initially stiff, they're eventually quite comfy.",
+    "res": [],
+    "cost": 12,
+    "itemLvl": 5,
+    "slot": 3,
+    "num": 40,
+    "heavy": true
+}, {
+    "name": "Splint Gloves",
+    "def": 5,
+    "desc": "The splints that make up these allow a maximum of dexterity. They also allow a maximum of crushed fingers.",
+    "res": [],
+    "cost": 8,
+    "itemLvl": 1,
+    "slot": 3,
+    "num": 41,
+    "heavy": true
+}, {
+    "name": "Tattered Gloves",
+    "def": 1,
+    "desc": "These gloves have seen better days.",
+    "res": [],
+    "cost": 2,
+    "itemLvl": 1,
+    "slot": 3,
+    "num": 42,
+    "heavy": false
+}, {
+    "name": "Silk Boots",
+    "def": 7,
+    "desc": "These rather comfy boots also are incredibly stealthy. Too bad this game has no stealth mechanic",
+    "res": [],
+    "cost": 10,
+    "itemLvl": 7,
+    "slot": 4,
+    "num": 43,
+    "heavy": false
+}, {
+    "name": "Silk Gloves",
+    "def": 7,
+    "desc": "If nothing else, at least they make you feel fancy.",
+    "res": [],
+    "cost": 10,
+    "itemLvl": 7,
+    "slot": 3,
+    "num": 44,
+    "heavy": false
+}, {
+    "name": "Cloth Weave Boots",
+    "def": 1,
+    "desc": "The intricate weave of these provides significant protection",
+    "res": [],
+    "cost": 15,
+    "itemLvl": 12,
+    "slot": 4,
+    "num": 45,
+    "heavy": false
+}, {
+    "name": "Silk Leggings",
+    "def": 6,
+    "desc": "They make you feel all comfy. Like pajamas",
+    "res": [],
+    "cost": 8,
+    "itemLvl": 8,
+    "slot": 2,
+    "num": 46,
+    "heavy": false
+}, {
+    "name": "Crossweave Greaves",
+    "def": 10,
+    "desc": "They protect your bits! And they rhyme!",
+    "res": [],
+    "cost": 13,
+    "itemLvl": 12,
+    "slot": 2,
+    "num": 47,
+    "heavy": false
 }]

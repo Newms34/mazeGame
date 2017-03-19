@@ -54,9 +54,44 @@
                 <th ng-click='chSort("num")'><span ng-if='sortCol=="num" && !sortRev'>&#9660;</span><span ng-if='sortCol=="num" && sortRev'>&#9650;</span>Number</th>
                 <th ng-click='chSort("heavy")'><span ng-if='sortCol=="heavy" && !sortRev'>&#9660;</span><span ng-if='sortCol=="heavy" && sortRev'>&#9650;</span>Heavy?</th>
             </tr>
+            <tr class='info'>
+                <th>
+                    <input ng-model='filtIn.name' type="text">
+                </th>
+                <th class='thin'>
+                    <input ng-model='filtIn.def' type="number">
+                </th>
+                <th>
+                    <input ng-model='filtIn.desc' type="text">
+                </th>
+                <th>
+                <h5 style='font-weight:bold;' ng-click='filResShow = !filResShow'>Resistances</h5>
+                    <div ng-repeat='fr in resists' ng-show='filResShow'>
+                        <input type="checkbox" ng-model='filtIn.res[fr.num]'>{{fr.lbl}}</div>
+                </th>
+                <th class='thin'>
+                    <input ng-model='filtIn.cost' type="number">
+                </th>
+                <th class='thin'>
+                    <input ng-model='filtIn.itemLvl' type="number">
+                </th>
+                <th>
+                    <select ng-options='slt.num as slt.lbl for slt in slots' ng-model='filtIn.slot'></select>
+                </th>
+                <th class='thin'>
+                    <input ng-model='filtIn.num' type="number">
+                </th>
+                <th class='thin'>
+                    <input ng-model='filtIn.heavy' type="radio" value='heavy'>Yes
+                    <br/>
+                    <input ng-model='filtIn.heavy' type="radio" value='light'>No</th>
+            </tr>
+            <tr class='info' colspan='2'>
+                <button class='btn btn-primary' ng-click='clearFilt()'>Clear Filters</button>
+            </tr>
         </thead>
         <tbody>
-            <tr ng-repeat='a in armors|orderBy:sortCol:sortRev'>
+            <tr ng-repeat='a in armors|orderBy:sortCol:sortRev|filter:doFilt'>
                 <td>
                     <input type="text" ng-model='a.name'>
                 </td>
@@ -79,7 +114,7 @@
                 <td>
                     <select ng-options='slt.num as slt.lbl for slt in slots' ng-model='a.slot'></select>
                 </td>
-                <td>{{$index}}</td>
+                <td>{{a.num}}</td>
                 <td>
                     <input type="checkbox" name='heavyStat{{a.num}}' ng-model='a.heavy' value='true' checked='{{a.heavy}}'> is heavy
                 </td>
@@ -140,6 +175,28 @@
             lbl: 'Holy',
             num: 5
         }];
+        $scope.clearFilt = function(){
+            $scope.filtIn = {};
+        }
+        $scope.filtIn = {};
+        $scope.doFilt = function(it) {
+            var hasRes = false;
+            for(var i in $scope.filtIn.res){
+                if ($scope.filtIn[i] && $scope.filtIn.hasOwnProperty(i)){
+                    hasRes = true;
+                }
+            }
+            console.log(it.res,$scope.filtIn.res)
+            return ($scope.filtIn.name ? it.name.toLowerCase().indexOf($scope.filtIn.name.toLowerCase()) > -1 : true) 
+            && ($scope.filtIn.desc ? it.desc.toLowerCase().indexOf($scope.filtIn.desc.toLowerCase()) > -1 : true) 
+            && ($scope.filtIn.def ? it.def == $scope.filtIn.def : true) 
+            && ($scope.filtIn.cost ? it.cost == $scope.filtIn.cost : true) 
+            && ($scope.filtIn.itemLvl ? it.itemLvl == $scope.filtIn.itemLvl : true) 
+            && ($scope.filtIn.num ? it.num == $scope.filtIn.num : true)
+            && ($scope.filtIn.slot || $scope.filtIn.slot===0 ? it.slot == $scope.filtIn.slot : true)
+            && ($scope.filtIn.heavy ? ($scope.filtIn.heavy =='heavy' && it.heavy)||($scope.filtIn.heavy=='light' && !it.heavy):true)
+            && (hasRes? true:true);
+        }
         $scope.parseArmors = function() {
             console.log(JSON.parse($scope.objTxt));
             try {
