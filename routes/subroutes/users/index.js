@@ -18,41 +18,35 @@ router.post('/reset', function(req, res, next) {
             res.send('no');
         } else {
             if (usr.correctPassword(pwd)) {
-                var usrSkills = startStats.getSkills(prof);
-                var salt = mongoose.model('User').generateSalt();
-                var resUsr = {
-                    lvl: 1,
-                    playerLvl: 1,
-                    prof: prof,
-                    equip: {
-                        gold: 100,
-                        head: [-1, -1, -1],
-                        chest: [-1, -1, -1],
-                        hands: [-1, -1, -1],
-                        legs: [-1, -1, -1],
-                        feet: [-1, -1, -1],
-                        weap: [3, 0, 8],
-                        inv: []
-                    },
-                    salt: salt,
-                    pass: mongoose.model('User').encryptPassword(pwd, salt),
-                    questDone: [],
-                    inProg: [],
-                    currentLevel: {
-                        loc: null,
-                        data: [],
-                        names: []
-                    },
-                    skills: usrSkills,
-                    maxHp: 50,
-                    currHp: 50,
-                    maxEn: 30,
-                    currEn: 30,
-                    isStunned: false
-                }
-                mongoose.model('User').update({ 'name': un }, resUsr, function(r) {
-                    console.log('reset!');
-                    res.send('yes');
+                mongoose.model('Affix').find({}, function(erraf, affs) {
+                    //we err af right now fam
+                    var usrSkills = startStats.getSkills(prof);
+                    var salt = mongoose.model('User').generateSalt();
+                    var resUsr = {
+                        lvl: 1,
+                        playerLvl: 1,
+                        prof: prof,
+                        equip: startStats.getEquip(prof, affs.lenth),
+                        salt: salt,
+                        pass: mongoose.model('User').encryptPassword(pwd, salt),
+                        questDone: [],
+                        inProg: [],
+                        currentLevel: {
+                            loc: null,
+                            data: [],
+                            names: []
+                        },
+                        skills: usrSkills,
+                        maxHp: 50,
+                        currHp: 50,
+                        maxEn: 30,
+                        currEn: 30,
+                        isStunned: false
+                    }
+                    mongoose.model('User').update({ 'name': un }, resUsr, function(r) {
+                        console.log('reset!');
+                        res.send('yes');
+                    })
                 })
             } else {
                 console.log('wrong pwd!');
@@ -90,45 +84,36 @@ router.post('/new', function(req, res, next) {
         prof = parseInt(req.body.prof) || 1;
     mongoose.model('User').findOne({ 'name': un }, function(err, user) {
         if (!user) {
-            //this user does not exist yet, so 
-            //go ahead and record their un and pwd
-            //then make a new user!
-            var usrSkills = startStats.getSkills(prof);
-            var salt = mongoose.model('User').generateSalt();
-            var newUser = {
-                name: un,
-                lvl: 1,
-                playerLvl: 1,
-                prof: prof,
-                equip: {
-                    gold: 100,
-                    head: [-1, -1, -1],
-                    chest: [-1, -1, -1],
-                    hands: [-1, -1, -1],
-                    legs: [-1, -1, -1],
-                    feet: [-1, -1, -1],
-                    weap: [3, 0, 8],
-                    inv: []
-                },
-                salt: salt,
-                pass: mongoose.model('User').encryptPassword(pwd, salt),
-                questDone: [],
-                inProg: [],
-                currentLevel: {
-                    loc: null,
-                    data: [],
-                    names: []
-                },
-                skills: usrSkills,
-                maxHp: 50,
-                currHp: 50,
-                maxEn: 30,
-                currEn: 30,
-                isStunned: false
-            }
-            console.log(newUser);
-            mongoose.model('User').create(newUser);
-            res.send('saved!')
+            mongoose.model('Affix').find({}, function(erraf, affs) {
+                //this user does not exist yet, so okay to go ahead and record their un and pwd then make a new user!
+                var usrSkills = startStats.getSkills(prof);
+                var salt = mongoose.model('User').generateSalt();
+                var newUser = {
+                    name: un,
+                    lvl: 1,
+                    playerLvl: 1,
+                    prof: prof,
+                    equip: startStats.getEquip(prof, affs.length),
+                    salt: salt,
+                    pass: mongoose.model('User').encryptPassword(pwd, salt),
+                    questDone: [],
+                    inProg: [],
+                    currentLevel: {
+                        loc: null,
+                        data: [],
+                        names: []
+                    },
+                    skills: usrSkills,
+                    maxHp: 50,
+                    currHp: 50,
+                    maxEn: 30,
+                    currEn: 30,
+                    isStunned: false
+                }
+                console.log(newUser);
+                mongoose.model('User').create(newUser);
+                res.send('saved!')
+            })
         } else {
             res.send('DUPLICATE');
         }

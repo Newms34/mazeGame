@@ -4,10 +4,10 @@
     "min": 1,
     "max": 4,
     "def": 0,
-    "itemLvl": 0,
+    "itemLvl": 1,
     "cost": 2,
     "imgUrl": "",
-    "num":0
+    "num": 0
 }, {
     "name": "Rusted Axe",
     "desc": "This axe has seen better days. Perhaps you should axe for a new one.",
@@ -17,17 +17,17 @@
     "itemLvl": 1,
     "cost": 6,
     "imgUrl": "",
-    "num":1
+    "num": 1
 }, {
     "name": "Battered Shield",
     "desc": "The royal mathematicians have conclusive proven that having something between you and a monster statistically increases your chances of not dying.",
     "min": 0,
     "max": 0,
     "def": 5,
-    "itemLvl": 0,
+    "itemLvl": 1,
     "cost": 5,
     "imgUrl": "",
-    "num":2
+    "num": 2
 }, {
     "name": "Holy Mace",
     "desc": "This blessed mace shields its user, providing added defense.",
@@ -37,7 +37,7 @@
     "itemLvl": 3,
     "cost": 9,
     "imgUrl": "",
-    "num":3
+    "num": 3
 }, {
     "name": "Rusted Greatsword",
     "desc": "The battles that this once great weapon took part in have been lost to history. It's still intimidating, though.",
@@ -47,7 +47,7 @@
     "itemLvl": 6,
     "cost": 15,
     "imgUrl": "",
-    "num":4
+    "num": 4
 }, {
     "name": "Jeweled Staff",
     "desc": "Basically a stick with a pretty rock in it. Some [citation needed] think it makes your magic better.",
@@ -57,7 +57,7 @@
     "itemLvl": 5,
     "cost": 12,
     "imgUrl": "",
-    "num":5
+    "num": 5
 }, {
     "name": "Rusted Warhammer",
     "desc": "While certainly not as fast or elegant as a sword, a warhammer in the hands of a skilled warrior can be a fearsome sight.",
@@ -67,7 +67,7 @@
     "itemLvl": 6,
     "cost": 13,
     "imgUrl": "",
-    "num":6
+    "num": 6
 }, {
     "name": "Tower Shield",
     "desc": "While many view shields as useless or weak, the thought of having a big piece of metal between you and a foe is rather comforting.",
@@ -77,7 +77,7 @@
     "itemLvl": 8,
     "cost": 25,
     "imgUrl": "",
-    "num":7
+    "num": 7
 }, {
     "name": "Crude Sword",
     "desc": "Little more than a sharpened piece of metal, this isn't very intimidating.",
@@ -87,5 +87,15 @@
     "itemLvl": 2,
     "cost": 6,
     "imgUrl": "",
-    "num":8
+    "num": 8
+}, {
+    "name": "Crude Staff",
+    "def": 1,
+    "desc": "Really just a piece of driftwood with some basic incantations. Marginally better than nothing all.",
+    "max": 6,
+    "min": 2,
+    "itemLvl": 1,
+    "cost": 5,
+    "imgUrl": "",
+    "num": 9
 }]

@@ -134,8 +134,12 @@
             }
         }
         $scope.recChanges = function() {
-            
-            $scope.objTxt = JSON.stringify($scope.weaps)
+            var recObjs = angular.copy($scope.weaps);
+            recObjs.forEach(function(w){
+                delete w.$$hashkey;
+            })
+            console.log('recObjs',recObjs)
+            $scope.objTxt = JSON.stringify(recObjs)
         }
     });
     </script>
