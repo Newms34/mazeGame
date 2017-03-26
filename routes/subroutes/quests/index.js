@@ -29,7 +29,7 @@ router.post('/lvlQuest', function(req, res, next) {
         });
     }
 });
-router.get("/randQuest/:lvl", function(req, res, next) {
+router.post("/randQuest/:lvl", function(req, res, next) {
     //get a random level-appropriate quest. Note that the level may be anywhere from 1 level below to 3 levels above the current pLvl.
     console.log('checking login', req.session)
     if (!req.session || !req.session.user || req.body.user !== req.session.user.name) {

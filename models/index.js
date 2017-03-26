@@ -11,7 +11,8 @@ require('./npcs/');
 require('./dialog/');
 require('./quests/');
 require('./users/');
-require('./skills/')
+require('./skills/');
+require('./votes/');
 console.log('Node Environment:', process.env.NODE_ENV)
 if (!process.env.NODE_ENV || process.env.NODE_ENV != 'prod') {
     //just some quick env check. If we're developing locally, go ahead and use our local db. Otherwise, use the mlab db.

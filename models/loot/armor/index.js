@@ -8,7 +8,7 @@ var armorSchema = new mongoose.Schema({
     itemLvl:Number,
     slot:Number,
     num:Number,
-    heavy:{type: boolean, default:false}//this indicates the armor weight. If the item has a weight of FALSE, the armor is LIGHT armor (necro and sorc). Otherwise, the armor is HEAVY (paly and war)
+    heavy:{type: Boolean, default:false}//this indicates the armor weight. If the item has a weight of FALSE, the armor is LIGHT armor (necro and sorc). Otherwise, the armor is HEAVY (paly and war)
 },{collection: 'Armor'});
 /*slot describes where the item goes:
 0:head,
@@ -16,6 +16,6 @@ var armorSchema = new mongoose.Schema({
 2:legs,
 3:hands,
 4:feet
-5:ring
+5:none
 */
 mongoose.model('Armor', armorSchema);

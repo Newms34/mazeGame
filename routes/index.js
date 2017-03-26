@@ -12,6 +12,7 @@ var router = express.Router(),
 router.use('/item', require('./subroutes/items'));
 router.use('/user', require('./subroutes/users'));
 router.use('/quest', require('./subroutes/quests'));
+router.use('/voting',require('./subroutes/votes'))
 router.use('/other', require('./subroutes/other'));
 router.get('/', function(req, res, next) {
     /*get the homepage (the game screen)
@@ -28,7 +29,10 @@ router.get('/mobile', function(req, res, next) {
     /*get mobile!*/
     res.sendFile('mobile.html', { root: './views' })
 });
-
+router.get('/votes', function(req, res, next) {
+    /*get votes!*/
+    res.sendFile('votes.html', { root: './views' })
+});
 router.get('/login', function(req, res, next) {
     //send user to login page. This also gets called below if the user fails @ login.
     //This page will include BOTH a login AND signup option!

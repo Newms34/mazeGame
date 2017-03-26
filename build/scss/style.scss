@@ -411,23 +411,167 @@ body {
     & li {
         padding: 3px;
         color: #000;
-        cursor:pointer!important;
-        
-        & div{
-            width:15px;
-            height:15px;
-            display:inline-block;
-            pointer-events:none;
-            transition-duration:.5s;
+        cursor: pointer!important;
+        & div {
+            width: 15px;
+            height: 15px;
+            display: inline-block;
+            pointer-events: none;
+            transition-duration: .5s;
         }
-        &:hover div{
-            width:20px;
-            height:20px;
-            filter:invert(100%) drop-shadow(0 0 5px #000);
+        &:hover div {
+            width: 20px;
+            height: 20px;
+            filter: invert(100%) drop-shadow(0 0 5px #000);
         }
         &:hover {
-            text-shadow:0 0 10px #000;
+            text-shadow: 0 0 10px #000;
+            color: #fff;
+        }
+    }
+}
+
+#vote-page {
+    background: url('../img/assets/scribe.jpg');
+    background-size: cover;
+    background-attachment: fixed;
+}
+
+.vote-panel {
+    & .thin {
+        max-width: 50px;
+    }
+    & img {
+        width: 64px;
+        height: 64px;
+    }
+    & table {
+        display: block;
+        max-height: 200px;
+        & .table-div,
+        & tbody {
+            max-height: 200px;
+            display: block;
+            overflow-y: scroll;
+        }
+    }
+    & .old-stuff h3 {
+        background: #ddf;
+        cursor: pointer;
+        padding: 5px;
+        display: block;
+        width: 20%;
+        transition-duration: .2s;
+        border-radius: 5px;
+        &:hover {
+            background: #ccf;
+            box-shadow: 2px 2px 4px #000;
+        }
+    }
+    & .fake-table {
+        width: 100%;
+        display: none;
+        &.fake-vote-table {
+            display: block;
+        }
+        & .fake-head {
+            width: 100%;
+            font-weight: bold;
+            border-bottom: 1px solid #202034;
+        }
+        & .fake-body {
+            width: 100%;
+            height: 300px;
+            overflow-y: scroll;
+        }
+        & .fake-row {
+            width: 100%;
+            border-bottom: 1px solid #9D9DFF;
+            & div {
+                display: inline-block;
+                margin: 0px;
+                padding: 3px;
+                max-height: 64px;
+                position: relative;
+                &.col-med {
+                    width: 10%;
+                }
+                &.col-lg {
+                    width: 21%;
+                }
+                &.col-sm {
+                    width: 5%;
+                }
+                &.sortable {
+                    cursor: pointer;
+                    transition-duration: .2s;
+                    &:hover {
+                        background: #ddf;
+                    }
+                }
+                & .vote-cont {
+                    width: 100%;
+                    height: 20px;
+                    background: #333;
+                    position: relative;
+                    cursor: pointer;
+                    & .vote-bar {
+                        width: 10%;
+                        height: 99%;
+                        top: 1%;
+                        left: 0;
+                        position: absolute;
+                        background: #090;
+                        pointer-events: none;
+                        transition-duration: .2s;
+                        &.no-vote {
+                            background: #575!important;
+                        }
+                    }
+                    &:hover .vote-bar {
+                        background: #0c0;
+                    }
+                }
+            }
+        }
+    }
+    & .vote-select-btns {
+        background: #eee;
+        display: block;
+        height: 100%;
+        padding: 5px;
+    }
+    & .new-it-form {
+        & .col-md-8 {
+            background:#555;
             color:#fff;
+            margin-bottom:3px;
+            padding:5px;
+            & input[type='text'],
+            & textarea {
+                color:#000;
+                width: 100%;
+            }
+            & select, & input[type='number']{
+                color:#000;
+            }
+            & #size-bars {
+                position: relative;
+                margin-bottom:30px;
+                & .vert-range {
+                    position: absolute;
+                    transform-origin: 0% 100%;
+                    transform: rotateZ(90deg);
+                    left:100%;
+                }
+            }
+            & canvas {
+                display: block;
+                background:#fff;
+                position: absolute;
+                top:20px;
+                box-shadow: 1px 1px 3px #000;
+            }
         }
     }
 }
