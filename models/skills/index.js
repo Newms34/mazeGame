@@ -9,7 +9,7 @@ var skillSchema = new mongoose.Schema({
     degen: Number, //DoT damage (per turn)
     type: Number, //damage type.
     stuns: Boolean,
-    imgUrl: String,
+    imgUrl: String,//this should either be a url or a dataurl
     id: Number, //id number of skill
     prevSkill: { type: Number, default: 0 }, //for skill tree. If zero, this is a base skill (and thus has no required prev skill). Otherwise, id of prerequisite skill.
     nextSkills: [Number], //for skill tree. Array of possible next skills user may choose from this skill 

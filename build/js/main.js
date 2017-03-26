@@ -240,7 +240,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
         return {
             ang: ang,
             ht: ht
-        }
+        };
     };
     $scope.chInv = function(dir) {
         //UI Cycle function
@@ -261,6 +261,20 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
                     $scope.currUIObjs.forEach(function(m) {
                         m.imgUrl = '/img' + m.imgUrl;
                     })
+                }else if($scope.currUIPan=='Skills'){
+                    for (var i=0; i<uiRes.data;i++){
+                        //load and draw images.
+                        uiRes.data[i].cid = uiRes.data[i].name.toLowerCase().replace(/\s/g,'_');
+                        if (uiRes.data[i].imgUrl.indexOf('./img')<0){
+                            var tempCanv = document.querySelector('#'+cid),
+                                tempCtx = tempCanv.getContext("2d"),
+                                tempImg = new Image();
+                            tempImg.src = uiRes.data[i].imgUrl;
+                            tempImg.onload = function(){
+                                tempCtx.drawImage(tempImg,0,0)
+                            }
+                        }
+                    }
                 }
                 console.log('UI OBJS:', $scope.currUIObjs);
             });
