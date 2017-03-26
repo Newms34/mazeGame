@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Maze! Votes</title>
+    <link rel="stylesheet" href="/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/styles.css">
+    <link rel="stylesheet" type="text/css" href="/sandal-chest/sandal-chest.css">
+</head>
+
+<body ng-app='mazeGame' ng-controller='vote-con' id='vote-page'>
+    <div class='container col-md-10 col-md-offset-1'>
+        <div class='panel panel-danger vote-panel'>
+            <div class='panel-heading'>
+                <h3>Skills &#128293;</h3></div>
+            <div class='panel-body'>
+                <div class='old-stuff'>
+                    <h3 onclick='$(this).siblings(".fake-table").toggle(100);'>Current Skills &#128269;</h3>
+                    <div class='fake-table'>
+                        <div class='fake-head'>
+                            <div class='fake-row'>
+                                <div ng-click='chSort("name","skills")' class='sortable col-med'>Name</div>
+                                <div ng-click='chSort("desc","skills")' class='sortable col-lg'>Description</div>
+                                <div ng-click='chSort("energy","skills")' class='sortable col-sm'>Energy</div>
+                                <div ng-click='chSort("heal","skills")' class='sortable col-sm'>Burst Heal</div>
+                                <div ng-click='chSort("regen","skills")' class='sortable col-sm'>Regen</div>
+                                <div ng-click='chSort("burst","skills")' class='sortable col-sm'>Burst Dmg</div>
+                                <div ng-click='chSort("degen","skills")' class='sortable col-sm'>Degen</div>
+                                <div ng-click='chSort("type","skills")' class='sortable col-med'>Damage Type</div>
+                                <div class='col-med'>Icon</div>
+                                <div ng-click='chSort("id","skills")' class='sortable col-sm'>Id</div>
+                                <div ng-click='chSort("effectList","skills")' class='sortable col-med'>Extra Effects</div>
+                                <div ng-click='chSort("prevSkill","skills")' class='sortable col-sm'>Previous Skill</div>
+                            </div>
+                        </div>
+                        <div class='fake-body'>
+                            <div class='fake-row' ng-repeat='s in items.skills|orderBy:sortCols["skills"]:sortRev["skills"]'>
+                                <div class='col-med'>{{s.name}}</div>
+                                <div class='col-lg'>{{s.desc}}</div>
+                                <div class='col-sm'>{{s.energy||'none'}}</div>
+                                <div class='col-sm'>{{s.heal||'none'}}</div>
+                                <div class='col-sm'>{{s.regen||'none'}}</div>
+                                <div class='col-sm'>{{s.burst||'none'}}</div>
+                                <div class='col-sm'>{{s.degen||'none'}}</div>
+                                <div class='col-med'>{{dtypes[s.type]}}</div>
+                                <div class='col-med'><img src='{{s.imgUrl}}'></div>
+                                <div class='col-sm'>{{s.id}}</div>
+                                <div class='col-med'>
+                                    <span ng-if='!s.effectList || !s.effectList.length'>None</span>
+                                    <ul ng-if='s.effectList && s.effectList.length'>
+                                        <li ng-repeat='ef in s.effectList'>{{ef}}</li>
+                                    </ul>
+                                </div>
+                                <div class='col-sm'>
+                                    <span ng-if='s.prevSkill>-1'>{{items.skills[s.prevSkill].name}}</span>
+                                    <span ng-if='s.prevSkill==-1'>(base)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <div class='curr-votes'>
+                    <h3>Skills In Voting</h3>
+                    <div class='fake-table fake-vote-table'>
+                        <div class='fake-head'>
+                            <div class='fake-row'>
+                                <div ng-click='chSort("name","skillsv")' class='sortable col-med'>Name</div>
+                                <div ng-click='chSort("desc","skillsv")' class='sortable col-lg'>Description</div>
+                                <div ng-click='chSort("energy","skillsv")' class='sortable col-sm'>Energy</div>
+                                <div ng-click='chSort("heal","skillsv")' class='sortable col-sm'>Burst Heal</div>
+                                <div ng-click='chSort("regen","skillsv")' class='sortable col-sm'>Regen</div>
+                                <div ng-click='chSort("burst","skillsv")' class='sortable col-sm'>Burst Dmg</div>
+                                <div ng-click='chSort("degen","skillsv")' class='sortable col-sm'>Degen</div>
+                                <div ng-click='chSort("type","skillsv")' class='sortable col-sm'>Damage Type</div>
+                                <div class='col-med'>Icon</div>
+                                <div ng-click='chSort("effectList","skillsv")' class='sortable col-med'>Extra Effects</div>
+                                <div ng-click='chSort("prevSkill","skillsv")' class='sortable col-sm'>Previous Skill Id</div>
+                                <div ng-click='chSort("voteCurr","skillsv")' class='sortable col-sm'>Vote</div>
+                            </div>
+                        </div>
+                        <div class='fake-body' ng-show='!!user'>
+                            <div class='fake-row' ng-repeat='sv in skillVotes|orderBy:sortCols["skillsv"]:sortRev["skillsv"]'>
+                                <div class='col-med'>{{sv.name}}</div>
+                                <div class='col-lg'>{{sv.desc}}</div>
+                                <div class='col-sm'>{{sv.energy||'none'}}</div>
+                                <div class='col-sm'>{{sv.heal||'none'}}</div>
+                                <div class='col-sm'>{{sv.regen||'none'}}</div>
+                                <div class='col-sm'>{{sv.burst||'none'}}</div>
+                                <div class='col-sm'>{{sv.degen||'none'}}</div>
+                                <div class='col-sm'>{{dtypes[sv.type]}}</div>
+                                <div class='col-med'><img src='{{sv.imgUrl}}'></div>
+                                <div class='col-med'>
+                                    <span ng-if='!sv.effectList || !sv.effectList.length'>None</span>
+                                    <ul ng-if='sv.effectList && sv.effectList.length'>
+                                        <li ng-repeat='ef in sv.effectList'>{{ef}}</li>
+                                    </ul>
+                                </div>
+                                <div class='col-sm'>
+                                    <span ng-if='sv.prevSkill>-1'>{{sv.prevSkill}}</span>
+                                    <span ng-if='sv.prevSkill==-1'>(base)</span>
+                                </div>
+                                <div class='col-med'>
+                                    <div class='vote-cont' ng-mousemove='moveBar(sv,$event)' ng-mouseout='resetBar(sv)' ng-click='doVote(sv,$event)'>
+                                        <div class='vote-bar' style='width:{{sv.voteCurr*20}}%;' ng-class="{'no-vote
+                                        ':sv.voted}"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class='panel panel-success vote-panel'>
+            <div class='panel-heading'>
+                <h3>Armor &#128085;</h3></div>
+            <div class='panel-body'>
+                <div class='old-stuff'>
+                    <h3 onclick='$(this).siblings(".fake-table").toggle(100);'>Current Armor &#128269;</h3>
+                    <div class='fake-table'>
+                        <div class='fake-head'>
+                            <div class='fake-row'>
+                                <div ng-click='chSort("name","armors")' class='sortable col-med'>Name</div>
+                                <div ng-click='chSort("desc","armors")' class='sortable col-lg'>Description</div>
+                                <div ng-click='chSort("def","armors")' class='sortable col-sm'>Defense</div>
+                                <div ng-click='chSort("res","armors")' class='sortable col-med'>Resistance</div>
+                                <div ng-click='chSort("cost","armors")' class='sortable col-sm'>Cost</div>
+                                <div ng-click='chSort("itemLvl","armors")' class='sortable col-sm'>Level</div>
+                                <div ng-click='chSort("slot","armors")' class='sortable col-sm'>Slot</div>
+                                <div ng-click='chSort("id","armors")' class='sortable col-sm'>Id</div>
+                                <div ng-click='chSort("heavy","armors")' class='sortable col-sm'>Heavy?</div>
+                            </div>
+                        </div>
+                        <div class='fake-body'>
+                            <div class='fake-row' ng-repeat='a in items.armors|orderBy:sortCols["armors"]:sortRev["armors"]'>
+                                <div class='col-med'>{{a.name}}</div>
+                                <div class='col-lg'>{{a.desc}}</div>
+                                <div class='col-sm'>{{a.def||'none'}}</div>
+                                <div class='col-med'>
+                                    <span ng-if='!a.resList || !a.resList.length'>None</span>
+                                    <ul ng-if='a.resList && a.resList.length'>
+                                        <li ng-repeat='rs in a.resList'>{{rs}}</li>
+                                    </ul>
+                                </div>
+                                <div class='col-sm'>{{a.cost}}</div>
+                                <div class='col-sm'>{{a.itemLvl}}</div>
+                                <div class='col-sm'>
+                                    {{slots[a.slot]}}
+                                </div>
+                                <div class='col-sm'>{{a.num}}</div>
+                                <div class='col-sm'>
+                                    <span ng-if='a.heavy'>Yes</span>
+                                    <span ng-if='!a.heavy'>No</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class='curr-votes'>
+                    <h3>Armor In Voting</h3>
+                    <div class='fake-table fake-vote-table'>
+                        <div class='fake-head'>
+                            <div class='fake-row'>
+                                <div ng-click='chSort("name","armorv")' class='sortable col-med'>Name</div>
+                                <div ng-click='chSort("desc","armorv")' class='sortable col-lg'>Description</div>
+                                <div ng-click='chSort("def","armorv")' class='sortable col-sm'>Defense</div>
+                                <div ng-click='chSort("res","armorv")' class='sortable col-med'>Resistance</div>
+                                <div ng-click='chSort("cost","armorv")' class='sortable col-sm'>Cost</div>
+                                <div ng-click='chSort("itemLvl","armorv")' class='sortable col-sm'>Level</div>
+                                <div ng-click='chSort("slot","armorv")' class='sortable col-sm'>Slot</div>
+                                <div ng-click='chSort("heavy","armorv")' class='sortable col-sm'>Heavy</div>
+                                <div ng-click='chSort("voteCurr","armorv")' class='sortable col-med'>Vote</div>
+                            </div>
+                        </div>
+                        <div class='fake-body' ng-show='!!user'>
+                            <div class='fake-row' ng-repeat='av in armorVotes|orderBy:sortCols["armorv"]:sortRev["armorv"]'>
+                                <div class='col-med'>{{av.name}}</div>
+                                <div class='col-lg'>{{av.desc}}</div>
+                                <div class='col-sm'>{{av.def||'none'}}</div>
+                                <div class='col-med'>
+                                    <span ng-if='!av.resList || !a.vresList.length'>None</span>
+                                    <ul ng-if='av.resList && av.resList.length'>
+                                        <li ng-repeat='rsv in av.resList'>{{rsv}}</li>
+                                    </ul>
+                                </div>
+                                <div class='col-sm'>{{av.cost}}</div>
+                                <div class='col-sm'>{{av.itemLvl}}</div>
+                                <div class='col-sm'>{{slots[av.slot]}}</div>
+                                <div class='col-sm'>
+                                    <span ng-if='av.heavy'>Yes</span>
+                                    <span ng-if='!av.heavy'>No</span>
+                                </div>
+                                <div class='col-med'>
+                                    <div class='vote-cont' ng-mousemove='moveBar(av,$event)' ng-mouseout='resetBar(av)' ng-click='doVote(av,$event)'>
+                                        <div class='vote-bar' style='width:{{av.voteCurr*20}}%;' ng-class="{'no-vote
+                                        ':av.voted}"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class='panel panel-info vote-panel'>
+            <div class='panel-heading'>
+                <h3>Weapons &#9876;</h3></div>
+            <div class='panel-body'>
+                <div class='old-stuff'>
+                    <h3 onclick='$(this).siblings(".fake-table").toggle(100);'>Current Weapons &#128269;</h3>
+                    <div class='fake-table'>
+                        <div class='fake-head'>
+                            <div class='fake-row'>
+                                <div ng-click='chSort("name","weaps")' class='sortable col-med'>Name</div>
+                                <div ng-click='chSort("desc","weaps")' class='sortable col-lg'>Description</div>
+                                <div ng-click='chSort("def","weaps")' class='sortable col-sm'>Defense</div>
+                                <div ng-click='chSort("min","weaps")' class='sortable col-sm'>Min</div>
+                                <div ng-click='chSort("max","weaps")' class='sortable col-sm'>Max</div>
+                                <div ng-click='chSort("itemLvl","weaps")' class='sortable col-sm'>Level</div>
+                                <div ng-click='chSort("cost","weaps")' class='sortable col-sm'>Cost</div>
+                                <div ng-click='chSort("num","weaps")' class='sortable col-sm'>Id</div>
+                            </div>
+                        </div>
+                        <div class='fake-body'>
+                            <div class='fake-row' ng-repeat='w in items.weaps|orderBy:sortCols["weaps"]:sortRev["weaps"]'>
+                                <div class='col-med'>{{w.name}}</div>
+                                <div class='col-lg'>{{w.desc}}</div>
+                                <div class='col-sm'>{{w.def||'none'}}</div>
+                                <div class='col-sm'>{{w.min}}</div>
+                                <div class='col-sm'>{{w.max}}</div>
+                                <div class='col-sm'>{{w.itemLvl}}</div>
+                                <div class='col-sm'>{{w.cost}}</div>
+                                <div class='col-sm'>{{w.num}}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class='curr-votes'>
+                    <h3>Weapons In Voting</h3>
+                    <div class='fake-table fake-vote-table'>
+                        <div class='fake-head'>
+                            <div class='fake-row'>
+                                <div ng-click='chSort("name","weapv")' class='sortable col-med'>Name</div>
+                                <div ng-click='chSort("desc","weapv")' class='sortable col-lg'>Description</div>
+                                <div ng-click='chSort("def","weapv")' class='sortable col-med'>Defense</div>
+                                <div ng-click='chSort("min","weapv")' class='sortable col-sm'>Min</div>
+                                <div ng-click='chSort("max","weapv")' class='sortable col-sm'>Max</div>
+                                <div ng-click='chSort("itemLvl","weapv")' class='sortable col-sm'>Level</div>
+                                <div ng-click='chSort("cost","weapv")' class='sortable col-sm'>Cost</div>
+                                <div ng-click='chSort("voteCurr","weapv")' class='sortable col-med'>Vote</div>
+                            </div>
+                        </div>
+                        <div class='fake-body' ng-show='!!user'>
+                            <div class='fake-row' ng-repeat='wv in weapVotes|orderBy:sortCols["weapv"]:sortRev["weapv"]'>
+                                <div class='col-med'>{{wv.name}}</div>
+                                <div class='col-lg'>{{wv.desc}}</div>
+                                <div class='col-med'>{{wv.def||'none'}}</div>
+                                <div class='col-sm'>{{wv.min}}</div>
+                                <div class='col-sm'>{{wv.max}}</div>
+                                <div class='col-sm'>{{wv.itemLvl}}</div>
+                                <div class='col-sm'>{{wv.cost}}</div>
+                                <div class='col-med'>
+                                    <div class='vote-cont' ng-mousemove='moveBar(wv,$event)' ng-mouseout='resetBar(wv)' ng-click='doVote(wv,$event)'>
+                                        <div class='vote-bar' style='width:{{wv.voteCurr*20}}%;' ng-class="{'no-vote
+                                        ':wv.voted}"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class='panel panel-primary vote-panel'>
+            <div class='panel-heading'>
+                <h3>Submit New</h3></div>
+            <div class='panel-body'>
+                <div class='col-md-12 vote-select-btns'>
+                    <h4>First, pick a category:</h4>
+                    <button class='btn btn-info col-md-3' ng-click='newItemCat = "weap"'>Weapon</button>
+                    <button class='btn btn-success col-md-3 col-md-offset-1' ng-click='newItemCat = "armor"'>Armor</button>
+                    <button class='btn btn-danger col-md-3 col-md-offset-1' ng-click='newItemCat = "skill"'>Skill</button>
+                </div>
+                <div class='col-md-12' ng-show='newItemCat=="weap"'>
+                    <h4>Add a weapon</h4>
+                    <form class='new-it-form' ng-submit='subVote(newIt,"weap")'>
+                        <div class='row'>
+                            <div class='col-md-2'>Name</div>
+                            <div class='col-md-8'>
+                                <input type="text" ng-model="newIt.name">
+                            </div>
+                        </div>
+                        <div class='row'>
+                            <div class='col-md-2'>Description</div>
+                            <div class='col-md-8'>
+                                <textarea ng-model="newIt.desc"></textarea>
+                            </div>
+                        </div>
+                        <div class='row'>
+                            <div class='col-md-2'>Defense</div>
+                            <div class='col-md-8'>
+                                <input min=0 type="number" ng-model="newIt.def">
+                            </div>
+                        </div>
+                        <div class='row'>
+                            <div class='col-md-2'>Level</div>
+                            <div class='col-md-8'>
+                                <input min='0' type="number" ng-model="newIt.itemLvl">
+                            </div>
+                        </div>
+                        <div class='row'>
+                            <div class='col-md-2'>Cost</div>
+                            <div class='col-md-8'>
+                                <input min='0' type="number" ng-model="newIt.cost">
+                            </div>
+                        </div>
+                        <div class='row'>
+                            <div class='col-md-2'>Minimum Damage</div>
+                            <div class='col-md-8'>
+                                <input min='0' type="number" ng-model="newIt.min">
+                            </div>
+                        </div>
+                        <div class='row'>
+                            <div class='col-md-2'>Maximum Damage</div>
+                            <div class='col-md-8'>
+                                <input min='0' type="number" ng-model="newIt.max">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class='col-md-12' ng-show='newItemCat=="armor"'>
+                    <h4>Add armor</h4>
+                    <form class='new-it-form' ng-submit='subVote(newIt,"armor")'>
+                        <div class='row'>
+                            <div class='col-md-2'>Name</div>
+                            <div class='col-md-8'>
+                                <input type="text" ng-model="newIt.name">
+                            </div>
+                        </div>
+                        <div class='row'>
+                            <div class='col-md-2'>Description</div>
+                            <div class='col-md-8'>
+                                <textarea ng-model="newIt.desc"></textarea>
+                            </div>
+                        </div>
+                        <div class='row'>
+                            <div class='col-md-2'>Defense</div>
+                            <div class='col-md-8'>
+                                <input min='0' type="number" ng-model="newIt.def">
+                            </div>
+                        </div>
+                        <div class='row'>
+                            <div class='col-md-2'>Level</div>
+                            <div class='col-md-8'>
+                                <input min='0' type="number" ng-model="newIt.itemLvl">
+                            </div>
+                        </div>
+                        <div class='row'>
+                            <div class='col-md-2'>Cost</div>
+                            <div class='col-md-8'>
+                                <input min='0' type="number" ng-model="newIt.cost">
+                            </div>
+                        </div>
+                        <div class='row'>
+                            <div class='col-md-2'>Slot</div>
+                            <div class='col-md-8'>
+                                <select ng-options='slt.num as slt.lbl for slt in newSlots' ng-model='newIt.slot'></select>
+                            </div>
+                        </div>
+                        <div class='row'>
+                            <div class='col-md-2'>Resistances</div>
+                            <div class='col-md-8'>
+                                TBD
+                            </div>
+                        </div>
+                        <div class='row'>
+                            <div class='col-md-2'>Heavy</div>
+                            <div class='col-md-8'>
+                                <input type="checkbox" ng-model="newIt.heavy"><span ng-if='newIt.heavy'>Heavy</span><span ng-if='!newIt.heavy'>Light</span>
+
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class='col-md-12' ng-show='newItemCat=="skill"'>
+                    <h4>Add a skill</h4>
+                    <form class='new-it-form' ng-submit='subVote(newIt,"skill")'>
+                        <div class='row'>
+                            <div class='col-md-2'>Name</div>
+                            <div class='col-md-8'>
+                                <input type="text" ng-model="newIt.name">
+                            </div>
+                        </div>
+                        <div class='row'>
+                            <div class='col-md-2'>Description</div>
+                            <div class='col-md-8'>
+                                <textarea ng-model="newIt.desc"></textarea>
+                            </div>
+                        </div>
+                        <div class='row'>
+                            <div class='col-md-2'>Energy</div>
+                            <div class='col-md-8'>
+                                <input type='number' min='0' max='200' ng-model="newIt.energy">
+                            </div>
+                        </div>
+                        <div class='row'>
+                            <div class='col-md-2'>Burst Heal</div>
+                            <div class='col-md-8'>
+                                <input type='number' min='0' max='200' ng-model="newIt.heal">
+                            </div>
+                        </div>
+                        <div class='row'>
+                            <div class='col-md-2'>Regeneration</div>
+                            <div class='col-md-8'>
+                                <input type='number' min='0' max='200' ng-model="newIt.regen">
+                            </div>
+                        </div>
+                        <div class='row'>
+                            <div class='col-md-2'>Burst Damage</div>
+                            <div class='col-md-8'>
+                                <input type='number' min='0' max='200' ng-model="newIt.burst">
+                            </div>
+                        </div>
+                        <div class='row'>
+                            <div class='col-md-2'>Degeneration</div>
+                            <div class='col-md-8'>
+                                <input type='number' min='0' max='200' ng-model="newIt.degen">
+                            </div>
+                        </div>
+                        <div class='row'>
+                            <div class='col-md-2'>Damage Type</div>
+                            <div class='col-md-8'>
+                                <select ng-options='dt for dt in dtypes' ng-model='newIt.type' ng-change='sayIt()'></select>
+                            </div>
+                        </div>
+                        <div class='row'>
+                            <div class='col-md-2'>Previous Skill</div>
+                            <div class='col-md-8'>
+                                <select ng-model='newIt.prevSkill' ng-options = 'ps.id as ps.name for ps in items.skills'></select>
+                            </div>
+                        </div>
+                        <div class='row'>
+                            <div class='col-md-2'>Extra Effects</div>
+                            <div class='col-md-8'>
+                                <div class='row info'>
+                                    <div class='col-md-1'>
+                                        <input type="checkbox" ng-model='newIt.stun'>
+                                    </div>
+                                    <div class='col-md-9'>
+                                    	Stuns
+                                    </div>
+                                </div>
+                                <div class='row info'>
+                                    <div class='col-md-1'>
+                                        <input type="checkbox" ng-model='newIt.extraFx.dmgVsStun'>
+                                    </div>
+                                    <div class='col-md-9'>
+                                        Extra Damage vs. Stunned
+                                    </div>
+                                </div>
+                                <div class='row info'>
+                                    <div class='col-md-1'>
+                                        <input type="checkbox" ng-model='newIt.extraFx.protection'>
+                                    </div>
+                                    <div class='col-md-9'>
+                                        Protection
+                                    </div>
+                                </div>
+                                <div class='row info'>
+                                    <div class='col-md-1'>
+                                        <input type="checkbox" ng-model='newIt.extraFx.dmgVsDegen'>
+                                    </div>
+                                    <div class='col-md-9'>
+                                        Extra Damage vs. Degen
+                                    </div>
+                                </div>
+                                <div class='row info'>
+                                    <div class='col-md-1'>
+                                        <input type="checkbox" ng-model='newIt.extraFx.critChance'>
+                                    </div>
+                                    <div class='col-md-9'>
+                                        Chance of Critical Hit
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class='row'>
+                            <div class='col-md-2'>Image</div>
+                            <div class='col-md-8'>
+                                <div class='col-md-12'>
+                                    <input class='btn btn-info' type="file" id='filepkr'>
+                                </div>
+                                <div class='col-md-12' style='position:relative'>
+                                    <div id='size-bars' style='width:{{icon.maxWidth}}px;height:{{icon.maxHeight}}px;'>
+                                        <input type="range" class='vert-range' min='0' max='{{icon.maxHeight}}' style='width:{{icon.maxHeight}}px;' ng-model='icon.height'>
+                                        <input type="range" min='0' max='{{icon.maxWidth}}' style='width:{{icon.maxWidth}}px;' ng-model='icon.width'>
+                                    </div>
+                                    <canvas width='{{icon.maxWidth}}' height='{{icon.maxHeight}}' style='width:{{icon.width}}px;height:{{icon.height}}px;'></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class='row'>
+                            <button class='btn btn-primary col-md-offset-4 col-md-3' ng-click='subSkillVote();'>Submit!</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src='/socket.io-client/dist/socket.io.min.js'></script>
+    <script src="/jquery/dist/jquery.min.js"></script>
+    <script src="/jquery-ui/jquery-ui.min.js"></script>
+    <script src="/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="/angular/angular.min.js"></script>
+    <script src="/angular-touch/angular-touch.min.js"></script>
+    <script src="/angular-bootstrap-context-menu/dist/bootstrapContextMenu-min.js"></script>
+    <script src="/sandal-chest/sandal-chest.js"></script>
+    <script src="/js/all.min.js"></script>
+</body>
+
+</html>
