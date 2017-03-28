@@ -121,7 +121,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
             $scope.currXp = d.data.currLvlXp || 0;
             $scope.playerSkills = d.data.skills;
             $scope.extraSkillPts = d.data.skillPts || 0;
-            $scope.prof = d.data.prof||1;
+            $scope.prof = d.data.prof || 1;
             econFac.merchInv($scope.playerItems.inv).then(function(r) {
                 for (var ep = 0; ep < r.length; ep++) {
                     console.log('REPLACING', $scope.playerItems.inv[ep].item, 'WITH', r[ep])
@@ -242,6 +242,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
             ht: ht
         };
     };
+    $scope.didSkills=false;
     $scope.chInv = function(dir) {
         //UI Cycle function
         if (!dir && $scope.currUINum > 0) {
@@ -261,22 +262,38 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
                     $scope.currUIObjs.forEach(function(m) {
                         m.imgUrl = '/img' + m.imgUrl;
                     })
-                }else if($scope.currUIPan=='Skills'){
-                    for (var i=0; i<uiRes.data;i++){
-                        //load and draw images.
-                        uiRes.data[i].cid = uiRes.data[i].name.toLowerCase().replace(/\s/g,'_');
-                        if (uiRes.data[i].imgUrl.indexOf('./img')<0){
-                            var tempCanv = document.querySelector('#'+cid),
-                                tempCtx = tempCanv.getContext("2d"),
-                                tempImg = new Image();
-                            tempImg.src = uiRes.data[i].imgUrl;
-                            tempImg.onload = function(){
-                                tempCtx.drawImage(tempImg,0,0)
+                } else if ($scope.currUIPan == 'Skills' || !$scope.didSkills) {
+                    var skillList = {};
+                    $scope.didSkills=true;
+                    for (var i = 0; i < $scope.skillChains.length; i++) {
+                        $scope.skillChains[i].lvls.forEach(function(sk) {
+                            for (var j = 0; j < $scope.skillChains[i][sk].length; j++) {
+                                $scope.skillChains[i][sk][j].data.cid = $scope.skillChains[i][sk][j].data.name.toLowerCase().replace(/\s/g, '_');
+                                skillList[$scope.skillChains[i][sk][j].data.cid] = $scope.skillChains[i][sk][j].data;
+                                skillList[$scope.skillChains[i][sk][j].data.cid].owned = $scope.skillChains[i][sk][j].owned;
+                            }
+                        });
+                    }
+                    console.log('Skill id list', skillList)
+                    var canvs = document.querySelectorAll('canvas');
+                    for (var i = 0; i < canvs.length; i++) {
+                        console.log(canvs[i].dataset.skid, skillList[canvs[i].dataset.skid])
+                            //load and draw images.
+                        if (skillList[canvs[i].dataset.skid].imgUrl.indexOf('./img') < 0) {
+
+                            skillList[canvs[i].dataset.skid].ctx = canvs[i].getContext("2d");
+                            skillList[canvs[i].dataset.skid].img = new Image();
+                            skillList[canvs[i].dataset.skid].img.dataset.canvId = i; 
+                            skillList[canvs[i].dataset.skid].img.src = skillList[canvs[i].dataset.skid].imgUrl;
+                            skillList[canvs[i].dataset.skid].img.onload = function(i) {
+                                // console.log('loaded image ', this, 'for', canvs[i])
+                                console.log('image:',canvs[this.dataset.canvId])
+                                // canvs[this.dataset.canvId].width =
+                                skillList[canvs[this.dataset.canvId].dataset.skid].ctx.drawImage(skillList[canvs[this.dataset.canvId].dataset.skid].img, 0, 0)
                             }
                         }
                     }
                 }
-                console.log('UI OBJS:', $scope.currUIObjs);
             });
         } else if ($scope.currUIPan == 'Inventory') {
             UIFac.doPlayerInv($scope.playerItems, $scope.bodyBoxes).then(function(s) {
@@ -284,9 +301,10 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
                 $scope.currUIObjs = $scope.playerItems.inv;
             });
         }
+
         $scope.currUIBg = UIFac.getUIBg($scope.currUIPan);
     };
-    $scope.chInv(1);
+    $scope.chInv(0);
     //end UI stuff
     $scope.bombOn = false;
     $scope.roomRot = 0;
@@ -671,7 +689,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
                     UIFac.buySkill(data, $scope.name).then(function(r) {
                         if (r) {
                             console.log('Bought skill', data.name)
-                            $scope.getUsrData();//refresh data, since we bought a new skill (and thus need to refresh the skill db.)
+                            $scope.getUsrData(); //refresh data, since we bought a new skill (and thus need to refresh the skill db.)
                             return true;
                         }
                     })

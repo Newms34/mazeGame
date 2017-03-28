@@ -34,10 +34,10 @@
         <div class='container skill-cont'>
             <div class='skill-ch' style='left:{{15+(100*$index/skillChains.length)}}%;' ng-repeat='ch in skillChains'>
                 <div class='skill-ch-row' ng-repeat='chr in ch.lvls' style='top:{{100*$index}}px;width:{{(100*ch[chr].length)+10}}px;left:-50px'>
-                    <div class='skill-ch-item' ng-repeat='chi in ch[chr]' ng-class="{'has':chi.owned==true}" style='background:url({{chi.data.imgUrl}});background-size:contain' ng-click='skillPurchUI(chi.data,chi.owned)'>
-                        <canvas id='{{chi.cid}}'>
+                <!-- chr is chain-row -->
+                    <div class='skill-ch-item' ng-repeat='chi in ch[chr]' ng-class="{'has':chi.owned==true}" style='background:#f00;' ng-click='skillPurchUI(chi.data,chi.owned)'>
+                        <canvas data-skid="{{chi.data.cid}}" width='64' height='64'>
                             <!-- need to draw dataurl here! WHEN do we draw? -->
-
                         </canvas>
                         <div class='skill-lbl'>{{chi.data.name}}</div>
                         <div class='skill-lbl' ng-if='!chi.owned'>Cost: {{chi.data.skillPts}} Points</div>

@@ -127,7 +127,8 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
                 //[{fireball,immolate}]
                 var skillChains = [];
                 for (var i = 0; i < skill.length; i++) {
-                    if ((!skill[i].prevSkill || skill[i].prevSkill == 0) && info.skills.indexOf(skill[i].id) > -1) {
+                    console.log('looking at skill',skill[i].name,'to see if base')
+                    if ((skill[i].prevSkill == -1) && info.skills.indexOf(skill[i].id) > -1) {
                         //base skill, owned
                         var newSkillChain = {
                             skills: [skill[i].id]
