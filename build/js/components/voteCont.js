@@ -70,6 +70,22 @@ app.controller('vote-con', function($scope, $http, userFact, $window) {
     $scope.resetBar = function(s) {
         s.voteCurr = s.votes;
     }
+    $scope.scrt=-40;
+    $scope.scrollToDiv = function(id){
+        console.log(id, $('#'+id).position().top);
+        $(window).scrollTop($('#'+id).position().top);
+    }
+    window.onscroll=function(e){
+        $scope.scrt = $(window).scrollTop()-40;
+        $scope.$digest();
+    }
+    $scope.goGame = function(){
+        sandalchest.confirm('Return to Game', 'Are you sure you want to stop voting and return to the game?',function(resp){
+            if(resp){
+                $window.location.href = './'
+            }
+        },{parent:'.vote-nav'})
+    }
     $scope.newItemCat = 'weap';
     $scope.chVotePan = function(n){
         if(n == $scope.newItemCat){
@@ -78,6 +94,7 @@ app.controller('vote-con', function($scope, $http, userFact, $window) {
             $('#'+$scope.newItemCat+'-vote').hide(200,function(){
                 $scope.newItemCat = n;
                 $('#'+$scope.newItemCat+'-vote').show(200);
+                $scope.$digest();
             });
         }
     }
@@ -169,7 +186,7 @@ app.controller('vote-con', function($scope, $http, userFact, $window) {
                 usr: $scope.user
             }
             if (s.voted) {
-                sandalchest.alert('Sorry, but you\'ve already voted for this item!')
+                sandalchest.alert('Sorry, but you\'ve already voted for this item!',{parent:'.vote-nav'})
             } else {
                 s.voted = true;
                 console.log('user wants to vote ', s.voteCurr, 'for', s.name, 'voted', s.voted)
@@ -244,28 +261,28 @@ app.controller('vote-con', function($scope, $http, userFact, $window) {
             //no img err
             sandalchest.alert('Error', 'Skills require a skill icon! Please pick one.', function() {
                 return false;
-            });
+            },{parent:'.vote-nav'});
         } else if ($scope.icon.width > 170 || $scope.icon.height > 170) {
             //img too large err
             sandalchest.alert('Error', 'Your image is too large! Please use the bars to resize it, or considering picking a different image.', function() {
                 return false;
-            });
+            },{parent:'.vote-nav'});
         } else if ($scope.icon.width < 15 || $scope.icon.height < 15) {
             //img too smol err
             sandalchest.alert('Error', 'Your image is too small! What is this, an image for ants?', function() {
                 return false;
-            });
+            },{parent:'.vote-nav'});
         } else if ($scope.icon.width / $scope.icon.height > 2 || $scope.icon.width / $scope.icon.height < 0.5) {
             //img weird dims
             sandalchest.alert('Error', 'Your image has strange dimensions! Images should be approximately square', function() {
                 return false;
-            });
+            },{parent:'.vote-nav'});
         } else if (!$scope.newIt.name || !$scope.newIt.desc || (!$scope.newIt.energy && $scope.newIt.energy !== 0) || (!$scope.newIt.heal && !$scope.newIt.burst && !$scope.newIt.regen && !$scope.newIt.degen) || !$scope.newIt.type || !$scope.newIt.prevSkill) {
 
             //any other stuff not defined!
             sandalchest.alert('Error', 'One or more of your skill&rsquo;s parameters is undefined!', function() {
                 return false;
-            });
+            },{parent:'.vote-nav'});
         } else {
             newVote.skill = {
                 name: $scope.newIt.name,

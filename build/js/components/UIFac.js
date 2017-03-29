@@ -318,14 +318,6 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
             //save game, w/ optional logout
             //first, we need to reset user data to ONLY have the item ids:
             for (var i = 0; i < data.equip.inv.length; i++) {
-                // if(data.equip.inv[i].item.length<2){
-                //     console.log('JUNK!',data.equip.inv[i].item[0].num);
-
-                // }else{
-                //     if(typeof data.equip.inv[i].item[0]!=='number'){
-                //         throw new Error('item '+JSON.stringify(data.equip.inv[i].item)+' isnt a number!')
-                //     }
-                // }
                 console.log('ITEM:', data.equip.inv[i])
                 if (!(data.equip.inv[i].item instanceof Array) && typeof data.equip.inv[i].item == 'object') {
                     //item is just a regular object (not array of objs), so

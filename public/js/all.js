@@ -160,12 +160,29 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
             //if we're NOT mobile, check to see if we're logged in
             userFact.checkLogin().then(function(resp) {
                 console.log('RESPONSE FROM CHECK LOGIN:', resp);
-                if (!resp) {
+                if (false && !resp) {
                     $window.location.href = './login';
                 }
             });
         }
     })();
+    $scope.goVote=function(){
+        sandalchest.dialog(
+            'Voting ',
+            'Wanna submit your own ideas or vote on other user&rsquo;s ideas? Vote for them by clicking below!<hr><i>Warning!:</i> This will reset your current level progress!', {
+                buttons: [{
+                    text: '&#9745; Go Vote!',
+                    close: false,
+                    click: function() {
+                        $window.location.href='./votes';
+                    }
+                },{
+                    text: '&#9744; Nevermind',
+                    close: true
+                }]
+            }
+        );
+    };
     $scope.fillCells = function() {
         console.log('cells:', $scope.cells);
         var promBeasts = [],
@@ -207,13 +224,32 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
                         $scope.cells[$scope.cellNames.indexOf(q.id)].has.quest = q.q
                         console.log('NPC HAS QUEST:', q.q, q.id)
                     });
-                    // $scope.saveGame(false); //save data, do not reload.
+                    var newMazeData = {
+                        name: $scope.name,
+                        lvl: $scope.lvl,
+                        equip: $scope.playerItems,
+                        questDone: $scope.questList || [],
+                        inProf: $scope.doneQuest,
+                        maxHp: $scope.maxHp,
+                        currHp: $scope.currHp,
+                        maxEn: $scope.maxEn,
+                        currEn: $scope.currEn,
+                        isStunned: $scope.isStunned,
+                        currentLevel: {
+                            loc: $scope.playerCell,
+                            data: $scope.cells,
+                            names: $scope.cellNames
+                        }
+                    };
+                    UIFac.saveGame(newMazeData, false, false); //save data, do not reload.
                 });
             });
         });
     };
 
     $scope.doMaze = function(w, h) {
+        //need to change this so that we're only running this if a lvl reset/new lvl
+        // mongoose
         var mazeObj = mazeFac.makeMaze(w, h);
         $scope.cells = mazeObj.cells;
         $scope.path = mazeObj.path;
@@ -247,15 +283,19 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
                     console.log('REPLACING', $scope.playerItems.inv[ep].item, 'WITH', r[ep])
                     $scope.playerItems.inv[ep].item = r[ep];
                 }
-                if (!d.data.currentLevel || !d.data.currentLevel.loc || d.data.currentLevel.loc == null || d.data.currentLevel.loc == '') {
+                if ((localStorage.mazeGameReset && localStorage.mazeGameReset.toString() == 'true') || !d.data.currentLevel || !d.data.currentLevel.loc || d.data.currentLevel.loc == null || d.data.currentLevel.loc == '') {
                     console.log('User does not already have level data saved!')
-                        //if no level data, reset;
+                    localStorage.removeItem('mazeGameReset'); //remove if we've just reset.
+
+                    //if no level data, reset;
                     $scope.doMaze($scope.width, $scope.height);
                 } else {
+                    console.log('User DOES have current level data! Reloading!')
                     $scope.cells = d.data.currentLevel.data;
                     $scope.cellNames = d.data.currentLevel.names;
                     $scope.playerCell = d.data.currentLevel.loc;
                     $scope.moveReady = true;
+                    $scope.$digest();
                 }
                 $scope.popInv();
             })
@@ -362,7 +402,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
             ht: ht
         };
     };
-    $scope.didSkills=false;
+    $scope.didSkills = false;
     $scope.chInv = function(dir) {
         //UI Cycle function
         if (!dir && $scope.currUINum > 0) {
@@ -384,7 +424,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
                     })
                 } else if ($scope.currUIPan == 'Skills' || !$scope.didSkills) {
                     var skillList = {};
-                    $scope.didSkills=true;
+                    $scope.didSkills = true;
                     for (var i = 0; i < $scope.skillChains.length; i++) {
                         $scope.skillChains[i].lvls.forEach(function(sk) {
                             for (var j = 0; j < $scope.skillChains[i][sk].length; j++) {
@@ -403,12 +443,12 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
 
                             skillList[canvs[i].dataset.skid].ctx = canvs[i].getContext("2d");
                             skillList[canvs[i].dataset.skid].img = new Image();
-                            skillList[canvs[i].dataset.skid].img.dataset.canvId = i; 
+                            skillList[canvs[i].dataset.skid].img.dataset.canvId = i;
                             skillList[canvs[i].dataset.skid].img.src = skillList[canvs[i].dataset.skid].imgUrl;
                             skillList[canvs[i].dataset.skid].img.onload = function(i) {
                                 // console.log('loaded image ', this, 'for', canvs[i])
-                                console.log('image:',canvs[this.dataset.canvId])
-                                // canvs[this.dataset.canvId].width =
+                                console.log('image:', canvs[this.dataset.canvId])
+                                    // canvs[this.dataset.canvId].width =
                                 skillList[canvs[this.dataset.canvId].dataset.skid].ctx.drawImage(skillList[canvs[this.dataset.canvId].dataset.skid].img, 0, 0)
                             }
                         }
@@ -884,6 +924,14 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
     };
     $scope.logout = UIFac.logout;
     $scope.reset = UIFac.reset;
+    $scope.resetLevel = function() {
+        sandalchest.confirm('Reset Level', 'Are you sure you want to reset this level? Doing so will re-randomize the level!', function(resp) {
+            if (resp) {
+                localStorage.mazeGameReset = true;
+                $window.location.reload();
+            }
+        })
+    };
     $scope.trunc = function(n) {
         return Math.floor(n * 10) / 10;
     };
@@ -2143,6 +2191,80 @@ app.controller('merch-cont', function($scope, $http, $q, $timeout, $window, econ
     };
 });
 
+var sandalchest = {};
+sandalchest.drawDiv = function(e, n, t) {
+    var a = e.options && e.options.speed || 1e3,
+        o = e.options && e.options.rotation || 2,
+        par = e.options && e.options.parent || 'body',
+        s = document.createElement("div");
+    s.id = "sandalchest-modal-bg", s.innerHTML = "&nbsp;";
+    var l = document.createElement("div");
+    l.className = "col-sm-12 col-md-4 col-md-offset-4 sandalchest-modal-main", l.innerHTML = "<h2>" + (e.title || " ") + '</h2><div class="sandalchest-text-main">' + (e.text || "") + "</div>", l.style.transform = "rotateZ(" + o + "deg)", $(s).append(l);
+    var r = document.createElement("div"),
+        u = document.createElement("div");
+    r.className = "sandalchest-modal-scroll-top", u.className = "sandalchest-modal-scroll-bot", $(l).append(r), $(l).append(u);
+    var i = document.createElement("div");
+    i.className = "sandalchest-modal-scroll-right", $(r).append(i);
+    var c = document.createElement("div");
+    c.className = "sandalchest-modal-scroll-right", $(u).append(c);
+    var m = document.createElement("div");
+    m.className = "sandalchest-modal-scroll-left", $(r).append(m);
+    var d = document.createElement("div");
+    d.className = "sandalchest-modal-scroll-left", $(u).append(d), $(par).append(s), $(s).fadeIn(250), $(l).animate({ height: "80vh", top: "10vh" }, { duration: a, queue: !1 }), $(r).animate({ height: "0%" }, { duration: a, queue: !1 }), $(u).animate({ height: "0%" }, { duration: a, queue: !1 }), $(".sandalchest-modal-scroll-right").animate({ width: ".25%" }, { duration: a, queue: !1 }), $(".sandalchest-modal-scroll-left").animate({ width: ".25%" }, { duration: a, queue: !1 });
+    var p = document.createElement("div");
+    if (p.className = "sandalchest-modal-buttons", $(l).append(p), 3 > n) {
+        var f = document.createElement("button"),
+            g = document.createElement("button"),
+            h = document.createElement("input");
+        f.className = "btn btn-stone", g.className = "btn btn-stone", f.id = "sandalchest-okay", g.id = "sandalchest-nope", f.tabIndex = 0, g.tabIndex = 1, f.innerHTML = "Okay", g.innerHTML = "Cancel", h.id = "sandalchest-input";
+        var y = null;
+        $(p).append(f), 0 == n || ($(p).append(g), 1 == n || ($(".sandalchest-text-main").append("<br/><br/>").append(h), h.tabIndex = 0, f.tabIndex = 1, g.tabIndex = 2)), document.querySelector("#sandalchest-okay").onkeyup = function(e) { 27 == e.which && $("#sandalchest-nope").click() }, 2 > n ? document.querySelector("#sandalchest-okay").focus() : (document.querySelector("#sandalchest-input").focus(), document.querySelector("#sandalchest-input").onkeyup = function(e) { console.log(e), 27 == e.which ? $("#sandalchest-nope").click() : 13 == e.which && $("#sandalchest-okay").click() }), f.onclick = function() { $(s).fadeOut(250, function() { n > 1 ? y = $("#sandalchest-input").val() || !1 : 1 == n && (y = !0), t && t(y), $(this).remove() }) }, g.onclick = function() { $(s).fadeOut(250, function() { t && t(null), console.log(null), $(this).remove() }) } } else
+        for (var b = 0; b < e.options.buttons.length; b++) {
+            var v = document.createElement("button");
+            v.className = "btn btn-stone", v.id = "customButton" + b, v.innerHTML = e.options.buttons[b].text || "Undefined", e.options.buttons[b].click && (console.log("Applying custom cb ", e.options.buttons[b].click), v.onclick = e.options.buttons[b].click), e.options.buttons[b].close && (v.onmouseup = function() { $(s).fadeOut(250, function() { $(this).remove() }) }), $(p).append(v) } }, sandalchest.alert = function(e, n, t, a) { console.log(arguments);
+    for (var o = null, s = null, l = null, r = null, u = 0; u < arguments.length; u++) {
+        if ("string" == typeof arguments[u] && null == o) o = arguments[u];
+        else if ("string" == typeof arguments[u] && null == s) s = arguments[u];
+        else if ("string" == typeof arguments[u]) throw new Error("Too many string params supplied!");
+        if ("object" == typeof arguments[u] && null == l) l = arguments[u];
+        else if ("object" == typeof arguments[u]) throw new Error("Too many configuration objects supplied!");
+        if ("function" == typeof arguments[u] && null == r) r = arguments[u];
+        else if ("function" == typeof arguments[u]) throw new Error("You can only have one callback function!") }
+    var i = { title: o, text: s, options: l };
+    sandalchest.drawDiv(i, 0, r) }, sandalchest.confirm = function(e, n, t, a) { console.log(arguments);
+    for (var o = null, s = null, l = null, r = null, u = 0; u < arguments.length; u++) {
+        if ("string" == typeof arguments[u] && null == o) o = arguments[u];
+        else if ("string" == typeof arguments[u] && null == s) s = arguments[u];
+        else if ("string" == typeof arguments[u]) throw new Error("Too many string params supplied!");
+        if ("object" == typeof arguments[u] && null == l) l = arguments[u];
+        else if ("object" == typeof arguments[u]) throw new Error("Too many configuration objects supplied!");
+        if ("function" == typeof arguments[u] && null == r) r = arguments[u];
+        else if ("function" == typeof arguments[u]) throw new Error("You can only have one callback function!") }
+    var i = { title: o, text: s, options: l };
+    sandalchest.drawDiv(i, 1, r) }, sandalchest.prompt = function(e, n, t, a) {
+    for (var o = null, s = null, l = null, r = null, u = 0; u < arguments.length; u++) {
+        if ("string" == typeof arguments[u] && null == o) o = arguments[u];
+        else if ("string" == typeof arguments[u] && null == s) s = arguments[u];
+        else if ("string" == typeof arguments[u]) throw new Error("Too many string params supplied!");
+        if ("object" == typeof arguments[u] && null == l) l = arguments[u];
+        else if ("object" == typeof arguments[u]) throw new Error("Too many configuration objects supplied!");
+        if ("function" == typeof arguments[u] && null == r) r = arguments[u];
+        else if ("function" == typeof arguments[u]) throw new Error("You can only have one callback function!") }
+    var i = { title: o, text: s, options: l };
+    sandalchest.drawDiv(i, 2, r) }, sandalchest.dialog = function(e, n, t, a) {
+    for (var o = null, s = null, l = null, r = null, u = 0; u < arguments.length; u++) {
+        if ("string" == typeof arguments[u] && null == o) o = arguments[u];
+        else if ("string" == typeof arguments[u] && null == s) s = arguments[u];
+        else if ("string" == typeof arguments[u]) throw new Error("Too many string params supplied!");
+        if ("object" == typeof arguments[u] && null == l) l = arguments[u];
+        else if ("object" == typeof arguments[u]) throw new Error("Too many configuration objects supplied!");
+        if ("function" == typeof arguments[u] && null == r) r = arguments[u];
+        else if ("function" == typeof arguments[u]) throw new Error("You can only have one callback function!") }
+    if (!l || !l.buttons) throw new Error("Custom dialog specified without any buttons!");
+    if (!o || !s) throw new Error("Custom dialogs MUST have both a title and body text!");
+    var i = { title: o, text: s, options: l };
+    sandalchest.drawDiv(i, 3, r) };
+
 app.factory('socketFac', function ($rootScope) {
   var socket = io.connect();
   return {
@@ -2486,14 +2608,6 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
             //save game, w/ optional logout
             //first, we need to reset user data to ONLY have the item ids:
             for (var i = 0; i < data.equip.inv.length; i++) {
-                // if(data.equip.inv[i].item.length<2){
-                //     console.log('JUNK!',data.equip.inv[i].item[0].num);
-
-                // }else{
-                //     if(typeof data.equip.inv[i].item[0]!=='number'){
-                //         throw new Error('item '+JSON.stringify(data.equip.inv[i].item)+' isnt a number!')
-                //     }
-                // }
                 console.log('ITEM:', data.equip.inv[i])
                 if (!(data.equip.inv[i].item instanceof Array) && typeof data.equip.inv[i].item == 'object') {
                     //item is just a regular object (not array of objs), so
@@ -2980,6 +3094,22 @@ app.controller('vote-con', function($scope, $http, userFact, $window) {
     $scope.resetBar = function(s) {
         s.voteCurr = s.votes;
     }
+    $scope.scrt=-40;
+    $scope.scrollToDiv = function(id){
+        console.log(id, $('#'+id).position().top);
+        $(window).scrollTop($('#'+id).position().top);
+    }
+    window.onscroll=function(e){
+        $scope.scrt = $(window).scrollTop()-40;
+        $scope.$digest();
+    }
+    $scope.goGame = function(){
+        sandalchest.confirm('Return to Game', 'Are you sure you want to stop voting and return to the game?',function(resp){
+            if(resp){
+                $window.location.href = './'
+            }
+        },{parent:'.vote-nav'})
+    }
     $scope.newItemCat = 'weap';
     $scope.chVotePan = function(n){
         if(n == $scope.newItemCat){
@@ -2988,6 +3118,7 @@ app.controller('vote-con', function($scope, $http, userFact, $window) {
             $('#'+$scope.newItemCat+'-vote').hide(200,function(){
                 $scope.newItemCat = n;
                 $('#'+$scope.newItemCat+'-vote').show(200);
+                $scope.$digest();
             });
         }
     }
@@ -3079,7 +3210,7 @@ app.controller('vote-con', function($scope, $http, userFact, $window) {
                 usr: $scope.user
             }
             if (s.voted) {
-                sandalchest.alert('Sorry, but you\'ve already voted for this item!')
+                sandalchest.alert('Sorry, but you\'ve already voted for this item!',{parent:'.vote-nav'})
             } else {
                 s.voted = true;
                 console.log('user wants to vote ', s.voteCurr, 'for', s.name, 'voted', s.voted)
@@ -3154,28 +3285,28 @@ app.controller('vote-con', function($scope, $http, userFact, $window) {
             //no img err
             sandalchest.alert('Error', 'Skills require a skill icon! Please pick one.', function() {
                 return false;
-            });
+            },{parent:'.vote-nav'});
         } else if ($scope.icon.width > 170 || $scope.icon.height > 170) {
             //img too large err
             sandalchest.alert('Error', 'Your image is too large! Please use the bars to resize it, or considering picking a different image.', function() {
                 return false;
-            });
+            },{parent:'.vote-nav'});
         } else if ($scope.icon.width < 15 || $scope.icon.height < 15) {
             //img too smol err
             sandalchest.alert('Error', 'Your image is too small! What is this, an image for ants?', function() {
                 return false;
-            });
+            },{parent:'.vote-nav'});
         } else if ($scope.icon.width / $scope.icon.height > 2 || $scope.icon.width / $scope.icon.height < 0.5) {
             //img weird dims
             sandalchest.alert('Error', 'Your image has strange dimensions! Images should be approximately square', function() {
                 return false;
-            });
+            },{parent:'.vote-nav'});
         } else if (!$scope.newIt.name || !$scope.newIt.desc || (!$scope.newIt.energy && $scope.newIt.energy !== 0) || (!$scope.newIt.heal && !$scope.newIt.burst && !$scope.newIt.regen && !$scope.newIt.degen) || !$scope.newIt.type || !$scope.newIt.prevSkill) {
 
             //any other stuff not defined!
             sandalchest.alert('Error', 'One or more of your skill&rsquo;s parameters is undefined!', function() {
                 return false;
-            });
+            },{parent:'.vote-nav'});
         } else {
             newVote.skill = {
                 name: $scope.newIt.name,

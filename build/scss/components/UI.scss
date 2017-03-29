@@ -1,7 +1,8 @@
-.btn-stone{
-    width:auto!important;
-    min-width:20%;
+.btn-stone {
+    width: auto!important;
+    min-width: 20%;
 }
+
 #UI {
     position: absolute;
     background: #bbb;
@@ -61,14 +62,13 @@
                 background: #0a0;
                 box-shadow: 0 0 2px #0a0;
                 left: 0;
-                color:#fff;
+                color: #fff;
             }
         }
     }
-    .skillCostTbl{
-        font-size:smaller;
+    .skillCostTbl {
+        font-size: smaller;
     }
-
     .skill-ch {
         position: absolute;
         .skill-ch-row {
@@ -84,14 +84,14 @@
                 text-align: center;
                 cursor: pointer;
                 z-index: 1;
-                & canvas{
-                    width:50px;
-                    height:50px;
-                    position:absolute;
-                    left:0;
-                    top:0;
-                    background:#000;
-                    z-index:-1;
+                & canvas {
+                    width: 50px;
+                    height: 50px;
+                    position: absolute;
+                    left: 0;
+                    top: 0;
+                    background: #000;
+                    z-index: -1;
                 }
                 &:hover {
                     box-shadow: 0 0 5px 5px #a00;
@@ -253,3 +253,4 @@ body#mob {
         }
     }
 }
+

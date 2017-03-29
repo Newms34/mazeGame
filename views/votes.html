@@ -10,7 +10,7 @@
 
 <body ng-app='mazeGame' ng-controller='vote-con' id='vote-page'>
     <div class='container col-md-10 col-md-offset-1'>
-        <div class='panel panel-danger vote-panel'>
+        <div class='panel panel-danger vote-panel' id='skill-in-prog'>
             <div class='panel-heading'>
                 <h3>Skills &#128293;</h3></div>
             <div class='panel-body'>
@@ -112,7 +112,7 @@
                 </div>
             </div>
         </div>
-        <div class='panel panel-success vote-panel'>
+        <div class='panel panel-success vote-panel'  id='armor-in-prog'>
             <div class='panel-heading'>
                 <h3>Armor &#128085;</h3></div>
             <div class='panel-body'>
@@ -203,7 +203,7 @@
                 </div>
             </div>
         </div>
-        <div class='panel panel-info vote-panel'>
+        <div class='panel panel-info vote-panel'  id='weap-in-prog'>
             <div class='panel-heading'>
                 <h3>Weapons &#9876;</h3></div>
             <div class='panel-body'>
@@ -278,11 +278,17 @@
             <div class='panel-body'>
                 <div class='col-md-12 vote-select-btns'>
                     <h4>First, pick a category:</h4>
-                    <button class='btn btn-info col-md-3' ng-click='chVotePan("weap")'>Weapon</button>
-                    <button class='btn btn-success col-md-3 col-md-offset-1' ng-click='chVotePan("armor")'>Armor</button>
-                    <button class='btn btn-warning col-md-3 col-md-offset-1' ng-click='chVotePan("skill")'>Skill</button>
+                    <div class='new-it-tab vote-tab col-md-4' ng-class="{'weap-vote':newItemCat=='weap'}">
+                        <button class='btn btn-info col-md-10' ng-click='chVotePan("weap")'>Weapon &#9876;</button>
+                    </div>
+                    <div class='new-it-tab vote-tab col-md-4' ng-class="{'armor-vote':newItemCat=='armor'}">
+                        <button class='btn btn-success col-md-10 col-md-offset-1' ng-click='chVotePan("armor")'>Armor &#128085;</button>
+                    </div>
+                    <div class='new-it-tab vote-tab col-md-4' ng-class="{'skill-vote':newItemCat=='skill'}">
+                        <button class='btn btn-warning col-md-10 col-md-offset-1' ng-click='chVotePan("skill")'>Skill &#128293;</button>
+                    </div>
                 </div>
-                <div class='col-md-12' style='display:block;' id='weap-vote'>
+                <div class='col-md-12 weap-vote' style='display:block;' id='weap-vote'>
                     <h4>Add a weapon</h4>
                     <form class='new-it-form' ng-submit='subVote(newIt,"weap")'>
                         <div class='row'>
@@ -353,7 +359,7 @@
                         </div>
                     </form>
                 </div>
-                <div class='col-md-12' style='display:none;' id='armor-vote'>
+                <div class='col-md-12 armor-vote' style='display:none;' id='armor-vote'>
                     <h4>Add armor</h4>
                     <form class='new-it-form' ng-submit='subVote(newIt,"armor")'>
                         <div class='row'>
@@ -442,7 +448,7 @@
                         </div>
                     </form>
                 </div>
-                <div class='col-md-12' style='display:none;' id='skill-vote'>
+                <div class='col-md-12 skill-vote' style='display:none;' id='skill-vote'>
                     <h4>Add a skill</h4>
                     <form class='new-it-form' ng-submit='subVote(newIt,"skill")'>
                         <div class='row'>
@@ -600,6 +606,9 @@
             </div>
         </div>
     </div>
+    <div class='vote-nav' style='top:{{scrt}}px;'>
+        <div class='vote-nav-btn' ng-click='scrollToDiv("skill-in-prog")'>Skills In Voting &#128293;</div><div class='vote-nav-btn' ng-click='scrollToDiv("armor-in-prog")'>Armor In Voting &#128085;</div><div class='vote-nav-btn' ng-click='scrollToDiv("weap-in-prog")'>Weapons In Voting &#9876;</div><div class='vote-nav-btn' ng-click='goGame()'>Back to Game</div>
+    </div>
     <script src='/socket.io-client/dist/socket.io.min.js'></script>
     <script src="/jquery/dist/jquery.min.js"></script>
     <script src="/jquery-ui/jquery-ui.min.js"></script>
@@ -607,7 +616,6 @@
     <script src="/angular/angular.min.js"></script>
     <script src="/angular-touch/angular-touch.min.js"></script>
     <script src="/angular-bootstrap-context-menu/dist/bootstrapContextMenu-min.js"></script>
-    <script src="/sandal-chest/sandal-chest.js"></script>
     <script src="/js/all.min.js"></script>
 </body>
 

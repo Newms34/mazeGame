@@ -40,12 +40,29 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
             //if we're NOT mobile, check to see if we're logged in
             userFact.checkLogin().then(function(resp) {
                 console.log('RESPONSE FROM CHECK LOGIN:', resp);
-                if (!resp) {
+                if (false && !resp) {
                     $window.location.href = './login';
                 }
             });
         }
     })();
+    $scope.goVote=function(){
+        sandalchest.dialog(
+            'Voting ',
+            'Wanna submit your own ideas or vote on other user&rsquo;s ideas? Vote for them by clicking below!<hr><i>Warning!:</i> This will reset your current level progress!', {
+                buttons: [{
+                    text: '&#9745; Go Vote!',
+                    close: false,
+                    click: function() {
+                        $window.location.href='./votes';
+                    }
+                },{
+                    text: '&#9744; Nevermind',
+                    close: true
+                }]
+            }
+        );
+    };
     $scope.fillCells = function() {
         console.log('cells:', $scope.cells);
         var promBeasts = [],
@@ -87,13 +104,32 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
                         $scope.cells[$scope.cellNames.indexOf(q.id)].has.quest = q.q
                         console.log('NPC HAS QUEST:', q.q, q.id)
                     });
-                    // $scope.saveGame(false); //save data, do not reload.
+                    var newMazeData = {
+                        name: $scope.name,
+                        lvl: $scope.lvl,
+                        equip: $scope.playerItems,
+                        questDone: $scope.questList || [],
+                        inProf: $scope.doneQuest,
+                        maxHp: $scope.maxHp,
+                        currHp: $scope.currHp,
+                        maxEn: $scope.maxEn,
+                        currEn: $scope.currEn,
+                        isStunned: $scope.isStunned,
+                        currentLevel: {
+                            loc: $scope.playerCell,
+                            data: $scope.cells,
+                            names: $scope.cellNames
+                        }
+                    };
+                    UIFac.saveGame(newMazeData, false, false); //save data, do not reload.
                 });
             });
         });
     };
 
     $scope.doMaze = function(w, h) {
+        //need to change this so that we're only running this if a lvl reset/new lvl
+        // mongoose
         var mazeObj = mazeFac.makeMaze(w, h);
         $scope.cells = mazeObj.cells;
         $scope.path = mazeObj.path;
@@ -127,15 +163,19 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
                     console.log('REPLACING', $scope.playerItems.inv[ep].item, 'WITH', r[ep])
                     $scope.playerItems.inv[ep].item = r[ep];
                 }
-                if (!d.data.currentLevel || !d.data.currentLevel.loc || d.data.currentLevel.loc == null || d.data.currentLevel.loc == '') {
+                if ((localStorage.mazeGameReset && localStorage.mazeGameReset.toString() == 'true') || !d.data.currentLevel || !d.data.currentLevel.loc || d.data.currentLevel.loc == null || d.data.currentLevel.loc == '') {
                     console.log('User does not already have level data saved!')
-                        //if no level data, reset;
+                    localStorage.removeItem('mazeGameReset'); //remove if we've just reset.
+
+                    //if no level data, reset;
                     $scope.doMaze($scope.width, $scope.height);
                 } else {
+                    console.log('User DOES have current level data! Reloading!')
                     $scope.cells = d.data.currentLevel.data;
                     $scope.cellNames = d.data.currentLevel.names;
                     $scope.playerCell = d.data.currentLevel.loc;
                     $scope.moveReady = true;
+                    $scope.$digest();
                 }
                 $scope.popInv();
             })
@@ -242,7 +282,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
             ht: ht
         };
     };
-    $scope.didSkills=false;
+    $scope.didSkills = false;
     $scope.chInv = function(dir) {
         //UI Cycle function
         if (!dir && $scope.currUINum > 0) {
@@ -264,7 +304,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
                     })
                 } else if ($scope.currUIPan == 'Skills' || !$scope.didSkills) {
                     var skillList = {};
-                    $scope.didSkills=true;
+                    $scope.didSkills = true;
                     for (var i = 0; i < $scope.skillChains.length; i++) {
                         $scope.skillChains[i].lvls.forEach(function(sk) {
                             for (var j = 0; j < $scope.skillChains[i][sk].length; j++) {
@@ -283,12 +323,12 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
 
                             skillList[canvs[i].dataset.skid].ctx = canvs[i].getContext("2d");
                             skillList[canvs[i].dataset.skid].img = new Image();
-                            skillList[canvs[i].dataset.skid].img.dataset.canvId = i; 
+                            skillList[canvs[i].dataset.skid].img.dataset.canvId = i;
                             skillList[canvs[i].dataset.skid].img.src = skillList[canvs[i].dataset.skid].imgUrl;
                             skillList[canvs[i].dataset.skid].img.onload = function(i) {
                                 // console.log('loaded image ', this, 'for', canvs[i])
-                                console.log('image:',canvs[this.dataset.canvId])
-                                // canvs[this.dataset.canvId].width =
+                                console.log('image:', canvs[this.dataset.canvId])
+                                    // canvs[this.dataset.canvId].width =
                                 skillList[canvs[this.dataset.canvId].dataset.skid].ctx.drawImage(skillList[canvs[this.dataset.canvId].dataset.skid].img, 0, 0)
                             }
                         }
@@ -764,6 +804,14 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
     };
     $scope.logout = UIFac.logout;
     $scope.reset = UIFac.reset;
+    $scope.resetLevel = function() {
+        sandalchest.confirm('Reset Level', 'Are you sure you want to reset this level? Doing so will re-randomize the level!', function(resp) {
+            if (resp) {
+                localStorage.mazeGameReset = true;
+                $window.location.reload();
+            }
+        })
+    };
     $scope.trunc = function(n) {
         return Math.floor(n * 10) / 10;
     };

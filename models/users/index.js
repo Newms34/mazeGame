@@ -69,6 +69,4 @@ usrSchema.methods.correctPassword = function(candidatePassword) {
     console.log('this users condiments:', this.salt, 'and their pwd:', this.pass)
     return encryptPassword(candidatePassword, this.salt) === this.pass;
 };
-
-
 mongoose.model('User', usrSchema);

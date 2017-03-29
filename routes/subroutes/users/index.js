@@ -71,7 +71,7 @@ router.post('/save', function(req, res, next) {
 });
 router.get('/currUsrData', function(req, res, next) {
     //get current user data so we can update the front-end fields
-    console.log(req.session.user);
+    console.log('SESSION FOR USR DATA',req.session.user);
     mongoose.model('User').findOne({ 'name': req.session.user.name }, function(err, usr) {
         res.send(usr);
     });
