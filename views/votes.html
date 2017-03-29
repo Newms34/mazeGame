@@ -278,11 +278,11 @@
             <div class='panel-body'>
                 <div class='col-md-12 vote-select-btns'>
                     <h4>First, pick a category:</h4>
-                    <button class='btn btn-info col-md-3' ng-click='newItemCat = "weap"'>Weapon</button>
-                    <button class='btn btn-success col-md-3 col-md-offset-1' ng-click='newItemCat = "armor"'>Armor</button>
-                    <button class='btn btn-danger col-md-3 col-md-offset-1' ng-click='newItemCat = "skill"'>Skill</button>
+                    <button class='btn btn-info col-md-3' ng-click='chVotePan("weap")'>Weapon</button>
+                    <button class='btn btn-success col-md-3 col-md-offset-1' ng-click='chVotePan("armor")'>Armor</button>
+                    <button class='btn btn-warning col-md-3 col-md-offset-1' ng-click='chVotePan("skill")'>Skill</button>
                 </div>
-                <div class='col-md-12' ng-show='newItemCat=="weap"'>
+                <div class='col-md-12' style='display:block;' id='weap-vote'>
                     <h4>Add a weapon</h4>
                     <form class='new-it-form' ng-submit='subVote(newIt,"weap")'>
                         <div class='row'>
@@ -290,11 +290,17 @@
                             <div class='col-md-8'>
                                 <input type="text" ng-model="newIt.name">
                             </div>
+                            <div class='col-md-1'>
+                                <button class='btn btn-danger' ng-click='explVoteFld("Name")'>?</button>
+                            </div>
                         </div>
                         <div class='row'>
                             <div class='col-md-2'>Description</div>
                             <div class='col-md-8'>
                                 <textarea ng-model="newIt.desc"></textarea>
+                            </div>
+                            <div class='col-md-1'>
+                                <button class='btn btn-danger' ng-click='explVoteFld("Desc")'>?</button>
                             </div>
                         </div>
                         <div class='row'>
@@ -302,17 +308,26 @@
                             <div class='col-md-8'>
                                 <input min=0 type="number" ng-model="newIt.def">
                             </div>
+                            <div class='col-md-1'>
+                                <button class='btn btn-danger' ng-click='explVoteFld("Def")'>?</button>
+                            </div>
                         </div>
                         <div class='row'>
                             <div class='col-md-2'>Level</div>
                             <div class='col-md-8'>
                                 <input min='0' type="number" ng-model="newIt.itemLvl">
                             </div>
+                            <div class='col-md-1'>
+                                <button class='btn btn-danger' ng-click='explVoteFld("Lvl")'>?</button>
+                            </div>
                         </div>
                         <div class='row'>
                             <div class='col-md-2'>Cost</div>
                             <div class='col-md-8'>
                                 <input min='0' type="number" ng-model="newIt.cost">
+                            </div>
+                            <div class='col-md-1'>
+                                <button class='btn btn-danger' ng-click='explVoteFld("Cost")'>?</button>
                             </div>
                         </div>
                         <div class='row'>
@@ -320,16 +335,25 @@
                             <div class='col-md-8'>
                                 <input min='0' type="number" ng-model="newIt.min">
                             </div>
+                            <div class='col-md-1'>
+                                <button class='btn btn-danger' ng-click='explVoteFld("Min")'>?</button>
+                            </div>
                         </div>
                         <div class='row'>
                             <div class='col-md-2'>Maximum Damage</div>
                             <div class='col-md-8'>
                                 <input min='0' type="number" ng-model="newIt.max">
                             </div>
+                            <div class='col-md-1'>
+                                <button class='btn btn-danger' ng-click='explVoteFld("Max")'>?</button>
+                            </div>
+                        </div>
+                        <div class='row'>
+                            <button class='btn btn-info col-md-offset-4 col-md-3' ng-click='subWeapVote();'>Submit!</button>
                         </div>
                     </form>
                 </div>
-                <div class='col-md-12' ng-show='newItemCat=="armor"'>
+                <div class='col-md-12' style='display:none;' id='armor-vote'>
                     <h4>Add armor</h4>
                     <form class='new-it-form' ng-submit='subVote(newIt,"armor")'>
                         <div class='row'>
@@ -337,11 +361,17 @@
                             <div class='col-md-8'>
                                 <input type="text" ng-model="newIt.name">
                             </div>
+                            <div class='col-md-1'>
+                                <button class='btn btn-danger' ng-click='explVoteFld("Name")'>?</button>
+                            </div>
                         </div>
                         <div class='row'>
                             <div class='col-md-2'>Description</div>
                             <div class='col-md-8'>
                                 <textarea ng-model="newIt.desc"></textarea>
+                            </div>
+                            <div class='col-md-1'>
+                                <button class='btn btn-danger' ng-click='explVoteFld("Desc")'>?</button>
                             </div>
                         </div>
                         <div class='row'>
@@ -349,11 +379,17 @@
                             <div class='col-md-8'>
                                 <input min='0' type="number" ng-model="newIt.def">
                             </div>
+                            <div class='col-md-1'>
+                                <button class='btn btn-danger' ng-click='explVoteFld("DefArmor")'>?</button>
+                            </div>
                         </div>
                         <div class='row'>
                             <div class='col-md-2'>Level</div>
                             <div class='col-md-8'>
                                 <input min='0' type="number" ng-model="newIt.itemLvl">
+                            </div>
+                            <div class='col-md-1'>
+                                <button class='btn btn-danger' ng-click='explVoteFld("Lvl")'>?</button>
                             </div>
                         </div>
                         <div class='row'>
@@ -361,29 +397,52 @@
                             <div class='col-md-8'>
                                 <input min='0' type="number" ng-model="newIt.cost">
                             </div>
+                            <div class='col-md-1'>
+                                <button class='btn btn-danger' ng-click='explVoteFld("Cost")'>?</button>
+                            </div>
                         </div>
                         <div class='row'>
                             <div class='col-md-2'>Slot</div>
                             <div class='col-md-8'>
                                 <select ng-options='slt.num as slt.lbl for slt in newSlots' ng-model='newIt.slot'></select>
                             </div>
+                            <div class='col-md-1'>
+                                <button class='btn btn-danger' ng-click='explVoteFld("Slot")'>?</button>
+                            </div>
                         </div>
                         <div class='row'>
                             <div class='col-md-2'>Resistances</div>
                             <div class='col-md-8'>
-                                TBD
+                                <div ng-repeat='typ in dtypes' class='col-md-12'>
+                                    <div class='col-md-1'>
+                                        <input type="checkbox" ng-model='newIt.res[typ]'>
+                                    </div>
+                                    <div class='col-md-8'>{{typ}}</div>
+                                </div>
+                            </div>
+                            <div class='col-md-1'>
+                                <button class='btn btn-danger' ng-click='explVoteFld("Res")'>?</button>
                             </div>
                         </div>
                         <div class='row'>
                             <div class='col-md-2'>Heavy</div>
                             <div class='col-md-8'>
-                                <input type="checkbox" ng-model="newIt.heavy"><span ng-if='newIt.heavy'>Heavy</span><span ng-if='!newIt.heavy'>Light</span>
-
+                                <div class='col-md-1'>
+                                    <input type="checkbox" ng-model="newIt.heavy">
+                                </div>
+                                <div ng-if='newIt.heavy' class='col-md-8'>Heavy</div>
+                                <div ng-if='!newIt.heavy' class='col-md-8'>Light</div>
                             </div>
+                            <div class='col-md-1'>
+                                <button class='btn btn-danger' ng-click='explVoteFld("Heavy")'>?</button>
+                            </div>
+                        </div>
+                        <div class='row'>
+                            <button class='btn btn-success col-md-offset-4 col-md-3' ng-click='subArmorVote();'>Submit!</button>
                         </div>
                     </form>
                 </div>
-                <div class='col-md-12' ng-show='newItemCat=="skill"'>
+                <div class='col-md-12' style='display:none;' id='skill-vote'>
                     <h4>Add a skill</h4>
                     <form class='new-it-form' ng-submit='subVote(newIt,"skill")'>
                         <div class='row'>
@@ -391,11 +450,17 @@
                             <div class='col-md-8'>
                                 <input type="text" ng-model="newIt.name">
                             </div>
+                            <div class='col-md-1'>
+                                <button class='btn btn-danger' ng-click='explVoteFld("Name")'>?</button>
+                            </div>
                         </div>
                         <div class='row'>
                             <div class='col-md-2'>Description</div>
                             <div class='col-md-8'>
                                 <textarea ng-model="newIt.desc"></textarea>
+                            </div>
+                            <div class='col-md-1'>
+                                <button class='btn btn-danger' ng-click='explVoteFld("Desc")'>?</button>
                             </div>
                         </div>
                         <div class='row'>
@@ -403,11 +468,17 @@
                             <div class='col-md-8'>
                                 <input type='number' min='0' max='200' ng-model="newIt.energy">
                             </div>
+                            <div class='col-md-1'>
+                                <button class='btn btn-danger' ng-click='explVoteFld("Energy")'>?</button>
+                            </div>
                         </div>
                         <div class='row'>
                             <div class='col-md-2'>Burst Heal</div>
                             <div class='col-md-8'>
                                 <input type='number' min='0' max='200' ng-model="newIt.heal">
+                            </div>
+                            <div class='col-md-1'>
+                                <button class='btn btn-danger' ng-click='explVoteFld("Heal")'>?</button>
                             </div>
                         </div>
                         <div class='row'>
@@ -415,11 +486,17 @@
                             <div class='col-md-8'>
                                 <input type='number' min='0' max='200' ng-model="newIt.regen">
                             </div>
+                            <div class='col-md-1'>
+                                <button class='btn btn-danger' ng-click='explVoteFld("Regen")'>?</button>
+                            </div>
                         </div>
                         <div class='row'>
                             <div class='col-md-2'>Burst Damage</div>
                             <div class='col-md-8'>
                                 <input type='number' min='0' max='200' ng-model="newIt.burst">
+                            </div>
+                            <div class='col-md-1'>
+                                <button class='btn btn-danger' ng-click='explVoteFld("Burst")'>?</button>
                             </div>
                         </div>
                         <div class='row'>
@@ -427,17 +504,26 @@
                             <div class='col-md-8'>
                                 <input type='number' min='0' max='200' ng-model="newIt.degen">
                             </div>
+                            <div class='col-md-1'>
+                                <button class='btn btn-danger' ng-click='explVoteFld("Degen")'>?</button>
+                            </div>
                         </div>
                         <div class='row'>
                             <div class='col-md-2'>Damage Type</div>
                             <div class='col-md-8'>
                                 <select ng-options='dt for dt in dtypes' ng-model='newIt.type' ng-change='sayIt()'></select>
                             </div>
+                            <div class='col-md-1'>
+                                <button class='btn btn-danger' ng-click='explVoteFld("Type")'>?</button>
+                            </div>
                         </div>
                         <div class='row'>
                             <div class='col-md-2'>Previous Skill</div>
                             <div class='col-md-8'>
-                                <select ng-model='newIt.prevSkill' ng-options = 'ps.id as ps.name for ps in items.skills'></select>
+                                <select ng-model='newIt.prevSkill' ng-options='ps.id as ps.name for ps in items.skills'></select>
+                            </div>
+                            <div class='col-md-1'>
+                                <button class='btn btn-danger' ng-click='explVoteFld("Prev")'>?</button>
                             </div>
                         </div>
                         <div class='row'>
@@ -448,7 +534,7 @@
                                         <input type="checkbox" ng-model='newIt.stun'>
                                     </div>
                                     <div class='col-md-9'>
-                                    	Stuns
+                                        Stuns
                                     </div>
                                 </div>
                                 <div class='row info'>
@@ -484,6 +570,9 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class='col-md-1'>
+                                <button class='btn btn-danger' ng-click='explVoteFld("ExtraFx")'>?</button>
+                            </div>
                         </div>
                         <div class='row'>
                             <div class='col-md-2'>Image</div>
@@ -499,9 +588,12 @@
                                     <canvas width='{{icon.maxWidth}}' height='{{icon.maxHeight}}' style='width:{{icon.width}}px;height:{{icon.height}}px;'></canvas>
                                 </div>
                             </div>
+                            <div class='col-md-1'>
+                                <button class='btn btn-danger' ng-click='explVoteFld("Image")'>?</button>
+                            </div>
                         </div>
                         <div class='row'>
-                            <button class='btn btn-primary col-md-offset-4 col-md-3' ng-click='subSkillVote();'>Submit!</button>
+                            <button class='btn btn-warning col-md-offset-4 col-md-3' ng-click='subSkillVote();'>Submit!</button>
                         </div>
                     </form>
                 </div>

@@ -107,14 +107,13 @@ router.get('/testVote1324/:type', function(req, res, next) {
             res.send('Item should be done.')
         })
     }
-
 })
 router.post('/subVote', function(req, res, next) {
     //submit a vote item for voting!
     var voteInf = req.body
     console.log('checking login', req.session)
     if (!req.session || !req.session.user || req.body.user !== req.session.user.name) {
-        res.send('auth error in lvlQuest'); //user trying to 'spoof' a request
+        res.send('auth error in vote!'); //user trying to 'spoof' a request
     } else {
         var voteMode = 'Weap'
         if (voteInf.type == 1) {
@@ -123,14 +122,10 @@ router.post('/subVote', function(req, res, next) {
             voteMode == 'Skill';
         }
         mongoose.model('Vote').find({}, function(errv, vs) {
-            mongoose.model(voteMode).findOne({ name: voteInf.name }, function(err, voteItem) {
+            mongoose.model(voteMode).find({}, function(err, voteItems) {
                 //this should NOT find anything.
                 if (errv) {
                     res.send(err);
-                    return;
-                }
-                if (voteItem) {
-                    res.send('errDup');
                     return;
                 } else {
                     //now the fun part: parsing all the data as appropriate;
@@ -138,55 +133,19 @@ router.post('/subVote', function(req, res, next) {
                         type: voteInf.type || 0,
                         vid: Math.floor(Math.random() * 99999999).toString(32),
                         votesOpen: true,
-                        startTime: newDate.getTime()
+                        startTime: new Date().getTime()
                     };
                     if (voteMode == 'Weap') {
-                        voteObj.weap = {
-                            name: voteInf.name,
-                            desc: voteInf.desc,
-                            num: voteInf.num,
-                            min: voteInf.min,
-                            max: voteInf.max,
-                            def: voteInf.def,
-                            itemLvl: voteInf.itemLvl,
-                            cost: voteInf.cost
-                        };
+                        voteObj.weap = req.body.weap;
+                        voteObj.weap.num = voteItems.length;
                     } else if (voteMode == 'Armor') {
-                        voteObj.armor = {
-                            name: voteInf.name,
-                            desc: voteInf.desc,
-                            num: voteInf.num,
-                            def: voteInf.def,
-                            res: voteInf.res,
-                            itemLvl: voteInf.itemLvl,
-                            slot: voteInf.slot,
-                            heavy: voteInf.heavy,
-                            cost: voteInf.cost
-                        };
+                        voteObj.armor = req.body.armor;
+                        voteObj.armor.num = voteItems.length;
                     } else if (voteMode == 'Skill') {
-                        voteObj.skill = {
-                            name: voteInf.name,
-                            desc: voteInf.desc,
-                            id: voteInf.id,
-                            energy: voteInf.energy,
-                            heal: voteInf.heal,
-                            regen: voteInf.regen,
-                            burst: voteInf.burst,
-                            degen: voteInf.degen,
-                            type: voteInf.skillType,
-                            stuns: voteInf.stuns,
-                            imgUrl: voteInf.imgUrl,
-                            prevSkills: voteInf.prevSkills,
-                            nextSkills: [], //skills in voting cannot have 'next' skills!
-                            skillPts: voteInf.skillPts,
-                            extraFx: {
-                                dmgVsStun: voteInf.dmgVsStun,
-                                protection: voteInf.protection,
-                                dmgVsDegen: voteInf.dmgVsDegen,
-                                critChance: voteInf.critChance
-                            }
-                        };
+                        voteObj.skill = req.body.skill;
+                        voteObj.skill.id = voteItems.length;
                     }
+                    console.log('FINAL OBJ',voteObj)
                     //done!
                     mongoose.model('Vote').create(voteObj);
                     res.send('done!');

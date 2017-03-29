@@ -1,10 +1,11 @@
 html,
 body {
     width: 100%;
-    height: 100%;
     margin: 0;
     perspective: 1200px;
     transform-style: preserve-3d;
+    position: absolute;
+    font-family: 'Bad Script', cursive;
 }
 
 .cent {
@@ -541,37 +542,69 @@ body {
         height: 100%;
         padding: 5px;
     }
+    & .new-it-form .col-md-2:first-child,
+    & .panel-body > .col-md-12 > h4 {
+        margin: 5px;
+        padding: 4px;
+        background: #fff;
+    }
     & .new-it-form {
         & .col-md-8 {
-            background:#555;
-            color:#fff;
-            margin-bottom:3px;
-            padding:5px;
+            background: #555;
+            color: #fff;
+            margin-bottom: 3px;
+            padding: 5px;
             & input[type='text'],
             & textarea {
-                color:#000;
+                color: #000;
                 width: 100%;
             }
-            & select, & input[type='number']{
-                color:#000;
+            & select,
+            & input[type='number'] {
+                color: #000;
             }
             & #size-bars {
                 position: relative;
-                margin-bottom:30px;
+                margin-bottom: 30px;
                 & .vert-range {
                     position: absolute;
                     transform-origin: 0% 100%;
                     transform: rotateZ(90deg);
-                    left:100%;
+                    left: 100%;
                 }
             }
             & canvas {
                 display: block;
-                background:#fff;
+                background: #fff;
                 position: absolute;
-                top:20px;
+                top: 20px;
                 box-shadow: 1px 1px 3px #000;
             }
         }
     }
+}
+
+#sandalchest-modal-bg {
+    position: fixed!important;
+    bottom: 0px!important;
+    top: auto!important;
+    transform: none!important;
+}
+
+#armor-vote {
+    background: linear-gradient(rgba(255, 255, 255, .7), rgba(255, 255, 255, .7)), url('../img/assets/Armor.jpg');
+    background-attachment: fixed;
+    background-size: cover;
+}
+
+#weap-vote {
+    background: linear-gradient(rgba(255, 255, 255, .7), rgba(255, 255, 255, .7)), url('../img/assets/Weap.jpg');
+    background-attachment: fixed;
+    background-size: cover;
+}
+
+#skill-vote {
+    background: linear-gradient(rgba(255, 255, 255, .7), rgba(255, 255, 255, .7)), url('../img/assets/Skill.jpg');
+    background-attachment: fixed;
+    background-size: cover;
 }

@@ -4,29 +4,29 @@ var app = angular.module('mazeGame', ['ngTouch']).controller('log-con', function
         prof: '0'
     }
     $scope.profDescs = [{
-        name: 'Warrior',
+        name:'Warrior',
         txt: 'What they lack in magical apptitude, warriors more than make up for in their martial expertise. The warrior uses their weapon training to bring swift and steely death to their foes',
         img: './img/assets/war.jpg',
-        ico: './img/assets/warPick.png',
-        skill: "Berserker's Fury - Chance to do extra damage on attack."
+        ico:'./img/assets/warPick.png',
+        skill:"Berserker's Fury - Chance to do extra damage on attack."
     }, {
-        name: 'Sorcerer',
+        name:'Sorcerer',
         txt: 'The scholarly sorcerer uses their extensive knowledge of the arcane to obliterate their enemies with magical fire, or hinder them with conjured ice and blizzards.',
         img: './img/assets/sorc.jpg',
-        ico: './img/assets/sorcPick.png',
-        skill: "Elemental Mastery - Additional damage versus foes with degen"
+        ico:'./img/assets/sorcPick.png',
+        skill:"Elemental Mastery - Additional damage versus foes with degen"
     }, {
-        name: 'Paladin',
+        name:'Paladin',
         txt: 'The holy paladins are bastions of the Holy Ones. Using their faith both offensively as a shield and defensively as a weapon, they can both smite their enemies and renew themselves.',
         img: './img/assets/paly.jpg',
-        ico: './img/assets/palyPick.png',
-        skill: "Righteous Fury - Heal or regen for a small amount on attack"
+        ico:'./img/assets/palyPick.png',
+        skill:"Righteous Fury - Heal or regen for a small amount on attack"
     }, {
-        name: 'Necromancer',
+        name:'Necromancer',
         txt: 'Masters of the so-called "dark" arts, the necromancers are an oft-maligned lot. However, no one would deny their power - or their usefulness - in turning the minds and even fallen bodies of their foes against them.',
         img: './img/assets/necro.jpg',
-        ico: './img/assets/necroPick.png',
-        skill: "Soul Siphon - steal some health on attack"
+        ico:'./img/assets/necroPick.png',
+        skill:"Soul Siphon - steal some health on attack"
     }]
     $scope.newUsr = function() {
         //eventually we need to CHECK to see if this user is already taken!
@@ -39,9 +39,9 @@ var app = angular.module('mazeGame', ['ngTouch']).controller('log-con', function
             var userInf = {
                 user: $scope.regForm.username.$viewValue,
                 password: $scope.regForm.pwd.$viewValue,
-                prof: $scope.user.prof + 1
+                prof:$scope.user.prof+1
             };
-            console.log('userInf', userInf)
+            console.log('userInf',userInf)
             $http.post('/user/new', userInf).then(function(res) {
                 if (res.data == 'saved!') {
                     $scope.login(true);
@@ -362,7 +362,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
             ht: ht
         };
     };
-    $scope.didSkills = false;
+    $scope.didSkills=false;
     $scope.chInv = function(dir) {
         //UI Cycle function
         if (!dir && $scope.currUINum > 0) {
@@ -384,7 +384,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
                     })
                 } else if ($scope.currUIPan == 'Skills' || !$scope.didSkills) {
                     var skillList = {};
-                    $scope.didSkills = true;
+                    $scope.didSkills=true;
                     for (var i = 0; i < $scope.skillChains.length; i++) {
                         $scope.skillChains[i].lvls.forEach(function(sk) {
                             for (var j = 0; j < $scope.skillChains[i][sk].length; j++) {
@@ -396,26 +396,23 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
                     }
                     console.log('Skill id list', skillList)
                     var canvs = document.querySelectorAll('canvas');
-                    //for some odd reason, we need to use this timer to give the above foreach to work. It SHOULDNT be async, but it seems that running it directly in seq leads to skillList[canvs[i].dataset.skid] being undefined.
-                    setTimeout(function() {
-                        for (var i = 0; i < canvs.length; i++) {
-                            console.log(canvs[i].dataset.skid, skillList[canvs[i].dataset.skid])
-                                //load and draw images.
-                            if (skillList[canvs[i].dataset.skid].imgUrl.indexOf('./img') < 0) {
+                    for (var i = 0; i < canvs.length; i++) {
+                        console.log(canvs[i].dataset.skid, skillList[canvs[i].dataset.skid])
+                            //load and draw images.
+                        if (skillList[canvs[i].dataset.skid].imgUrl.indexOf('./img') < 0) {
 
-                                skillList[canvs[i].dataset.skid].ctx = canvs[i].getContext("2d");
-                                skillList[canvs[i].dataset.skid].img = new Image();
-                                skillList[canvs[i].dataset.skid].img.dataset.canvId = i;
-                                skillList[canvs[i].dataset.skid].img.src = skillList[canvs[i].dataset.skid].imgUrl;
-                                skillList[canvs[i].dataset.skid].img.onload = function(i) {
-                                    // console.log('loaded image ', this, 'for', canvs[i])
-                                    console.log('image:', canvs[this.dataset.canvId])
-                                        // canvs[this.dataset.canvId].width =
-                                    skillList[canvs[this.dataset.canvId].dataset.skid].ctx.drawImage(skillList[canvs[this.dataset.canvId].dataset.skid].img, 0, 0)
-                                }
+                            skillList[canvs[i].dataset.skid].ctx = canvs[i].getContext("2d");
+                            skillList[canvs[i].dataset.skid].img = new Image();
+                            skillList[canvs[i].dataset.skid].img.dataset.canvId = i; 
+                            skillList[canvs[i].dataset.skid].img.src = skillList[canvs[i].dataset.skid].imgUrl;
+                            skillList[canvs[i].dataset.skid].img.onload = function(i) {
+                                // console.log('loaded image ', this, 'for', canvs[i])
+                                console.log('image:',canvs[this.dataset.canvId])
+                                // canvs[this.dataset.canvId].width =
+                                skillList[canvs[this.dataset.canvId].dataset.skid].ctx.drawImage(skillList[canvs[this.dataset.canvId].dataset.skid].img, 0, 0)
                             }
                         }
-                    }, 100);
+                    }
                 }
             });
         } else if ($scope.currUIPan == 'Inventory') {
@@ -1050,9 +1047,9 @@ app.controller('mob-con', function($scope, $http, $q, $interval, $swipe, $window
     $scope.ringSize = 275;
     $scope.currRingRot = 0;
     $scope.rngChTimer;
-    $scope.rngChOkay = true;
+    $scope.rngChOkay=true;
     $scope.ringChAni = function(newR, oldR) {
-        if (!$scope.rngChOkay) {
+        if(!$scope.rngChOkay){
             return false;
         }
         if ([].slice.call($('.RingUIEl')).length) {
@@ -1118,10 +1115,10 @@ app.controller('mob-con', function($scope, $http, $q, $interval, $swipe, $window
             $scope.uiObjs = rData.objs;
             $scope.rotPer = rData.rot;
         }
-        $scope.rngChOkay = false;
-        $scope.rngChTimer = setTimeout(function() {
+        $scope.rngChOkay=false;
+        $scope.rngChTimer = setTimeout(function(){
             $scope.rngChOkay = true;
-        }, 1000)
+        },1000)
     }
     $scope.uiObjs = UIFac.getRingObjs(0);
     $scope.chMenRng = function(dir) {
@@ -1168,10 +1165,10 @@ app.controller('mob-con', function($scope, $http, $q, $interval, $swipe, $window
             dy = e.y - $scope.oldY;
         $scope.oldX = e.x;
         $scope.oldY = e.y;
-
+    
         if (Math.abs(dx) > Math.abs(dy)) {
 
-            //horizontal movement (spin rings)
+                //horizontal movement (spin rings)
             $scope.currRingRot = UIFac.PlatinumSpinningRings($scope.currRingRot, dx);
         } else if (Math.abs(dy) > 10) {
 
@@ -1200,7 +1197,7 @@ app.factory('combatFac', function($http) {
             $('#combat-box #player .energy-bar .stat-bar-stat').css('width', '100%');
         },
         getSkillInf: function(all, n) {
-            sandalchest.dialog(all[n].name, all[n].desc, { buttons: [{ text: 'Okay', close: true }] })
+            sandalchest.dialog( all[n].name,all[n].desc, { buttons: [{ text: 'Okay', close: true }] })
         },
         updateBars: function(pm, pc, pem, pec, mm, mc) {
             pm = parseInt(pm);
@@ -1227,8 +1224,8 @@ app.factory('combatFac', function($http) {
                 return i.data;
             })
         },
-        addXp: function(u, x) {
-            return $http.post('/user/addXp', { xp: x, user: u }, function(r) {
+        addXp: function(u,x){
+            return $http.post('/user/addXp',{xp:x,user:u},function(r){
                 return r;
             })
         }
@@ -1386,7 +1383,7 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
             allJunk = $scope.comb.itemStats[3];
         console.log('WEAP IDS', $scope.$parent.playerItems.weap, 'WEAPS', allWeaps, 'ARMOR', allArm, 'AFFIXES', allAff, 'JUNK', allJunk)
         var playerWeap = $scope.$parent.playerItems.weap;
-        console.log('PLAYER WEAPON:', playerWeap)
+        console.log('PLAYER WEAPON:',playerWeap)
         var playerArmor;
         var dtype,
             totalRawD = 0,
@@ -1561,10 +1558,10 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                 dmg *= 1.5;
             }
         }
-        if ($scope.$parent.prof == 1 || $scope.$parent.prof == 3) {
+        if ($scope.$parent.prof==1 || $scope.$parent.prof==3){
             //heavy armor dmg reduction
             console.log('Char has HEAVY ARMOR! Reduction in dmg');
-            dmg *= 0.9;
+            dmg*=0.9;
         }
         return $scope.comb.fleeMult * dmg; //we return the total damage, multiplied by the flee multiplier (if any!).
     }
@@ -1610,7 +1607,7 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                     iName = items.loot.pre.pre + ' ' + items.loot.base.name + ' ' + items.loot.post.post;
                     $scope.playerItems.inv.push(lootObj)
                 }
-                newXp = 50 * $scope.intTarg.lvl / $scope.playerLvl || 1;
+                newXp = 50 * $scope.intTarg.lvl / $scope.playerLvl||1;
                 sandalchest.alert('After killing the ' + $scope.comb.lastDefeated + ', you gain ' + newXp + ' experience and recieve ' + iName + '!');
 
             });
@@ -1622,16 +1619,16 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
             angular.element('body').scope().intTarg.currHp = angular.element('body').scope().hp;
             $scope.$parent.intTarg.currHp = $scope.$parent.intTarg.hp;
         }
-        combatFac.addXp($scope.name, newXp).then(function(s) {
+        combatFac.addXp($scope.name,newXp).then(function(s) {
             $scope.inCombat = false;
             angular.element('body').scope().inCombat = false;
             angular.element('body').scope().intTarg = false;
             angular.element('body').scope().moveReady = true;
             angular.element('body').scope().currHp = angular.element('body').scope().maxHp;
             angular.element('body').scope().currEn = angular.element('body').scope().maxEn;
-            if (typeof s.data == 'object') {
+            if(typeof s.data=='object'){
                 //got new xp (most likely, user won a fight)
-                $scope.currXp = 500 - parseInt(s.data.xpTill);
+                $scope.currXp = 500-parseInt(s.data.xpTill);
                 $scope.playerLvl = parseInt(s.data.lvl);
             }
             $scope.currHp = $scope.maxHp;
@@ -1808,7 +1805,7 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
 app.factory('econFac', function($http, $q) {
     var npcTypes = ['merch', 'ambient', 'quest']
     return {
-        merchInv: function(invArr, id) {
+        merchInv: function(invArr,id) {
             //get all item info from backend 
             return $http.get('/item/allItems/').then(function(d) {
                 console.log('GETTING ITEM DATA:invArr', invArr, d)
@@ -1851,7 +1848,7 @@ app.factory('econFac', function($http, $q) {
                         throw new Error('FOUND JUNK ' + JSON.stringify(it) + ' in inventory of merch!');
                     }
                 })
-                console.log('POPULATED MERCH INV', invArr)
+                console.log('POPULATED MERCH INV',invArr)
                 return {
                     inv: invArr,
                     id: id
@@ -1982,7 +1979,7 @@ app.factory('mazeFac', function($http) {
     };
 
     return {
-        popCell: function(l, c) {
+        popCell: function(l,c) {
             return $http.get('/item/beastie/' + l + '/' + c).then(function(res) {
                 return res.data;
             });
@@ -2067,8 +2064,8 @@ app.controller('merch-cont', function($scope, $http, $q, $timeout, $window, econ
         $scope.merchy.merch.sez = $scope.merchy.merch.gossip[Math.floor(Math.random() * $scope.merchy.merch.gossip.length)];
     };
     $scope.merchy.itemForPlayer = null;
-    $scope.acceptQuest = function() {
-        console.log($scope.$parent.name, $scope.merchy.merch.quest.name)
+    $scope.acceptQuest= function(){
+        console.log($scope.$parent.name,$scope.merchy.merch.quest.name)
     }
     $scope.merchy.exchange = function(item, dir, ind) {
         //main sell function
@@ -2146,28 +2143,28 @@ app.controller('merch-cont', function($scope, $http, $q, $timeout, $window, econ
     };
 });
 
-app.factory('socketFac', function($rootScope) {
-    var socket = io.connect();
-    return {
-        on: function(eventName, callback) {
-            socket.on(eventName, function() {
-                var args = arguments;
-                $rootScope.$apply(function() {
-                    callback.apply(socket, args);
-                });
-            });
-        },
-        emit: function(eventName, data, callback) {
-            socket.emit(eventName, data, function() {
-                var args = arguments;
-                $rootScope.$apply(function() {
-                    if (callback) {
-                        callback.apply(socket, args);
-                    }
-                });
-            })
-        }
-    };
+app.factory('socketFac', function ($rootScope) {
+  var socket = io.connect();
+  return {
+    on: function (eventName, callback) {
+      socket.on(eventName, function () { 
+        var args = arguments;
+        $rootScope.$apply(function () {
+          callback.apply(socket, args);
+        });
+      });
+    },
+    emit: function (eventName, data, callback) {
+      socket.emit(eventName, data, function () {
+        var args = arguments;
+        $rootScope.$apply(function () {
+          if (callback) {
+            callback.apply(socket, args);
+          }
+        });
+      })
+    }
+  };
 });
 app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
     var findItem = function(arr, i) {
@@ -2184,8 +2181,8 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
         this.owned = owned;
     }
     return {
-        buySkill: function(data, usr) {
-            return $http.post('/user/buySkill/', { usr: usr, skill: data.id }, function(r) {
+        buySkill:function(data,usr){
+            return $http.post('/user/buySkill/',{usr:usr,skill:data.id},function(r){
                 return r.data;
             })
         },
@@ -2298,7 +2295,7 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
                 //[{fireball,immolate}]
                 var skillChains = [];
                 for (var i = 0; i < skill.length; i++) {
-                    console.log('looking at skill', skill[i].name, 'to see if base')
+                    console.log('looking at skill',skill[i].name,'to see if base')
                     if ((skill[i].prevSkill == -1) && info.skills.indexOf(skill[i].id) > -1) {
                         //base skill, owned
                         var newSkillChain = {
@@ -2428,8 +2425,8 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
                 })
             } else if (el.energy || el.energy === 0) {
                 //skill
-                hasPic = true;
-                if ((el.burst && el.burst > 0) || (el.degen && el.degen > 0)) {
+                hasPic=true;
+                if ((el.burst && el.burst > 0)||(el.degen && el.degen>0)) {
                     addStuff += '<li>Damage Type:' + combatFac.getDmgType(el.type) + '</li>';
                 }
                 addStuff += '<li>Energy:' + el.energy + '</li>';
@@ -2881,9 +2878,36 @@ app.factory('userFact', function($http) {
                 console.log('CHECKLOG RESULTS', chkLog)
                 return chkLog.data;
             })
+        },
+        getVoteExpl: function(inp) {
+            console.log('Clicked', inp);
+            var voteExplanations = {
+                Name: 'Your armor, weapon or skill&rsquo;s Name.',
+                Desc: 'Your armor, weapon or skill&rsquo;s Description.',
+                Def: 'Some weapons provide defense!',
+                DefArmor: 'How much this armor reduces damage.',
+                Lvl: 'The armor, weapon or skill&rsquo;s level. This is roughly equivalent to a dungeon level!',
+                Cost: 'How much your armor, weapon or skill costs in gold pieces',
+                Min: 'Weapons do a random amount of damage between a minimum and maximum amount (not counting skill effects). This is the LOWER end of that range.',
+                Max: 'Weapons do a random amount of damage between a minimum and maximum amount (not counting skill effects). This is the HIGHER end of that range.',
+                Slot: 'Armor pieces fit on a particular slot: Head, Chest, Pants, Gloves, Boots, or None. Items in a "none" slot simply stay in inventory.',
+                Res: 'Your armor can provide resistance against certain damage types.',
+                Heavy: 'Armors are restricted by weight, so a necromancer and sorcerer can only wear LIGHT armor, while a paladin and warrior can only wear HEAVY armor.',
+                Energy: 'How much energy your skill takes to cast.',
+                Heal: 'Heal, or Burst Heal, is a one-time effect that restores a portion of your health on casting. Generally, Burst Heals are stronger than Regen heals per unit time, but they don&rsquo;t last as long. Compare with Regeneration.',
+                Regen: 'Regen, or Regeneration, is a heal-over-time effect. Generally, regen heals are weaker per unit time than Burst Heals, but this is counteracted by their heal-over-time effect. Compare with Burst Heal.',
+                Burst: 'Burst, Damage, or Burst Damage is pretty much what it sounds like: one walloping great smack of damage. It happens all at once tho, so if your enemy survives it, you will need to come up with a new plan.',
+                Degen: 'Caused by effects like Burning, Bleeding, and Poison, Degeneration allows you to damage your foe a little bit over time. Great for adding a bit of pressure!',
+                Type: 'The type of damage done by your skill. Be aware that certain enemies are resistant to certain damage types, so attacking a Flame Elemental with a fire-based attack may not be the best use of your time.',
+                Prev: 'Except for the base skills - Bandage, Swing, Fireball, Chill, Curse, Smite, and Divine Blessing - every skill in the game has a "previous skill". In order to learn your skill, a player will need to have enough skill points AND own the previous skill.',
+                ExtraFx: 'Certain skills have additional effects. For example, the warrior&rsquo;s Uppercut stuns.',
+                Image: 'All skills require a skill icon!'
+            }
+            sandalchest.alert('Explanation', voteExplanations[inp])
         }
     };
 });
+
 app.controller('vote-con', function($scope, $http, userFact, $window) {
     userFact.checkLogin().then(function(resp) {
         if (!resp) {
@@ -2913,6 +2937,7 @@ app.controller('vote-con', function($scope, $http, userFact, $window) {
         lbl: '\uD83D\uDC8D None',
         num: 5
     }];
+    $scope.explVoteFld  = userFact.getVoteExpl;
     $scope.armorVotes = [];
     $scope.weapVotes = [];
     $scope.slots = ['\uD83C\uDFA9', '\uD83D\uDC55', '\uD83D\uDC56', '\u261E', '\uD83D\uDC62', '\uD83D\uDC8D']
@@ -2954,6 +2979,17 @@ app.controller('vote-con', function($scope, $http, userFact, $window) {
     }
     $scope.resetBar = function(s) {
         s.voteCurr = s.votes;
+    }
+    $scope.newItemCat = 'weap';
+    $scope.chVotePan = function(n){
+        if(n == $scope.newItemCat){
+            return false;
+        }else{
+            $('#'+$scope.newItemCat+'-vote').hide(200,function(){
+                $scope.newItemCat = n;
+                $('#'+$scope.newItemCat+'-vote').show(200);
+            });
+        }
     }
     var refreshVotes = function() {
         $http.get('./voting/voteList').then(function(v) {
@@ -3026,7 +3062,15 @@ app.controller('vote-con', function($scope, $http, userFact, $window) {
             })
         });
     }
-
+    $scope.concatRes = function(r){
+        var resArr = [];
+        $scope.dtypes.forEach(function(f,i){
+            if (r[f]){
+                resArr.push(i);
+            }
+        })
+        return resArr;
+    }
     $scope.doVote = function(s, e) {
             console.log('VID', s)
             var voStuff = {
@@ -3048,9 +3092,10 @@ app.controller('vote-con', function($scope, $http, userFact, $window) {
         //NOTE for the following: num (w & a) and id (s) is NOT defined! this is defined on the backend once the skill's voted in!
     $scope.subArmorVote = function() {
         var newVote = {
-            type: 1
-        }
-        if (err) {
+                type: 1
+            },
+            err = false;
+        if (false) {
             //errs
         } else {
             newVote.armor = {
@@ -3067,6 +3112,10 @@ app.controller('vote-con', function($scope, $http, userFact, $window) {
             newVote.votedUsrs = $scope.user;
             newVote.votes = [];
             newVote.votesOpen = true;
+            newVote.user = $scope.user;
+            $http.post('./voting/subVote',newVote).then(function(r){
+                console.log(r)
+            })
             console.log('NEW ARMOR:', newVote)
         }
     };
