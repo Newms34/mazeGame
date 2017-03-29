@@ -1,14 +1,14 @@
-#Dave's Maze Game.
+# Dave's Maze Game.
 ![Screenie](/public/img/demo.jpg?raw=true)
 
-##Contents:
+## Contents:
  * [About](#About)
  * [Currently Under Development](#currently-under-development)
  * [How You Can Help](#how-you-can-help)
  * [License](#license)
  * [Credits](#credits)
 
-##About:
+## About:
 Dave's Maze Game (I'll probably change that title later) is a dungeon crawler game written in MEAN stack JavaScript. It's an exploration of 1st-person 3D in the browser, as well as (eventually!) some simple AI concepts. The technologies involved are as follows:
  - **AngularJS 1.x** for awesome front-end stuffs
  - **MongoDB** for storing all your epic adventures
@@ -19,14 +19,14 @@ Dave's Maze Game (I'll probably change that title later) is a dungeon crawler ga
  - **CSS3** Because CSS can do 3D, and CSS really isn't that bad, so stop whining.
  - **A Heck of a Lot of NPM/Bower Modules** Because if someone else has already done it, why rewrite it?
 
-##Currently Under Development:
+## Currently Under Development:
  - I'm always adding more stuff like loot, monsters, skills, etc.
  - A profession system is currently in development. This will allow you to choose from a subset of skills
  - Skill purchasing via leveling up
  - Armor weights (Heavy/Light)
  - A storyline!
 
-##How You Can Help:
+## How You Can Help:
 Writing this app takes a lot of time and love. 
  - You can help by forking the repo and writing more monsters, weapons, armor, loot, skills, etc., and making a pull request. 
  - If I like your additions, I'll include em! 
@@ -35,8 +35,8 @@ Writing this app takes a lot of time and love.
 
    - On the other hand, if some of this art's yours, and you'd rather I *not* use it, lemme know, and I'll take it down.
 
-##License:
+## License:
  Eh, do whatever you want. Seriously. I give you permsission.
 
-##Credits:
+## Credits:
  This app was designed and coded by yours truly, [David Newman](https://github.com/Newms34)
