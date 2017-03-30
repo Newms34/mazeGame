@@ -221,7 +221,11 @@ app.controller('vote-con', function($scope, $http, userFact, $window) {
             newVote.votesOpen = true;
             newVote.user = $scope.user;
             $http.post('./voting/subVote',newVote).then(function(r){
-                console.log(r)
+                if(r.data!='done'){
+                    sandalchest.alert('Too Many Submissions','Sorry, but you&rsquo;ve submitted too many items recently. Please wait for one of your items to expire before submitting another!')
+                }else{
+                    refreshVotes();
+                }
             })
             console.log('NEW ARMOR:', newVote)
         }
@@ -246,6 +250,13 @@ app.controller('vote-con', function($scope, $http, userFact, $window) {
             newVote.votedUsrs = $scope.user;
             newVote.votes = [];
             newVote.votesOpen = true;
+            $http.post('./voting/subVote',newVote).then(function(r){
+                if(r.data!='done'){
+                    sandalchest.alert('Too Many Submissions','Sorry, but you&rsquo;ve submitted too many items recently. Please wait for one of your items to expire before submitting another!')
+                }else{
+                    refreshVotes();
+                }
+            })
             console.log('NEW WEAPON:', newVote)
         }
     };
@@ -302,6 +313,13 @@ app.controller('vote-con', function($scope, $http, userFact, $window) {
             newVote.votedUsrs = $scope.user;
             newVote.votes = [];
             newVote.votesOpen = true;
+            $http.post('./voting/subVote',newVote).then(function(r){
+                if(r.data!='done'){
+                    sandalchest.alert('Too Many Submissions','Sorry, but you&rsquo;ve submitted too many items recently. Please wait for one of your items to expire before submitting another!')
+                }else{
+                    refreshVotes();
+                }
+            });
             console.log('NEW SKILL:', newVote)
         }
     }

@@ -39,6 +39,7 @@ var usrSchema = new mongoose.Schema({
     currHp: Number,
     maxEn: Number, //max energy (for skills)
     currEn: Number,
+    currVotes:[String],//votes this user has.
     isStunned: Boolean //some skills can stun!
 }, { collection: 'User' });
 

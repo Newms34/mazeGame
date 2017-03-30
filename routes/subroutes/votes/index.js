@@ -128,7 +128,6 @@ router.post('/subVote', function(req, res, next) {
                     res.send(err);
                     return;
                 } else {
-                    //now the fun part: parsing all the data as appropriate;
                     var voteObj = {
                         type: voteInf.type || 0,
                         vid: Math.floor(Math.random() * 99999999).toString(32),
@@ -146,9 +145,15 @@ router.post('/subVote', function(req, res, next) {
                         voteObj.skill.id = voteItems.length;
                     }
                     console.log('FINAL OBJ', voteObj)
-                        //done!
-                    mongoose.model('Vote').create(voteObj);
-                    res.send('done!');
+                    mongoose.model('User').findOne({ name: req.body.user }, function(err, vusr) {
+                        if (!vusr.currVotes || vusr.currVotes.length < 4) {
+                            //user cannot submit more than 3 items at a time.
+                            mongoose.model('Vote').create(voteObj);
+                            res.send('done');
+                        } else {
+                            res.send('maxVotes'); //user submitted too many items.
+                        }
+                    })
                 }
             });
         });
@@ -180,6 +185,14 @@ router.get('/voteList', function(req, res, next) {
         });
     });
 })
+var cleanUpVote = function(vid, firstUser) {
+    mongoose.model('Vote').findOne({ id: vid }).remove(function(err, vrem) {
+        mongoose.model('User').findOne({ name: firstUser }, function(err, veu) {
+            veu.currVotes.splice(veu.currVotes.indexOf(vid), 1);
+            veu.save();
+        })
+    });
+}
 var voteTimer = setInterval(function() {
     //run every 30 seconds to check 'expired' votes.
     mongoose.model('Vote').find({}, function(err, votes) {
@@ -190,7 +203,7 @@ var voteTimer = setInterval(function() {
             return false;
         } else {
             var now = new Date().getTime();
-            console.log('Checking votes at ',now)
+            console.log('Checking votes at ', now)
             votes.forEach(function(v) {
                 if ((now - v.startTime) > voteDur) {
                     //vote expired!
@@ -198,8 +211,10 @@ var voteTimer = setInterval(function() {
                     //1) Are there 2 or more votes? This is done so that a single user cannot vote in an item by themselves that they created
                     //2) Is the average score of the votes greater than 3.5 (70%)?
                     var voteAvg = v.votes.reduce(function(a, b) {
-                        return a + b;
-                    }) / v.votes.length;
+                            return a + b;
+                        }) / v.votes.length,
+                        firstUser = v.votedUsrs[0], //creator of voted item.
+                        vid = v.vid;
                     if (voteAvg > 3.5 && v.votes.length > 2) {
                         var itemType = v.type == 0 ? 'Weap' : v.type == 1 ? 'Armor' : 'Skill';
                         mongoose.model(itemType).find({}, function(err, items) {
@@ -208,25 +223,27 @@ var voteTimer = setInterval(function() {
                                 //skill
                                 v.skill.id = numItems;
                                 mongoose.model(itemType).update({ id: v.skill.prevSkill }, { $push: { nextSkills: numItems } }, function(err, psk) {
-                                    mongoose.model(itemType).create(v.skill);
+                                    mongoose.model(itemType).create(v.skill, function(err, resp) {
+                                        cleanUpVote(vid,firstUser)
+                                    });
                                 })
                             } else if (v.type && v.type != 0) {
                                 //armor
                                 v.armor.num = numItems;
                                 mongoose.model(itemType).create(v.armor, function(err, resp) {
-                                    mongoose.model('Vote').findOne({ id: v.vid }).remove();
+                                    cleanUpVote(vid,firstUser)
                                 })
                             } else {
                                 //weap
                                 v.weap.num = numItems;
                                 mongoose.model(itemType).create(v.weap, function(err, resp) {
-                                    mongoose.model('Vote').findOne({ id: v.vid }).remove();
+                                    cleanUpVote(vid,firstUser)
                                 })
                             }
-                        })
+                        });
                     } else {
                         //item was not voted in. simply remove.
-                        mongoose.model('Vote').find({ id: v.vid }).remove();
+                        cleanUpVote(vid,firstUser)
                     }
                 }
             })

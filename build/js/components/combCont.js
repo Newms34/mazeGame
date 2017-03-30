@@ -105,7 +105,7 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                 efStr += $scope.comb.attackEffects[i] + ', ';
             }
             efStr += $scope.comb.attackEffects.length > 1 ? 'and ' + $scope.comb.attackEffects[$scope.comb.attackEffects.length - 1] + ' one.' : $scope.comb.attackEffects[$scope.comb.attackEffects.length - 1] + ' one.';
-            attackInfoStr += efStr;
+            attackInfoStr += efStr + ' ' + $scope.comb.xfx.join('');
         }
         sandalchest.alert(attackInfoStr, function(r) {
             if ($scope.intTarg.currHp <= 0) {
@@ -140,16 +140,17 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
             }
         }
     }
+    $scope.comb.xfx = [];
     $scope.comb.calcDmg = function(d) {
         //first, get player items:
-
+        $scope.comb.xfx = [];
         var allWeaps = $scope.comb.itemStats[1],
             allArm = $scope.comb.itemStats[0],
             allAff = $scope.comb.itemStats[2],
             allJunk = $scope.comb.itemStats[3];
         console.log('WEAP IDS', $scope.$parent.playerItems.weap, 'WEAPS', allWeaps, 'ARMOR', allArm, 'AFFIXES', allAff, 'JUNK', allJunk)
         var playerWeap = $scope.$parent.playerItems.weap;
-        console.log('PLAYER WEAPON:',playerWeap)
+        console.log('PLAYER WEAPON:', playerWeap)
         var playerArmor;
         var dtype,
             totalRawD = 0,
@@ -231,11 +232,11 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                 if (Math.random() < playerWeap[0].conf || Math.random() < playerWeap[2].conf) {
                     // Confusion: gives monster a 50% chance of damaging itSELF. 
                     $scope.monsConf = true;
-                    $scope.comb.attackEffects.push('confusing')
+                    $scope.comb.attackEffects.push('confusing');
                 }
                 if (playerWeap[0].vamp > 0 || playerWeap[2].vamp > 0) {
                     //vampiric: heal 5-15% weap dmg this strike
-                    $scope.comb.attackEffects.push('life-stealing')
+                    $scope.comb.attackEffects.push('life-stealing');
                     var vampPerc = (.1 * Math.random()) + .05; //percentage healed this strike;
                     $scope.currHp += (weapDmg + skillDmg) * vampPerc;
                     if ($scope.currHp > $scope.maxHp) {
@@ -243,7 +244,25 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                     }
                 }
                 $scope.currEn -= $scope.$parent.playerSkills[$scope.currSkillNum].energy;
-                return skillDmg + weapDmg + novaDmg;
+                var totalDmg = skillDmg + weapDmg + novaDmg;
+                //extraFx stuff.
+                if ($scope.monsStunned && $scope.$parent.playerSkills[$scope.currSkillNum].extraFx && $scope.$parent.playerSkills[$scope.currSkillNum].extraFx.dmgVsStun) {
+                    totalDmg *= (1 + Math.random() * .7);
+                    $scope.comb.xfx.push('It did extra damage to your stunned foe. ');
+                }
+                if ($scope.currMDegens.length && $scope.$parent.playerSkills[$scope.currSkillNum].extraFx && $scope.$parent.playerSkills[$scope.currSkillNum].extraFx.dmgVsDegen) {
+                    totalDmg *= (1 + Math.random() * .7);
+                    $scope.comb.xfx.push('It did extra damage since your foe&rsquo;s suffering from degen. ');
+                }
+                if ($scope.$parent.playerSkills[$scope.currSkillNum].extraFx && $scope.$parent.playerSkills[$scope.currSkillNum].extraFx.critChance) {
+                    totalDmg *= (1 + Math.random() * .5);
+                    $scope.comb.xfx.push('It hit for extra critical damage.');
+                }
+                if ($scope.$parent.playerSkills[$scope.currSkillNum].extraFx && $scope.$parent.playerSkills[$scope.currSkillNum].extraFx.protection) {
+                    $scope.pProt = true;
+                    $scope.comb.xfx.push('Using the skill applied protection for one turn!');
+                }
+                return totalDmg;
             } else if ($scope.$parent.playerSkills[$scope.currSkillNum].energy > $scope.currEn) {
                 sandalChest.alert('You don\'t have enough energy to use ' + $scope.$parent.playerSkills[$scope.currSkillNum].name + '.')
             } else {
@@ -324,10 +343,14 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                 dmg *= 1.5;
             }
         }
-        if ($scope.$parent.prof==1 || $scope.$parent.prof==3){
+        if ($scope.$parent.prof == 1 || $scope.$parent.prof == 3) {
             //heavy armor dmg reduction
             console.log('Char has HEAVY ARMOR! Reduction in dmg');
-            dmg*=0.9;
+            dmg *= 0.7;
+        }
+        if ($scope.pProt) {
+            dmg *= 0.7;
+            $scope.pProt = false;
         }
         return $scope.comb.fleeMult * dmg; //we return the total damage, multiplied by the flee multiplier (if any!).
     }
@@ -373,7 +396,7 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                     iName = items.loot.pre.pre + ' ' + items.loot.base.name + ' ' + items.loot.post.post;
                     $scope.playerItems.inv.push(lootObj)
                 }
-                newXp = 50 * $scope.intTarg.lvl / $scope.playerLvl||1;
+                newXp = 50 * $scope.intTarg.lvl / $scope.playerLvl || 1;
                 sandalchest.alert('After killing the ' + $scope.comb.lastDefeated + ', you gain ' + newXp + ' experience and recieve ' + iName + '!');
 
             });
@@ -385,16 +408,16 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
             angular.element('body').scope().intTarg.currHp = angular.element('body').scope().hp;
             $scope.$parent.intTarg.currHp = $scope.$parent.intTarg.hp;
         }
-        combatFac.addXp($scope.name,newXp).then(function(s) {
+        combatFac.addXp($scope.name, newXp).then(function(s) {
             $scope.inCombat = false;
             angular.element('body').scope().inCombat = false;
             angular.element('body').scope().intTarg = false;
             angular.element('body').scope().moveReady = true;
             angular.element('body').scope().currHp = angular.element('body').scope().maxHp;
             angular.element('body').scope().currEn = angular.element('body').scope().maxEn;
-            if(typeof s.data=='object'){
+            if (typeof s.data == 'object') {
                 //got new xp (most likely, user won a fight)
-                $scope.currXp = 500-parseInt(s.data.xpTill);
+                $scope.currXp = 500 - parseInt(s.data.xpTill);
                 $scope.playerLvl = parseInt(s.data.lvl);
             }
             $scope.currHp = $scope.maxHp;

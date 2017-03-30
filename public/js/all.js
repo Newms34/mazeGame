@@ -166,7 +166,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
             });
         }
     })();
-    $scope.goVote=function(){
+    $scope.goVote = function() {
         sandalchest.dialog(
             'Voting ',
             'Wanna submit your own ideas or vote on other user&rsquo;s ideas? Vote for them by clicking below!<hr><i>Warning!:</i> This will reset your current level progress!', {
@@ -174,9 +174,9 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
                     text: '&#9745; Go Vote!',
                     close: false,
                     click: function() {
-                        $window.location.href='./votes';
+                        $window.location.href = './votes';
                     }
-                },{
+                }, {
                     text: '&#9744; Nevermind',
                     close: true
                 }]
@@ -404,6 +404,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
     };
     $scope.didSkills = false;
     $scope.chInv = function(dir) {
+        //inv, skills, beastiary, quests, menu
         //UI Cycle function
         if (!dir && $scope.currUINum > 0) {
             $scope.currUINum--;
@@ -415,44 +416,13 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
             $scope.currUINum = 0;
         }
         $scope.currUIPan = $scope.UIPans[$scope.currUINum]; //title of current ui panel
-        if ($scope.currUIPan !== 'Menu' && $scope.currUIPan !== 'Inventory') {
+        if ($scope.currUIPan !== 'Menu' && $scope.currUIPan !== 'Inventory' && $scope.currUIPan !== 'Skills') {
             UIFac.getUIObj($scope.currUIPan, $scope[$scope.currUIPan]).then(function(uiRes) {
                 $scope.currUIObjs = uiRes.data;
                 if ($scope.currUIPan == 'Bestiary') {
                     $scope.currUIObjs.forEach(function(m) {
                         m.imgUrl = '/img' + m.imgUrl;
                     })
-                } else if ($scope.currUIPan == 'Skills' || !$scope.didSkills) {
-                    var skillList = {};
-                    $scope.didSkills = true;
-                    for (var i = 0; i < $scope.skillChains.length; i++) {
-                        $scope.skillChains[i].lvls.forEach(function(sk) {
-                            for (var j = 0; j < $scope.skillChains[i][sk].length; j++) {
-                                $scope.skillChains[i][sk][j].data.cid = $scope.skillChains[i][sk][j].data.name.toLowerCase().replace(/\s/g, '_');
-                                skillList[$scope.skillChains[i][sk][j].data.cid] = $scope.skillChains[i][sk][j].data;
-                                skillList[$scope.skillChains[i][sk][j].data.cid].owned = $scope.skillChains[i][sk][j].owned;
-                            }
-                        });
-                    }
-                    console.log('Skill id list', skillList)
-                    var canvs = document.querySelectorAll('canvas');
-                    for (var i = 0; i < canvs.length; i++) {
-                        console.log(canvs[i].dataset.skid, skillList[canvs[i].dataset.skid])
-                            //load and draw images.
-                        if (skillList[canvs[i].dataset.skid].imgUrl.indexOf('./img') < 0) {
-
-                            skillList[canvs[i].dataset.skid].ctx = canvs[i].getContext("2d");
-                            skillList[canvs[i].dataset.skid].img = new Image();
-                            skillList[canvs[i].dataset.skid].img.dataset.canvId = i;
-                            skillList[canvs[i].dataset.skid].img.src = skillList[canvs[i].dataset.skid].imgUrl;
-                            skillList[canvs[i].dataset.skid].img.onload = function(i) {
-                                // console.log('loaded image ', this, 'for', canvs[i])
-                                console.log('image:', canvs[this.dataset.canvId])
-                                    // canvs[this.dataset.canvId].width =
-                                skillList[canvs[this.dataset.canvId].dataset.skid].ctx.drawImage(skillList[canvs[this.dataset.canvId].dataset.skid].img, 0, 0)
-                            }
-                        }
-                    }
                 }
             });
         } else if ($scope.currUIPan == 'Inventory') {
@@ -460,6 +430,22 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
                 $scope.bodyBoxes = s;
                 $scope.currUIObjs = $scope.playerItems.inv;
             });
+        } else if ($scope.currUIPan == 'Skills' || !$scope.didSkills) {
+            // shouldnt have to do anything besides refresh
+            var playerInfo = {
+                lvl: $scope.playerLvl,
+                done: $scope.doneQuest,
+                inProg: $scope.questList,
+                items: $scope.playerItems,
+                xp: $scope.currXp,
+                skills: $scope.playerSkills,
+                chains: []
+            };
+            UIFac.getAllUIs(playerInfo).then(function(d) {
+                $scope.skillChains = d.chains;
+                console.log('chains', d.chains)
+                $scope.$digest();
+            })
         }
 
         $scope.currUIBg = UIFac.getUIBg($scope.currUIPan);
@@ -1387,7 +1373,7 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                 efStr += $scope.comb.attackEffects[i] + ', ';
             }
             efStr += $scope.comb.attackEffects.length > 1 ? 'and ' + $scope.comb.attackEffects[$scope.comb.attackEffects.length - 1] + ' one.' : $scope.comb.attackEffects[$scope.comb.attackEffects.length - 1] + ' one.';
-            attackInfoStr += efStr;
+            attackInfoStr += efStr + ' ' + $scope.comb.xfx.join('');
         }
         sandalchest.alert(attackInfoStr, function(r) {
             if ($scope.intTarg.currHp <= 0) {
@@ -1422,16 +1408,17 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
             }
         }
     }
+    $scope.comb.xfx = [];
     $scope.comb.calcDmg = function(d) {
         //first, get player items:
-
+        $scope.comb.xfx = [];
         var allWeaps = $scope.comb.itemStats[1],
             allArm = $scope.comb.itemStats[0],
             allAff = $scope.comb.itemStats[2],
             allJunk = $scope.comb.itemStats[3];
         console.log('WEAP IDS', $scope.$parent.playerItems.weap, 'WEAPS', allWeaps, 'ARMOR', allArm, 'AFFIXES', allAff, 'JUNK', allJunk)
         var playerWeap = $scope.$parent.playerItems.weap;
-        console.log('PLAYER WEAPON:',playerWeap)
+        console.log('PLAYER WEAPON:', playerWeap)
         var playerArmor;
         var dtype,
             totalRawD = 0,
@@ -1513,11 +1500,11 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                 if (Math.random() < playerWeap[0].conf || Math.random() < playerWeap[2].conf) {
                     // Confusion: gives monster a 50% chance of damaging itSELF. 
                     $scope.monsConf = true;
-                    $scope.comb.attackEffects.push('confusing')
+                    $scope.comb.attackEffects.push('confusing');
                 }
                 if (playerWeap[0].vamp > 0 || playerWeap[2].vamp > 0) {
                     //vampiric: heal 5-15% weap dmg this strike
-                    $scope.comb.attackEffects.push('life-stealing')
+                    $scope.comb.attackEffects.push('life-stealing');
                     var vampPerc = (.1 * Math.random()) + .05; //percentage healed this strike;
                     $scope.currHp += (weapDmg + skillDmg) * vampPerc;
                     if ($scope.currHp > $scope.maxHp) {
@@ -1525,7 +1512,25 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                     }
                 }
                 $scope.currEn -= $scope.$parent.playerSkills[$scope.currSkillNum].energy;
-                return skillDmg + weapDmg + novaDmg;
+                var totalDmg = skillDmg + weapDmg + novaDmg;
+                //extraFx stuff.
+                if ($scope.monsStunned && $scope.$parent.playerSkills[$scope.currSkillNum].extraFx && $scope.$parent.playerSkills[$scope.currSkillNum].extraFx.dmgVsStun) {
+                    totalDmg *= (1 + Math.random() * .7);
+                    $scope.comb.xfx.push('It did extra damage to your stunned foe. ');
+                }
+                if ($scope.currMDegens.length && $scope.$parent.playerSkills[$scope.currSkillNum].extraFx && $scope.$parent.playerSkills[$scope.currSkillNum].extraFx.dmgVsDegen) {
+                    totalDmg *= (1 + Math.random() * .7);
+                    $scope.comb.xfx.push('It did extra damage since your foe&rsquo;s suffering from degen. ');
+                }
+                if ($scope.$parent.playerSkills[$scope.currSkillNum].extraFx && $scope.$parent.playerSkills[$scope.currSkillNum].extraFx.critChance) {
+                    totalDmg *= (1 + Math.random() * .5);
+                    $scope.comb.xfx.push('It hit for extra critical damage.');
+                }
+                if ($scope.$parent.playerSkills[$scope.currSkillNum].extraFx && $scope.$parent.playerSkills[$scope.currSkillNum].extraFx.protection) {
+                    $scope.pProt = true;
+                    $scope.comb.xfx.push('Using the skill applied protection for one turn!');
+                }
+                return totalDmg;
             } else if ($scope.$parent.playerSkills[$scope.currSkillNum].energy > $scope.currEn) {
                 sandalChest.alert('You don\'t have enough energy to use ' + $scope.$parent.playerSkills[$scope.currSkillNum].name + '.')
             } else {
@@ -1606,10 +1611,14 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                 dmg *= 1.5;
             }
         }
-        if ($scope.$parent.prof==1 || $scope.$parent.prof==3){
+        if ($scope.$parent.prof == 1 || $scope.$parent.prof == 3) {
             //heavy armor dmg reduction
             console.log('Char has HEAVY ARMOR! Reduction in dmg');
-            dmg*=0.9;
+            dmg *= 0.7;
+        }
+        if ($scope.pProt) {
+            dmg *= 0.7;
+            $scope.pProt = false;
         }
         return $scope.comb.fleeMult * dmg; //we return the total damage, multiplied by the flee multiplier (if any!).
     }
@@ -1655,7 +1664,7 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                     iName = items.loot.pre.pre + ' ' + items.loot.base.name + ' ' + items.loot.post.post;
                     $scope.playerItems.inv.push(lootObj)
                 }
-                newXp = 50 * $scope.intTarg.lvl / $scope.playerLvl||1;
+                newXp = 50 * $scope.intTarg.lvl / $scope.playerLvl || 1;
                 sandalchest.alert('After killing the ' + $scope.comb.lastDefeated + ', you gain ' + newXp + ' experience and recieve ' + iName + '!');
 
             });
@@ -1667,16 +1676,16 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
             angular.element('body').scope().intTarg.currHp = angular.element('body').scope().hp;
             $scope.$parent.intTarg.currHp = $scope.$parent.intTarg.hp;
         }
-        combatFac.addXp($scope.name,newXp).then(function(s) {
+        combatFac.addXp($scope.name, newXp).then(function(s) {
             $scope.inCombat = false;
             angular.element('body').scope().inCombat = false;
             angular.element('body').scope().intTarg = false;
             angular.element('body').scope().moveReady = true;
             angular.element('body').scope().currHp = angular.element('body').scope().maxHp;
             angular.element('body').scope().currEn = angular.element('body').scope().maxEn;
-            if(typeof s.data=='object'){
+            if (typeof s.data == 'object') {
                 //got new xp (most likely, user won a fight)
-                $scope.currXp = 500-parseInt(s.data.xpTill);
+                $scope.currXp = 500 - parseInt(s.data.xpTill);
                 $scope.playerLvl = parseInt(s.data.lvl);
             }
             $scope.currHp = $scope.maxHp;
@@ -3245,7 +3254,11 @@ app.controller('vote-con', function($scope, $http, userFact, $window) {
             newVote.votesOpen = true;
             newVote.user = $scope.user;
             $http.post('./voting/subVote',newVote).then(function(r){
-                console.log(r)
+                if(r.data!='done'){
+                    sandalchest.alert('Too Many Submissions','Sorry, but you&rsquo;ve submitted too many items recently. Please wait for one of your items to expire before submitting another!')
+                }else{
+                    refreshVotes();
+                }
             })
             console.log('NEW ARMOR:', newVote)
         }
@@ -3270,6 +3283,13 @@ app.controller('vote-con', function($scope, $http, userFact, $window) {
             newVote.votedUsrs = $scope.user;
             newVote.votes = [];
             newVote.votesOpen = true;
+            $http.post('./voting/subVote',newVote).then(function(r){
+                if(r.data!='done'){
+                    sandalchest.alert('Too Many Submissions','Sorry, but you&rsquo;ve submitted too many items recently. Please wait for one of your items to expire before submitting another!')
+                }else{
+                    refreshVotes();
+                }
+            })
             console.log('NEW WEAPON:', newVote)
         }
     };
@@ -3326,6 +3346,13 @@ app.controller('vote-con', function($scope, $http, userFact, $window) {
             newVote.votedUsrs = $scope.user;
             newVote.votes = [];
             newVote.votesOpen = true;
+            $http.post('./voting/subVote',newVote).then(function(r){
+                if(r.data!='done'){
+                    sandalchest.alert('Too Many Submissions','Sorry, but you&rsquo;ve submitted too many items recently. Please wait for one of your items to expire before submitting another!')
+                }else{
+                    refreshVotes();
+                }
+            });
             console.log('NEW SKILL:', newVote)
         }
     }
