@@ -1534,7 +1534,7 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                 }
                 //profession-specific effects:
                 //note that as the level difference between the player and target becomes more positive, the greater the chance of the effect firing
-                var profEffTrigger = (Math.random() * 100) < ((6.25 * ($scope.lvl - $scope.$parent.intTarg.lvl)) + 37.5);
+                var profEffTrigger = (Math.random() * 100) < ((6.25 * Math.max(-6,Math.min($scope.lvl - $scope.$parent.intTarg.lvl,6))) + 37.5);
                 if (profEffTrigger) {
                     if ($scope.$parent.prof == 1) {
                         //war
