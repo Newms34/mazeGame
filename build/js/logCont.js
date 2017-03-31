@@ -8,25 +8,25 @@ var app = angular.module('mazeGame', ['ngTouch']).controller('log-con', function
         txt: 'What they lack in magical apptitude, warriors more than make up for in their martial expertise. The warrior uses their weapon training to bring swift and steely death to their foes',
         img: './img/assets/war.jpg',
         ico:'./img/assets/warPick.png',
-        skill:"Berserker's Fury - Chance to do extra damage on attack."
+        skill:"Berserker's Precision - Your martial training allows you to make more devastating attacks. Chance to cause degen to stunned foes, or stun to degening foes."
     }, {
         name:'Sorcerer',
         txt: 'The scholarly sorcerer uses their extensive knowledge of the arcane to obliterate their enemies with magical fire, or hinder them with conjured ice and blizzards.',
         img: './img/assets/sorc.jpg',
         ico:'./img/assets/sorcPick.png',
-        skill:"Elemental Mastery - Additional damage versus foes with degen"
+        skill:"Elemental Boon - By channeling more into your spells, you can renew yourself or devastate your enemies. Chance to grant additional regen or degen. Based on level."
     }, {
         name:'Paladin',
         txt: 'The holy paladins are bastions of the Holy Ones. Using their faith both offensively as a shield and defensively as a weapon, they can both smite their enemies and renew themselves.',
         img: './img/assets/paly.jpg',
         ico:'./img/assets/palyPick.png',
-        skill:"Righteous Fury - Heal or regen for a small amount on attack"
+        skill:"Redemption - The paladin's fortitude gives them a chance to reflect the enemy's damage back at them. Chance to reflect enemy damage. Based on level."
     }, {
         name:'Necromancer',
         txt: 'Masters of the so-called "dark" arts, the necromancers are an oft-maligned lot. However, no one would deny their power - or their usefulness - in turning the minds and even fallen bodies of their foes against them.',
         img: './img/assets/necro.jpg',
         ico:'./img/assets/necroPick.png',
-        skill:"Soul Siphon - steal some health on attack"
+        skill:"Soul Siphon - Calling on some really dark stuff, you rend part of your enemy's life force. Chance to steal some health on attack. Based on level."
     }]
     $scope.newUsr = function() {
         //eventually we need to CHECK to see if this user is already taken!

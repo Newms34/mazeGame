@@ -159,6 +159,7 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
             dmg,
             lvlDif;
         //calculate (and cap) the level difference multiplier
+
         if ($scope.$parent.intTarg.lvl / $scope.lvl > 2) {
             lvlDif = 2;
         } else if ($scope.$parent.intTarg.lvl / $scope.lvl < .5) {
@@ -262,6 +263,52 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                     $scope.pProt = true;
                     $scope.comb.xfx.push('Using the skill applied protection for one turn!');
                 }
+                //profession-specific effects:
+                //note that as the level difference between the player and target becomes more positive, the greater the chance of the effect firing
+                var profEffTrigger = (Math.random() * 100) < ((6.25 * Math.max(-6,Math.min($scope.lvl - $scope.$parent.intTarg.lvl,6))) + 37.5);
+                if (profEffTrigger) {
+                    if ($scope.$parent.prof == 1) {
+                        //war
+                        if ($scope.monsStunned) {
+                            //stunned: add degen.
+                            if ($scope.comb.checkDoTDup($scope.currMDegens, $scope.$parent.intTarg.name + '-war-degen')) {
+                                $scope.currMDegens.push(new $scope.comb.DoT($scope.$parent.intTarg.name + '-war-degen', 2, 5));
+                            } else {
+                                $scope.resetDoTDur('currMDegens', $scope.$parent.intTarg.name + '-war-degen', 5)
+                            }
+
+                        } else if ($scope.currMDegens.length) {
+                            $scope.monsStunned = true;
+                        }
+                    } else if ($scope.$parent.prof == 2) {
+                        //sorc
+                        if (Math.random() > .5) {
+                            //degen to mons
+                            if ($scope.comb.checkDoTDup($scope.currMDegens, $scope.$parent.intTarg.name + '-sorc-degen')) {
+                                $scope.currMDegens.push(new $scope.comb.DoT($scope.$parent.intTarg.name + '-sorc-degen', 2, 5));
+                            } else {
+                                $scope.resetDoTDur('currMDegens', $scope.$parent.intTarg.name + '-sorc-degen', 5)
+                            }
+
+                        } else {
+                            //regen to player
+                            if ($scope.comb.checkDoTDup($scope.currPRegens, $scope.$parent.intTarg.name + '-sorc-regen')) {
+                                $scope.currPRegens.push(new $scope.comb.DoT($scope.$parent.intTarg.name + '-sorc-regen', 3, 5));
+                            } else {
+                                $scope.resetDoTDur('currPRegens', $scope.$parent.intTarg.name + '-sorc-regen', 5)
+                            }
+
+                        }
+                    } else if ($scope.$parent.prof == 3) {
+                        //paly
+                        $scope.monsRetalled = true;
+                    } else if ($scope.$parent.prof == 4) {
+                        //necro
+                        $scope.currHp+=dmg*.15;
+                        dmg*=1.15;
+                    }
+                }
+                //and finally, return the damage!
                 return totalDmg;
             } else if ($scope.$parent.playerSkills[$scope.currSkillNum].energy > $scope.currEn) {
                 sandalChest.alert('You don\'t have enough energy to use ' + $scope.$parent.playerSkills[$scope.currSkillNum].name + '.')
@@ -503,17 +550,15 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
         }
         // console.log('player stats', $scope.lvl, $scope.playerItems, $scope.questList, $scope.doneQuest, $scope.maxHp, $scope.currHp, $scope.maxEn, $scope.currEn, $scope.isStunned)
     $scope.comb.monsTurn = function() {
-
         //eventually, the monster should be able to do other stuff (heal, wait, etc)
         console.log('monster taking turn!')
         if (!$scope.monsStunned) {
             var monDmg = parseInt($scope.comb.calcDmg()); //mon dmg? Oui oui!
             var confSelfDmg = Math.random() < 0.5 && $scope.monsConf;
+            if ($scope.monsRetalled) {
+                $scope.intTarg.currHp -= 0.15 * monDmg;
+            }
             if (!confSelfDmg) {
-                /*first, effects:
-                    Note that monster can neither heal nor stun if they're confused
-        
-                    */
                 if ($scope.intTarg.currHp / $scope.intTarg.hp > .5 && Math.random < $scope.intTarg.healCh) {
                     //monster heals. This is the chance that it heals ABOVE a 'low health' threshold
                     sandalchest.alert('The ' + $scope.intTarg.name + ' heals!', function() {
@@ -525,7 +570,8 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                         }
                         $scope.comb.playersTurn = true;
                         $scope.comb.fleeMult = 1;
-                    })
+                        $scope.monsRetalled = false;
+                    });
                 } else if (($scope.intTarg.currHp / $scope.intTarg.hp) > .5 && ((-18 / 5) * ($scope.intTarg.currHp / $scope.intTarg.hp) + 3 > Math.random())) {
                     //monster at low hp (<50%), so gets additional % chance to heal
                     sandalchest.alert('The ' + $scope.intTarg.name + ' heals!', function() {
@@ -537,19 +583,25 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                         }
                         $scope.comb.playersTurn = true;
                         $scope.comb.fleeMult = 1;
-                    })
+                        $scope.monsRetalled = false;
+                    });
                 } else {
                     if (Math.random() < $scope.$parent.intTarg.stunCh) {
                         $scope.pStunned = true;
                     }
                     $scope.currHp -= monDmg; //reduce player's health by amt
                     combatFac.updateBars($scope.maxHp, $scope.currHp, $scope.maxEn, $scope.currEn, $scope.$parent.intTarg.hp, $scope.$parent.intTarg.currHp); //update health and energy bars
-                    sandalchest.alert($scope.$parent.intTarg.name + ' attacks for ' + monDmg + ' ' + combatFac.getDmgType($scope.$parent.intTarg.type) + '!', function() {
+                    var retalNote = $scope.monsRetalled ? ' Your Redemption trait reflects some of the monster&rsquo;s damage!' : '';
+                    sandalchest.alert($scope.$parent.intTarg.name + ' attacks for ' + monDmg + ' ' + combatFac.getDmgType($scope.$parent.intTarg.type) + '!' + retalNote, function() {
                         $scope.comb.updateDoTs();
-                        console.log('triggered cb for mons attack')
                         if ($scope.currHp <= 0) {
                             //FATALITY! Monster wins!
                             $scope.comb.dieP();
+                            $scope.monsRetalled=false;
+                        } else if ($scope.intTarg.currHp <= 0) {
+                            //Monster kills self from retal.
+                            $scope.comb.dieM();
+                            $scope.monsRetalled=false;
                         } else {
                             $scope.comb.playersTurn = true;
                             $scope.comb.fleeMult = 1;
@@ -557,6 +609,7 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                             if ($scope.currEn > $scope.maxEn) {
                                 $scope.currEn = $scope.maxEn;
                             }
+                            $scope.monsRetalled=false;
                         }
                     })
                 }
