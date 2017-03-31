@@ -41,8 +41,8 @@
                     <button ng-disabled='comb.playersTurn==false' class='btn btn-success choiceBut change-dwn-butt' ng-click='comb.skillCh(0)'>&leftarrow;</button>
                 </div>
                 <div class='col-md-6 the-skill' ng-click='comb.showSkillInf();'>
-                    <h4>{{playerSkills[currSkillNum].name}}</h4>
-                    <img src='{{playerSkills[currSkillNum].imgUrl}}'>
+                    <h4>{{fullSkills[currSkillNum].name}}</h4>
+                    <img src='{{fullSkills[currSkillNum].imgUrl}}'>
                 </div>
                 <div class='col-md-3'>
                     <button ng-disabled='comb.playersTurn==false' class='btn btn-success choiceBut change-up-butt' ng-click='comb.skillCh(1)'>&rightarrow;</button>

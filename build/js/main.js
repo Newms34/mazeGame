@@ -254,7 +254,6 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
         };
         UIFac.getAllUIs(playerInfo).then(function(r) {
             //do stuff with response.
-            console.log('DATA RETURNED', r)
             $scope.playerSkills = r.skills;
             $scope.playerItems = r.items;
             $scope.skillChains = r.chains;
