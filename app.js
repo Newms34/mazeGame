@@ -4,8 +4,9 @@ var express = require('express'),
     routes = require('./routes'),
     path = require('path'),
     bodyParser = require('body-parser'),
-    session = require('client-sessions');
-
+    session = require('client-sessions'),
+    compression = require('compression');
+app.use(compression());
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.set('view engine', 'html');

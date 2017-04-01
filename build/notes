@@ -1,1 +1,0 @@
-This folder is used as the 'source' for gulp. It's where i actually write all the client-side JS stuff, which gulp then pipes into the /public folder.

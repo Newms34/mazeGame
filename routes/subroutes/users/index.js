@@ -167,6 +167,7 @@ router.get('/logout', function(req, res, next) {
     res.send('logged');
 });
 router.post('/addXp', function(req, res, next) {
+    console.log(req.body)
     if (!req.body.xp || req.body.xp === 0) {
         res.send('err');
     } else {
@@ -176,16 +177,18 @@ router.post('/addXp', function(req, res, next) {
             } else {
                 usr.currLvlXp += req.body.xp;
                 var didLevel = false;
-                if (usr.currLvlXp > 500) {
-                    usr.currLvlXp = 0;
-                    usr.playerLvl++;
+                usr.currentLevel.data = req.body.cells;
+                while (usr.currLvlXp>500){
+                    //note that using a while loop allows us to account for instances in which the user has MORE than 1 skillpt's worth of xp
+                    usr.currLvlXp -= 500
+                    playerLvl++;
                     usr.skillPts++;
                     didLevel = true;
                 }
                 usr.save(function(r) {
                     res.send({
                         lvl: usr.playerLvl,
-                        xpTill: usr.currLvlXp,
+                        xp: usr.currLvlXp,
                         leveled: didLevel,
                         skillPts: usr.skillPts
                     });
@@ -228,3 +231,21 @@ router.post('/buySkill', function(req, res, next) {
         }
     });
 });
+
+router.post('/addBeast',function(req,res,next){
+    if (!req.session || !req.session.user || req.body.u !== req.session.user.name) {
+        res.send('autherr'); //user trying to 'spoof' a request
+    }else{
+        mongoose.model('User').findOne({name:req.body.u},function(err,usr){
+            console.log('adding',req.body.id,'to',usr.name)
+            if(!usr.mons){
+                usr.mons = [req.body.id];
+            }else if(!usr.mons.length || usr.mons.indexOf(req.body.id)<0){
+                usr.mons.push(req.body.id);
+            }
+            usr.save(function(s){
+                res.send(usr.mons);
+            })
+        })
+    }
+})

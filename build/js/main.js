@@ -25,6 +25,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
     $scope.isStunned = false;
     $scope.inCombat = false;
     $scope.merchy = {};
+    $scope.beastLib = [];
     $scope.turnSpeed = 0;
     // $scope.possRoomConts = ['loot', 'mons', 'npcs', 'jewl', ' ', 'exit', ' ', ' ', 'mons', 'mons']; //things that could be in a room!
     $scope.name = ''; //actual name. 
@@ -158,7 +159,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
             $scope.playerSkills = d.data.skills;
             $scope.extraSkillPts = d.data.skillPts || 0;
             $scope.prof = d.data.prof || 1;
-            alert('Player prof number is: '+$scope.prof);
+            $scope.beastLib = d.data.mons;
             econFac.merchInv($scope.playerItems.inv).then(function(r) {
                 for (var ep = 0; ep < r.length; ep++) {
                     console.log('REPLACING', $scope.playerItems.inv[ep].item, 'WITH', r[ep])
@@ -171,7 +172,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
                     //if no level data, reset;
                     $scope.doMaze($scope.width, $scope.height);
                 } else {
-                    console.log('User DOES have current level data! Reloading!')
+                    console.log('User DOES have current level data! Reloading!', d.data)
                     $scope.cells = d.data.currentLevel.data;
                     $scope.cellNames = d.data.currentLevel.names;
                     $scope.playerCell = d.data.currentLevel.loc;
@@ -283,6 +284,17 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
         };
     };
     $scope.didSkills = false;
+    $scope.currMons = 0;
+    $scope.adjBeast = function(dir) {
+        console.log('DIR', dir, 'MONS', $scope.currMons)
+        if (dir && $scope.currMons < $scope.currUIObjs.length - 2) {
+            $scope.currMons += 2;
+        } else if ($scope.currMons > 1) {
+            console.log('goin backwards')
+            $scope.currMons -= 2;
+        }
+        $scope.$digest();
+    }
     $scope.chInv = function(dir) {
         //inv, skills, beastiary, quests, menu
         //UI Cycle function
@@ -303,6 +315,11 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
                     $scope.currUIObjs.forEach(function(m) {
                         m.imgUrl = '/img' + m.imgUrl;
                     })
+                    $scope.currUIObjs = $scope.currUIObjs.filter(function(m) {
+                        return !m.quest && $scope.beastLib.indexOf(m._id)>-1;
+                    })
+                    $scope.currMons = 0;
+                    $scope.$apply();
                 }
             });
         } else if ($scope.currUIPan == 'Inventory') {

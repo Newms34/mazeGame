@@ -1,7 +1,5 @@
 app.controller('merch-cont', function($scope, $http, $q, $timeout, $window, econFac, UIFac) {
     //merchants!
-    console.log('THING RUNNING')
-
     $scope.merchy.prepNpc = function() {
         $scope.merchy.buy = true;
         $scope.merchy.merch = $scope.currNpc;
@@ -9,7 +7,11 @@ app.controller('merch-cont', function($scope, $http, $q, $timeout, $window, econ
     };
     $scope.merchy.itemForPlayer = null;
     $scope.acceptQuest= function(){
-        console.log($scope.$parent.name,$scope.merchy.merch.quest.name)
+        sandalchest.confirm('Accept Quest', 'Are you sure you want to accept this quest?',function(resp){
+            if(resp){
+                econFac.acceptQuest($scope.user.$scope.merchy.merch.quest.id);
+            }    
+        })
     }
     $scope.merchy.exchange = function(item, dir, ind) {
         //main sell function

@@ -13,21 +13,6 @@ app.factory('combatFac', function($http) {
         getSkillInf: function(all, n) {
             sandalchest.dialog( all[n].name,all[n].desc, { buttons: [{ text: 'Okay', close: true }] })
         },
-        updateBars: function(pm, pc, pem, pec, mm, mc) {
-            pm = parseInt(pm);
-            pc = parseInt(pc);
-            pem = parseInt(pem);
-            pec = parseInt(pec);
-            mm = parseInt(mm);
-            mc = parseInt(mc);
-            var phperc = parseInt(100 * pc / pm);
-            var penperc = parseInt(100 * pec / pem);
-            var mhperc = parseInt(100 * mc / mm);
-            console.log(mhperc, phperc, penperc)
-            $('#combat-box #enemy .health-bar .stat-bar-stat').css('width', mhperc + '%');
-            $('#combat-box #player .health-bar .stat-bar-stat').css('width', phperc + '%');
-            $('#combat-box #player .energy-bar .stat-bar-stat').css('width', penperc + '%');
-        },
         getItems: function() {
             return $http.get('/item/allItems').then(function(s) {
                 return s;
@@ -38,9 +23,14 @@ app.factory('combatFac', function($http) {
                 return i.data;
             })
         },
-        addXp: function(u,x){
-            return $http.post('/user/addXp',{xp:x,user:u},function(r){
+        addXp: function(u,x,c,l){
+            return $http.post('/user/addXp',{xp:x,user:u,cells:c,loc:l},function(r){
                 return r;
+            })
+        },
+        besties:function(data){
+            return $http.post('/user/addBeast',data).then(function(r){
+                return r.data;
             })
         }
     };

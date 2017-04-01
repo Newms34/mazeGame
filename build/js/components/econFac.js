@@ -65,5 +65,10 @@ app.factory('econFac', function($http, $q) {
                 return q.data;
             })
         },
+        acceptQuest: function(usr,qid){
+            return $http.post('/quests/acceptQuest',{n:usr,qid:qid}).then(function(n){
+                return n.data;
+            });
+        }
     };
 });

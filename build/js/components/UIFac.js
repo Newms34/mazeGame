@@ -67,16 +67,16 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
                 console.log('armor:', armor[0], '\nAffix', affix[0], '\nJunk', junk[0], '\nWeap', weap[0], '\nMon', mon[0], '\nSkill', skill[0], '\nQuest', quest[0])
                     //now should have all the data in their proper places. now we need to 'populate' the appropriate fields in the given userdata ('info')
                 info.inProg.forEach(function(qId) {
-                    for (i = 0; i < quests.length; i++) {
-                        if (qId == quests[i].id) {
-                            qId = angular.copy(quests[i]);
+                    for (i = 0; i < quest.length; i++) {
+                        if (qId == quest[i].id) {
+                            qId = angular.copy(quest[i]);
                         }
                     }
                 });
                 info.done.forEach(function(qId) {
-                    for (i = 0; i < quests.length; i++) {
-                        if (qId == quests[i].id) {
-                            qId = angular.copy(quests[i]);
+                    for (i = 0; i < quest.length; i++) {
+                        if (qId == quest[i].id) {
+                            qId = angular.copy(quest[i]);
                         }
                     }
                 });

@@ -172,7 +172,7 @@
     list-style: none;
 }
 
-$menu-buttons:save savelog logout reset-all reset-level;
+$menu-buttons:vote save savelog logout reset-all reset-level;
 .menuGrp {
     width: 100%;
     padding: 10px;
@@ -191,11 +191,16 @@ $menu-buttons:save savelog logout reset-all reset-level;
             background: linear-gradient(rgba(0, 0, 0, .5), rgba(0, 0, 0, .5)),
             url('.././img/assets/#{$mBtn}.jpg');
             background-attachment: fixed;
+            background-size: contain;
+            text-shadow: 0 0 5px #000;
+            box-shadow: 3px 3px 6px #000;
             &:hover {
                 background: linear-gradient(rgba(0, 0, 0, .01),
                 rgba(0, 0, 0, .01)),
                 url('.././img/assets/#{$mBtn}.jpg');
                 background-attachment: fixed;
+                box-shadow: 2px 2px 3px #000;
+                background-size: contain;
             }
         }
     }
@@ -254,3 +259,95 @@ body#mob {
     }
 }
 
+#book {
+    padding: 2px;
+    height: 80%;
+    position: relative;
+    & .page {
+        height: 100%;
+        display: inline-block;
+        margin: 0;
+        padding: 5px;
+        width: 50%;
+        background: #fed;
+        position: absolute;
+        top: 0px;
+        &.left-page {
+            left: 0px;
+            box-shadow: -10px 0 25px -10px #000 inset;
+        }
+        &.right-page {
+            right: 0px;
+            box-shadow: 10px 0 25px -10px #000 inset;
+        }
+        & h3 {
+            width: 100%;
+            text-align: center;
+        }
+        & img {
+            position: relative;
+            width: 50%;
+            left: 25%;
+        }
+
+        & .curl{
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            transition-duration: .5s;
+            cursor: pointer;
+        }
+        & .curl-right {
+            right: 0px;
+            bottom: 0px;
+            background: linear-gradient(to top left, rgba(0, 0, 0, .7), rgba(0, 0, 0, 0));
+            & .page-curl-bg {
+                position: absolute;
+                right: 0px;
+                bottom: 0px;
+                width: 0;
+                height: 0;
+                border-bottom: 20px solid #85807B;
+                transition-duration:.5s;
+                border-left: 20px solid transparent;
+            }
+            &:hover {
+                width: 50px;
+                height: 50px;
+                & .page-curl-bg {
+                    border-bottom: 50px solid #b0b0b0;
+                    border-left: 50px solid transparent;
+                }
+            }
+        }
+
+        & .curl-left {
+            position: absolute;
+            left: 0px;
+            bottom: 0px;
+            width: 20px;
+            height: 20px;
+            transition-duration: .5s;
+            cursor: pointer;
+            background: linear-gradient(to top right, rgba(0, 0, 0, .7), rgba(0, 0, 0, 0));
+            & .page-curl-bg {
+                position: absolute;
+                left: 0px;
+                bottom: 0px;
+                width: 0;
+                height: 0;
+                border-bottom: 20px solid #85807B;
+                transition-duration:.5s;
+                border-right: 20px solid transparent;
+            }
+            &:hover {
+                width: 50px;
+                height: 50px;
+                & .page-curl-bg {
+                    border-bottom: 50px solid #b0b0b0;
+                    border-right: 50px solid transparent;
+                }
+            }
+        }
+    }
+}

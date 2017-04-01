@@ -24,10 +24,7 @@ var usrSchema = new mongoose.Schema({
     pass: String,
     salt: String,
     questDone: [Number],
-    inProg: [{
-        id: Number,
-        status: Number
-    }],
+    inProg: [Number],
     currentLevel: {
         loc: String,
         data: [{}],
@@ -37,6 +34,7 @@ var usrSchema = new mongoose.Schema({
     skills:[Number],
     maxHp: Number,
     currHp: Number,
+    mons:[String],//list of monsters discovered.
     maxEn: Number, //max energy (for skills)
     currEn: Number,
     currVotes:[String],//votes this user has.

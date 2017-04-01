@@ -5,7 +5,7 @@
             <div class='col-md-12 health-bar'>
                 <div class='stat-bar-bg'>
                     <div class='stat-bar-inner'>
-                        <div class='stat-bar-stat'>
+                        <div class='stat-bar-stat' style='width:{{100*($parent.intTarg.currHp/$parent.intTarg.hp)}}%;'>
                         </div>
                         <span class='hb-stats-ind' ng-show='currMRegens.length'>&#9650;</span><span class='hb-stats-ind' ng-show='currMDegens.length'>&#9660;</span>
                     </div>
@@ -21,7 +21,7 @@
             <div class='col-md-12 health-bar'>
                 <div class='stat-bar-bg'>
                     <div class='stat-bar-inner'>
-                        <div class='stat-bar-stat'>
+                        <div class='stat-bar-stat' style='width:{{100*(currHp/maxHp)}}%;'>
                         </div>
                         <span class='hb-stats-ind' ng-show='currPRegens.length'>&#9650;</span><span class='hb-stats-ind' ng-show='currPDegens.length'>&#9660;</span>
                     </div>
@@ -30,7 +30,7 @@
             <div class='col-md-12 energy-bar'>
                 <div class='stat-bar-bg'>
                     <div class='stat-bar-inner'>
-                        <div class='stat-bar-stat'></div>
+                        <div class='stat-bar-stat' style='width:{{100*(currEn/maxEn)}}%;'></div>
                     </div>
                 </div>
             </div>

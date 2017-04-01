@@ -112,4 +112,7 @@ https://jsfiddle.net/L7wccqc6/10/show/
 Allow armor/weap/skill creation via community? in other words, release armor/weap/skill creation engines to public? These'd need a voting system.
 
 
-REMOVE CANVAS FROM ALL THE THINGS! <img> can use dataurl!
+right now, the player can reload the page to spam xp. we need to find a way to prevent that. snapshot of game @ start of lvl? either that, or make level saving more specific. for 2nd option:
+save curr location. save cells (including ones cleared!). save xp/skills
+quests filtered! yay!
+limit beasts in bestiary panel to those already encountered? would need array on the user model.

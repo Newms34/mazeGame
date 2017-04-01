@@ -4,10 +4,45 @@
         <button class='btn btn-primary' style='float:right' ng-click='chInv(1)'>&rightarrow;</button>
     </div>
     <div class='panel-body' style='background:url({{currUIBg}});background-size: cover;' ng-show='currUIPan!="Menu" && currUIPan!="Skills"'>
-        <div id='uiBlokCont'>
-            <div class='currUIEl' ng-repeat='UIEl in currUIObjs' ng-show='!UIEl.quest && ((currUIPan=="Skills" && playerSkills.indexOf(UIEl.id)>-1)||(currUIPan!="Skills"))' ng-click='getUIInfo(UIEl)' style='background:linear-gradient(rgba(0,0,0,.3),rgba(0,0,0,.3)),url({{UIEl.imgUrl||"/img/UI/none.jpg"}}); background-size:100% 100%;'>
-                {{currUIPan=='Inventory'?getInvName(UIEl):UIEl.name}}
+        <div id='uiBlokCont' ng-show='currUIPan=="Quests"'>
+            <!-- only quests -->
+            <div class='currUIEl' ng-show='questList.indexOf(UIEl.id)>-1' ng-repeat='UIEl in currUIObjs' ng-click='getUIInfo(UIEl)' style='background:linear-gradient(rgba(0,0,0,.3),rgba(0,0,0,.3)),url({{UIEl.imgUrl||"/img/UI/none.jpg"}}); background-size:100% 100%;'>
+                {{UIEl.name}}
             </div>
+        </div>
+        <div id='book' ng-show='currUIPan=="Bestiary"'>
+            <!-- only beasts -->
+            <div class='page left-page'>
+                <span ng-show='!beastLib || !beastLib.length'>You haven't discovered any creatures yet! Explore to find more creatures!</span>
+                <h3>{{currUIObjs[currMons].name}}</h3>
+                <img src="{{currUIObjs[currMons].imgUrl}}">
+                <br><br>
+                <div>
+                    <i>{{currUIObjs[currMons].desc}}</i>
+                </div>
+                <div class='curl curl-left' ng-show = 'currUIObjs[currMons-1]' ng-click='adjBeast(0)'>
+                    <div class='page-curl-bg'></div>
+                </div>
+            </div>
+            <div class='page right-page'>
+                <div ng-show='currUIObjs[currMons+1]'>
+                    <h3>{{currUIObjs[currMons+1].name}}</h3>
+                    <img src="{{currUIObjs[currMons+1].imgUrl}}">
+                    <br><br>
+                    <div>
+                        <i>{{currUIObjs[currMons+1].desc}}</i>
+                    </div>
+                </div>
+                <div class='curl curl-right' ng-show='currUIObjs[currMons+1] && currUIObjs[currMons+2]' ng-click='$parent.adjBeast(1)'>
+                    <div class='page-curl-bg'></div>
+                </div>
+            </div>
+        </div>
+        <div class='alert-danger' ng-show='currUIPan=="Quests" && (!questList || !questList.length)'>
+            No quests yet! Visit a merchant to grab a quest. Or just... wait for me to update the game ☺.
+        </div>
+        <div class='alert-danger' ng-show='currUIPan=="Bestiary" && (!beastLib || !beastLib.length)'>
+            You haven't discovered any creatures yet! Keep exploring to discover some!
         </div>
         <div id='inv-body-boxes' ng-show='currUIPan=="Inventory"'>
             <div class='body-box' ng-repeat='bb in bodyBoxes' style='left:{{bb.x}}px;top:{{bb.y}}px;background-image:linear-gradient( rgba(0,0,0,.8), rgba(0,0,0,.8) ),url("{{bb.imgUrl}}");'>{{bb.itName}}</div>
@@ -17,7 +52,7 @@
         <button class='btn btn-primary' title='connect to a phone!' ng-click='inpPhone()'>&#128241;</button>
         <div class="form-group cent">
             <div class='menuGrp'>
-                <button ng-click='goVote();' class='btn bigButt vote-men'>Go to Voting</button>
+                <button ng-click='goVote();' class='btn bigButt vote'>Go to Voting</button>
             </div>
             <div class="menuGrp">
                 <button ng-click='saveGame();' class='btn bigButt save'>Save</button>
@@ -37,8 +72,8 @@
         <div class='container skill-cont'>
             <div class='skill-ch' style='left:{{15+(100*$index/skillChains.length)}}%;' ng-repeat='ch in skillChains'>
                 <div class='skill-ch-row' ng-repeat='chr in ch.lvls' style='top:{{100*$index}}px;width:{{(100*ch[chr].length)+10}}px;left:-50px'>
-                <!-- chr is chain-row -->
-                    <div class='skill-ch-item' ng-repeat='chi in ch[chr]' ng-class="{'has':chi.owned==true}" style='background:url({{chi.data.imgUrl}});' ng-click='skillPurchUI(chi.data,chi.owned)'>       
+                    <!-- chr is chain-row -->
+                    <div class='skill-ch-item' ng-repeat='chi in ch[chr]' ng-class="{'has':chi.owned==true}" style='background:url({{chi.data.imgUrl}});' ng-click='skillPurchUI(chi.data,chi.owned)'>
                         <div class='skill-lbl'>{{chi.data.name}}</div>
                         <div class='skill-lbl' ng-if='!chi.owned'>Cost: {{chi.data.skillPts}} Points</div>
                         <div class='row-pointer' ng-if='chr!=0' style='left:0; top:-1.5px;transform:rotateZ({{skillPntrCalcs($index,ch[chr].length).ang}}deg);height:{{skillPntrCalcs($index,ch[chr].length).ht}}px;'></div>
@@ -47,7 +82,9 @@
             </div>
         </div>
         <div id='xp-bar-bg'>
-            <div id='xp-bar-chan'><div id='xp-bar-fill' style='width:{{100*(currXp||0)/500}}%;'>{{currXp}}/500xp</div></div>
+            <div id='xp-bar-chan'>
+                <div id='xp-bar-fill' style='width:{{100*(currXp||0)/500}}%;'>{{currXp}}/500xp</div>
+            </div>
         </div>
     </div>
 </div>

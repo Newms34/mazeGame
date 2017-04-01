@@ -73,7 +73,7 @@ router.get('/npcQ/:x/:y/:l/:n', function(req, res, next) {
     } else {
         // { $gte: parseInt(req.params.l), $lt: parseInt(req.params.l) + 6 }
         mongoose.model('Quest').find({ 'lvl': { "$gte": parseInt(req.params.l), "$lt": parseInt(req.params.l) + 4 } }, function(err, qs) {
-            console.log('quest results from level', req.params.l, ' to '+(parseInt(req.params.l)+4)+' are', err, qs)
+            console.log('quest results from level', req.params.l, ' to ' + (parseInt(req.params.l) + 4) + ' are', err, qs)
             if (!qs || !qs.length) {
                 res.send(false)
                 return;
@@ -98,7 +98,7 @@ router.get('/npcQ/:x/:y/:l/:n', function(req, res, next) {
                         pickedQuest = null;
                     }
                 };
-                console.log('Final picked quest',pickedQuest)
+                console.log('Final picked quest', pickedQuest)
                 if (!pickedQuest) {
                     res.send(false)
                 } else {
@@ -110,5 +110,20 @@ router.get('/npcQ/:x/:y/:l/:n', function(req, res, next) {
                 }
             });
         });
+    }
+})
+router.post('/acceptQuest', function(req, res, next) {
+    if (!req.session || !req.session.user || req.body.n !== req.session.user.name) {
+        res.send('autherr');
+    } else {
+        mongoose.model('User').findOne({name:req.session.user.name},function(err,usr){
+            if(usr.inProg.indexOf(req.body.qid)>-1){
+                res.send('dup');
+            }else
+            usr.inProg.push(req.body.qid);
+            usr.save(function(err,resp){
+                res.send(qid);
+            })
+        })
     }
 })

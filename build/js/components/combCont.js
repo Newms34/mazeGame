@@ -17,17 +17,22 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
         $scope.intTarg.currHp = $scope.intTarg.hp; //set ens current health to max. 
         //this is reset every time we 're-enter' the cell
         $('.pre-battle').hide(250);
-        combatFac.getItems().then(function(r) {
-            $scope.comb.itemStats = r.data;
-            $scope.currPRegens = [];
-            $scope.currPDegens = [];
-            $scope.currMRegens = [];
-            $scope.currMDegens = [];
-            $scope.popInv();
-        });
+        console.log('MONSTER ID:', $scope.$parent.intTarg);
+        combatFac.besties({id:$scope.$parent.intTarg._id,u:$scope.$parent.name}).then(function(b) {
+            $scope.beastLib = b;
+            console.log('BEASTLIB',$scope.beastLib)
+            combatFac.getItems().then(function(r) {
+                $scope.comb.itemStats = r.data;
+                $scope.currPRegens = [];
+                $scope.currPDegens = [];
+                $scope.currMRegens = [];
+                $scope.currMDegens = [];
+                $scope.popInv();
+            });
+        })
     };
     $scope.comb.skillCh = function(dir) {
-        console.log('prev skill:',$scope.$parent.fullSkills)
+        console.log('prev skill:', $scope.$parent.fullSkills)
         if (dir) {
             if ($scope.currSkillNum < $scope.$parent.fullSkills.length - 1) {
                 $scope.currSkillNum++;
@@ -94,7 +99,6 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
         $scope.comb.attackEffects = [];
         var pDmg = parseInt($scope.comb.calcDmg(1));
         $scope.intTarg.currHp -= pDmg;
-        combatFac.updateBars($scope.maxHp, $scope.currHp, $scope.maxEn, $scope.currEn, $scope.$parent.intTarg.hp, $scope.$parent.intTarg.currHp);
         $scope.comb.updateDoTs();
         var attackInfoStr = 'You attack for ' + pDmg + ' ' + combatFac.getDmgType($scope.$parent.fullSkills[$scope.currSkillNum].type) + ' damage, using ' + $scope.$parent.fullSkills[$scope.currSkillNum].name + '!';
         if ($scope.comb.attackEffects.length) {
@@ -142,9 +146,9 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
         }
     }
     $scope.comb.xfx = [];
-    var findItem = function(n,a){
-        for (var i=0;i<a.length;i++){
-            if(a[i].num==n){
+    var findItem = function(n, a) {
+        for (var i = 0; i < a.length; i++) {
+            if (a[i].num == n) {
                 return a[i];
             }
         }
@@ -158,10 +162,10 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
             allJunk = $scope.comb.itemStats[3];
         console.log('WEAP IDS', $scope.playerItems.weap, 'WEAPS', allWeaps, 'ARMOR', allArm, 'AFFIXES', allAff, 'JUNK', allJunk)
         var playerWeap = $scope.playerItems.weap;
-        if(typeof playerWeap[0]=='number'){
-            playerWeap[0] = findItem(playerWeap[0],allAff);
-            playerWeap[1] = findItem(playerWeap[1],allAff);
-            playerWeap[2] = findItem(playerWeap[2],allAff);
+        if (typeof playerWeap[0] == 'number') {
+            playerWeap[0] = findItem(playerWeap[0], allAff);
+            playerWeap[1] = findItem(playerWeap[1], allWeaps);
+            playerWeap[2] = findItem(playerWeap[2], allAff);
         }
         console.log('PLAYER WEAPON:', playerWeap)
         var playerArmor;
@@ -258,6 +262,7 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                     }
                 }
                 $scope.currEn -= $scope.$parent.fullSkills[$scope.currSkillNum].energy;
+                console.log('dmg components', skillDmg, weapDmg, novaDmg)
                 var totalDmg = skillDmg + weapDmg + novaDmg;
                 //extraFx stuff.
                 if ($scope.monsStunned && $scope.$parent.fullSkills[$scope.currSkillNum].extraFx && $scope.$parent.fullSkills[$scope.currSkillNum].extraFx.dmgVsStun) {
@@ -278,7 +283,7 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                 }
                 //profession-specific effects:
                 //note that as the level difference between the player and target becomes more positive, the greater the chance of the effect firing
-                var profEffTrigger = (Math.random() * 100) < ((6.25 * Math.max(-6,Math.min($scope.lvl - $scope.$parent.intTarg.lvl,6))) + 37.5);
+                var profEffTrigger = (Math.random() * 100) < ((6.25 * Math.max(-6, Math.min($scope.lvl - $scope.$parent.intTarg.lvl, 6))) + 37.5);
                 if (profEffTrigger) {
                     if ($scope.$parent.prof == 1) {
                         //war
@@ -317,16 +322,18 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                         $scope.monsRetalled = true;
                     } else if ($scope.$parent.prof == 4) {
                         //necro
-                        $scope.currHp+=dmg*.15;
-                        dmg*=1.15;
+                        $scope.currHp += totalDmg * .15;
+                        totalDmg *= 1.15;
                     }
                 }
                 //and finally, return the damage!
                 return totalDmg;
             } else if ($scope.$parent.fullSkills[$scope.currSkillNum].energy > $scope.currEn) {
                 sandalChest.alert('You don\'t have enough energy to use ' + $scope.$parent.fullSkills[$scope.currSkillNum].name + '.')
+                return 0;
             } else {
                 sandalChest.alert('You\'ve been stunned! You can\'t attack this turn.')
+                return 0;
             }
         } else {
             //monster is attacking PLAYER
@@ -456,10 +463,10 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                     iName = items.loot.pre.pre + ' ' + items.loot.base.name + ' ' + items.loot.post.post;
                     $scope.playerItems.inv.push(lootObj)
                 }
-                newXp = 50 * $scope.intTarg.lvl / $scope.playerLvl || 1;
                 sandalchest.alert('After killing the ' + $scope.comb.lastDefeated + ', you gain ' + newXp + ' experience and recieve ' + iName + '!');
 
             });
+            newXp = 50 * $scope.intTarg.lvl / $scope.playerLvl || 1;
             //clear cell
             angular.element('body').scope().cells[angular.element('body').scope().cellNames.indexOf(angular.element('body').scope().playerCell)].has = '';
         } else {
@@ -468,8 +475,9 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
             angular.element('body').scope().intTarg.currHp = angular.element('body').scope().hp;
             $scope.$parent.intTarg.currHp = $scope.$parent.intTarg.hp;
         }
-        combatFac.addXp($scope.name, newXp).then(function(s) {
+        combatFac.addXp($scope.name, newXp, $scope.$parent.cells, $scope.$parent.playerCell).then(function(s) {
             $scope.inCombat = false;
+            console.log('RESULT FROM XP ROUTE', s)
             angular.element('body').scope().inCombat = false;
             angular.element('body').scope().intTarg = false;
             angular.element('body').scope().moveReady = true;
@@ -477,12 +485,11 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
             angular.element('body').scope().currEn = angular.element('body').scope().maxEn;
             if (typeof s.data == 'object') {
                 //got new xp (most likely, user won a fight)
-                $scope.currXp = 500 - parseInt(s.data.xpTill);
+                $scope.currXp = parseInt(s.data.xp);
                 $scope.playerLvl = parseInt(s.data.lvl);
             }
             $scope.currHp = $scope.maxHp;
             $scope.currEn = $scope.maxEn;
-            combatFac.updateBars($scope.maxHp, $scope.currHp, $scope.maxEn, $scope.currEn, $scope.$parent.intTarg.hp, $scope.$parent.intTarg.currHp);
             angular.element('body').scope().$apply();
         })
     }
@@ -520,7 +527,7 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
         };
     }
     $scope.comb.updateDoTs = function() {
-            var a;
+            var a, n;
             //player regens
             for (n = 0; n < $scope.currPRegens; n++) {
                 $scope.currHp += $scope.currPRegens[n].amt;
@@ -603,18 +610,17 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                         $scope.pStunned = true;
                     }
                     $scope.currHp -= monDmg; //reduce player's health by amt
-                    combatFac.updateBars($scope.maxHp, $scope.currHp, $scope.maxEn, $scope.currEn, $scope.$parent.intTarg.hp, $scope.$parent.intTarg.currHp); //update health and energy bars
                     var retalNote = $scope.monsRetalled ? ' Your Redemption trait reflects some of the monster&rsquo;s damage!' : '';
                     sandalchest.alert($scope.$parent.intTarg.name + ' attacks for ' + monDmg + ' ' + combatFac.getDmgType($scope.$parent.intTarg.type) + '!' + retalNote, function() {
                         $scope.comb.updateDoTs();
                         if ($scope.currHp <= 0) {
                             //FATALITY! Monster wins!
                             $scope.comb.dieP();
-                            $scope.monsRetalled=false;
+                            $scope.monsRetalled = false;
                         } else if ($scope.intTarg.currHp <= 0) {
                             //Monster kills self from retal.
                             $scope.comb.dieM();
-                            $scope.monsRetalled=false;
+                            $scope.monsRetalled = false;
                         } else {
                             $scope.comb.playersTurn = true;
                             $scope.comb.fleeMult = 1;
@@ -622,7 +628,7 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                             if ($scope.currEn > $scope.maxEn) {
                                 $scope.currEn = $scope.maxEn;
                             }
-                            $scope.monsRetalled=false;
+                            $scope.monsRetalled = false;
                         }
                     })
                 }
@@ -631,7 +637,6 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                 //monster confused, dmgs self
                 $scope.monsConf = false;
                 $scope.intTarg.currHp -= monDmg; //monster confused, dmgs self
-                combatFac.updateBars($scope.maxHp, $scope.currHp, $scope.maxEn, $scope.currEn, $scope.$parent.intTarg.hp, $scope.$parent.intTarg.currHp); //update health and energy bars
                 sandalchest.alert($scope.$parent.intTarg.name + ' is confused, and attacks itself for ' + monDmg + ' ' + combatFac.getDmgType($scope.$parent.intTarg.type) + '!', function() {
                     $scope.comb.updateDoTs();
                     if ($scope.intTarg.currHp <= 0) {
