@@ -1,4 +1,4 @@
-app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combatFac) {
+app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combatFac, musFac) {
     //this is only in the subfolder because it's a subcomponent of the main controller (main.js)
     $scope.comb = {};
     $scope.comb.playersTurn = false; //monster goes first!
@@ -18,9 +18,9 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
         //this is reset every time we 're-enter' the cell
         $('.pre-battle').hide(250);
         console.log('MONSTER ID:', $scope.$parent.intTarg);
-        combatFac.besties({id:$scope.$parent.intTarg._id,u:$scope.$parent.name}).then(function(b) {
+        combatFac.besties({ id: $scope.$parent.intTarg._id, u: $scope.$parent.name }).then(function(b) {
             $scope.beastLib = b;
-            console.log('BEASTLIB',$scope.beastLib)
+            console.log('BEASTLIB', $scope.beastLib)
             combatFac.getItems().then(function(r) {
                 $scope.comb.itemStats = r.data;
                 $scope.currPRegens = [];
@@ -463,35 +463,57 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                     iName = items.loot.pre.pre + ' ' + items.loot.base.name + ' ' + items.loot.post.post;
                     $scope.playerItems.inv.push(lootObj)
                 }
-                sandalchest.alert('After killing the ' + $scope.comb.lastDefeated + ', you gain ' + newXp + ' experience and recieve ' + iName + '!');
-
+                sandalchest.alert('After killing the ' + $scope.comb.lastDefeated + ', you gain ' + newXp + ' experience and recieve ' + iName + '!', function(r) {
+                    newXp = 50 * $scope.intTarg.lvl / $scope.playerLvl || 1;
+                    //clear cell
+                    angular.element('body').scope().cells[angular.element('body').scope().cellNames.indexOf(angular.element('body').scope().playerCell)].has = null;
+                    combatFac.addXp($scope.name, newXp, $scope.$parent.cells, $scope.$parent.playerCell).then(function(s) {
+                        $scope.inCombat = false;
+                        musFac.getMusic('general');
+                        console.log('RESULT FROM XP ROUTE', s)
+                        angular.element('body').scope().inCombat = false;
+                        angular.element('body').scope().intTarg = false;
+                        angular.element('body').scope().moveReady = true;
+                        angular.element('body').scope().currHp = angular.element('body').scope().maxHp;
+                        angular.element('body').scope().currEn = angular.element('body').scope().maxEn;
+                        if (typeof s.data == 'object') {
+                            //got new xp (most likely, user won a fight)
+                            $scope.currXp = parseInt(s.data.xp);
+                            $scope.playerLvl = parseInt(s.data.lvl);
+                            $scope.$parent.currXp = parseInt(s.data.xp);
+                            $scope.$parent.playerLvl = parseInt(s.data.lvl);
+                        }
+                        $scope.currHp = $scope.maxHp;
+                        $scope.currEn = $scope.maxEn;
+                        angular.element('body').scope().$apply();
+                    });
+                });
             });
-            newXp = 50 * $scope.intTarg.lvl / $scope.playerLvl || 1;
-            //clear cell
-            angular.element('body').scope().cells[angular.element('body').scope().cellNames.indexOf(angular.element('body').scope().playerCell)].has = '';
-        } else {
-            //defeat
-            angular.element('body').scope().playerCell = '0-0';
-            angular.element('body').scope().intTarg.currHp = angular.element('body').scope().hp;
-            $scope.$parent.intTarg.currHp = $scope.$parent.intTarg.hp;
-        }
-        combatFac.addXp($scope.name, newXp, $scope.$parent.cells, $scope.$parent.playerCell).then(function(s) {
-            $scope.inCombat = false;
-            console.log('RESULT FROM XP ROUTE', s)
+        } else if ($scope.comb.battleStatus.title=='Flee!'){
+            console.log('player fled')
+            musFac.getMusic('general');
+            angular.element('body').scope().playerCell = angular.element('body').scope().oldCell;//player always flees to previous cell
             angular.element('body').scope().inCombat = false;
             angular.element('body').scope().intTarg = false;
             angular.element('body').scope().moveReady = true;
-            angular.element('body').scope().currHp = angular.element('body').scope().maxHp;
+            angular.element('body').scope().intTarg.currHp = angular.element('body').scope().hp;
             angular.element('body').scope().currEn = angular.element('body').scope().maxEn;
-            if (typeof s.data == 'object') {
-                //got new xp (most likely, user won a fight)
-                $scope.currXp = parseInt(s.data.xp);
-                $scope.playerLvl = parseInt(s.data.lvl);
-            }
-            $scope.currHp = $scope.maxHp;
-            $scope.currEn = $scope.maxEn;
+            $scope.$parent.intTarg.currHp = $scope.$parent.intTarg.hp;
             angular.element('body').scope().$apply();
-        })
+        }else{
+            //defeat
+            console.log('defeat condition')
+            musFac.getMusic('general');
+            angular.element('body').scope().playerCell = '0-0';
+            angular.element('body').scope().inCombat = false;
+            angular.element('body').scope().intTarg = false;
+            angular.element('body').scope().moveReady = true;
+            angular.element('body').scope().intTarg.currHp = angular.element('body').scope().hp;
+            angular.element('body').scope().currEn = angular.element('body').scope().maxEn;
+            $scope.$parent.intTarg.currHp = $scope.$parent.intTarg.hp;
+            angular.element('body').scope().$apply();
+        }
+
     }
     $scope.comb.battleEndMsgs = {
         win: ['Onward!', 'To victory!', 'Forward'],
@@ -499,6 +521,7 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
         flee: ['I\'m not a coward!', 'I\'ll be back...', 'Another time then...', 'A close one!']
     }
     $scope.comb.dieP = function() {
+        musFac.getMusic('defeat');
         $scope.comb.battleStatus = {
             status: true,
             title: 'Defeat!',
@@ -508,6 +531,7 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
         };
     }
     $scope.comb.dieM = function() {
+        musFac.getMusic('victory');
         $scope.comb.battleStatus = {
             status: true,
             title: 'Victory!',

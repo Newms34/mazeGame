@@ -17,27 +17,11 @@ best would be some sort of scroll interface to choose skills, a la TR4's inv rin
 
 https://jsfiddle.net/tvdvw9aq/58/
 
-possibly implement movement pause on the client side? this needs to be designed so that tilting the phone doesnt cause continuous key-pressing.
-
-Cloud9
-
-IMPLEMENT BROWSER CHECKING (seems to only work in chrome!)
-
-When should we save?:
- - When user clicks save
- - when user clicks save+exit
- - on leveling
- - before each boss?
- - others?
-
-Should user heal outside of combat?
 
 TO DO:
 1) Add more monsters
 2) Stat check system should be fine.
 3) ADD MOAR LOOTS so we dont keep getting the freakin cook's ring!
-4) BEGIN quest system (?!)
-https://jsfiddle.net/6gw8ygn7/24/show/
 
 
 quest instantiation:
@@ -116,3 +100,10 @@ right now, the player can reload the page to spam xp. we need to find a way to p
 save curr location. save cells (including ones cleared!). save xp/skills
 quests filtered! yay!
 limit beasts in bestiary panel to those already encountered? would need array on the user model.
+
+need to figure out quest reward system. Should be SOME mount of bonus xp, plus... random unique? do we want uneeks? while this'd require a big rewrite of all loot-related stuff, it'd provide incentive to complete quests. 
+Either that, or make some sort of trophy system. trophies would need to be premade, i think?
+
+music!
+
+xp STILL isnt updating after mons kill

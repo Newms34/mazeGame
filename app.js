@@ -3,25 +3,25 @@ var express = require('express'),
     app = express(),
     routes = require('./routes'),
     path = require('path'),
+    cookieParser = require('cookie-parser')
     bodyParser = require('body-parser'),
-    session = require('client-sessions'),
+    session = require('express-session'),
     compression = require('compression');
 app.use(compression());
-app.use(bodyParser.json({ limit: '50mb' }));
+app.use(session({
+    secret: 'ea augusta est et carissima',
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false }
+}));
+app.use(cookieParser('ea augusta est et carissima'))
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json({ limit: '50mb' }));
 app.set('view engine', 'html');
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'bower_components')));
 app.use(express.static(path.join(__dirname, 'views')));
-app.use(session({
-    cookieName: 'session', // cookie name dictates the key name added to the request object
-    secret: 'ea augusta est et carissima', // should be a large unguessable string
-    duration: 24 * 60 * 60 * 1000, // how long the session will stay valid in ms
-    ephemeral: false, // when true, cookie expires when the browser closes
-    httpOnly: true, // when true, cookie is not accessible from javascript
-    secure: false // when true, cookie will only be sent over SSL. use key 'secureProxy' instead if you handle SSL not in your node process
-}));
 app.use('/', routes);
 var server = http.Server(app);
 var io = require('socket.io')(server);

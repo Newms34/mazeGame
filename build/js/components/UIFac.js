@@ -339,7 +339,7 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
                 } else if (rel && res) {
                     $window.location.reload();
                 } else {
-                    sandalchest.alert('Saved!', 'Your game has been saved!')
+                    // sandalchest.alert('Saved!', 'Your game has been saved!')
                 }
             });
         },

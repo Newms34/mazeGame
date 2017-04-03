@@ -1,32 +1,39 @@
-var app = angular.module('mazeGame', ['ngTouch']).controller('log-con', function($scope, $http, $q, $timeout, $window, userFact) {
+var app = angular.module('mazeGame', ['ngTouch']).controller('log-con', function($scope, $http, $q, $timeout, $window, userFact, musFac) {
     $scope.hazLogd = false;
+    $scope.musOn = true;
     $scope.user = {
         prof: '0'
     }
+    musFac.createMus();
+    $scope.toggleMus = function() {
+        musFac.toggleMus();
+        $scope.musOn = !$scope.musOn
+    };
+    musFac.getMusic('intro');
     $scope.profDescs = [{
-        name:'Warrior',
+        name: 'Warrior',
         txt: 'What they lack in magical apptitude, warriors more than make up for in their martial expertise. The warrior uses their weapon training to bring swift and steely death to their foes',
         img: './img/assets/war.jpg',
-        ico:'./img/assets/warPick.png',
-        skill:"Berserker's Precision - Your martial training allows you to make more devastating attacks. Chance to cause degen to stunned foes, or stun to degening foes."
+        ico: './img/assets/warPick.png',
+        skill: "Berserker's Precision - Your martial training allows you to make more devastating attacks. Chance to cause degen to stunned foes, or stun to degening foes."
     }, {
-        name:'Sorcerer',
+        name: 'Sorcerer',
         txt: 'The scholarly sorcerer uses their extensive knowledge of the arcane to obliterate their enemies with magical fire, or hinder them with conjured ice and blizzards.',
         img: './img/assets/sorc.jpg',
-        ico:'./img/assets/sorcPick.png',
-        skill:"Elemental Boon - By channeling more into your spells, you can renew yourself or devastate your enemies. Chance to grant additional regen or degen. Based on level."
+        ico: './img/assets/sorcPick.png',
+        skill: "Elemental Boon - By channeling more into your spells, you can renew yourself or devastate your enemies. Chance to grant additional regen or degen. Based on level."
     }, {
-        name:'Paladin',
+        name: 'Paladin',
         txt: 'The holy paladins are bastions of the Holy Ones. Using their faith both offensively as a shield and defensively as a weapon, they can both smite their enemies and renew themselves.',
         img: './img/assets/paly.jpg',
-        ico:'./img/assets/palyPick.png',
-        skill:"Redemption - The paladin's fortitude gives them a chance to reflect the enemy's damage back at them. Chance to reflect enemy damage. Based on level."
+        ico: './img/assets/palyPick.png',
+        skill: "Redemption - The paladin's fortitude gives them a chance to reflect the enemy's damage back at them. Chance to reflect enemy damage. Based on level."
     }, {
-        name:'Necromancer',
+        name: 'Necromancer',
         txt: 'Masters of the so-called "dark" arts, the necromancers are an oft-maligned lot. However, no one would deny their power - or their usefulness - in turning the minds and even fallen bodies of their foes against them.',
         img: './img/assets/necro.jpg',
-        ico:'./img/assets/necroPick.png',
-        skill:"Soul Siphon - Calling on some really dark stuff, you rend part of your enemy's life force. Chance to steal some health on attack. Based on level."
+        ico: './img/assets/necroPick.png',
+        skill: "Soul Siphon - Calling on some really dark stuff, you rend part of your enemy's life force. Chance to steal some health on attack. Based on level."
     }]
     $scope.newUsr = function() {
         //eventually we need to CHECK to see if this user is already taken!
@@ -39,9 +46,9 @@ var app = angular.module('mazeGame', ['ngTouch']).controller('log-con', function
             var userInf = {
                 user: $scope.regForm.username.$viewValue,
                 password: $scope.regForm.pwd.$viewValue,
-                prof:$scope.user.prof+1
+                prof: $scope.user.prof + 1
             };
-            console.log('userInf',userInf)
+            console.log('userInf', userInf)
             $http.post('/user/new', userInf).then(function(res) {
                 if (res.data == 'saved!') {
                     $scope.login(true);
@@ -119,7 +126,7 @@ var app = angular.module('mazeGame', ['ngTouch']).controller('log-con', function
 });
 
 var socket = io();
-app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $window, mazeFac, combatFac, UIFac, userFact, econFac) {
+app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $window, mazeFac, combatFac, UIFac, userFact, econFac, musFac) {
     $scope.width = 6;
     $scope.height = 6;
     $scope.path = []; //all the cells visited, in order.
@@ -140,6 +147,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
     $scope.doneQuest = [];
     $scope.maxHp = 0;
     $scope.currHp = 0;
+
     $scope.maxEn = 0;
     $scope.currEn = 0;
     $scope.isStunned = false;
@@ -150,6 +158,12 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
     // $scope.possRoomConts = ['loot', 'mons', 'npcs', 'jewl', ' ', 'exit', ' ', ' ', 'mons', 'mons']; //things that could be in a room!
     $scope.name = ''; //actual name. 
     $scope.currSkillNum = 0;
+    musFac.createMus();
+    $scope.toggleMus = function() {
+        musFac.toggleMus();
+        $scope.musOn = !$scope.musOn
+    };
+    musFac.getMusic('general');
     $scope.uName = ''; //if this is blank, accept no incoming socket events from phone(s). Otherwise, accept from specified phone only! This is NOT the username of the player!
     ($scope.checkPhone = function() {
         var isMobile = false; //initiate as false
@@ -161,7 +175,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
             //if we're NOT mobile, check to see if we're logged in
             userFact.checkLogin().then(function(resp) {
                 console.log('RESPONSE FROM CHECK LOGIN:', resp);
-                if (false && !resp) {
+                if (!resp) {
                     $window.location.href = './login';
                 }
             });
@@ -436,7 +450,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
                         m.imgUrl = '/img' + m.imgUrl;
                     })
                     $scope.currUIObjs = $scope.currUIObjs.filter(function(m) {
-                        return !m.quest && $scope.beastLib.indexOf(m._id)>-1;
+                        return !m.quest && $scope.beastLib.indexOf(m._id) > -1;
                     })
                     $scope.currMons = 0;
                     $scope.$apply();
@@ -578,6 +592,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
                 e.preventDefault();
             }
             if ((e.which == 87 || e.which == 38 || e.which == 83 || e.which == 40) && canMove && !$scope.moving) {
+                $scope.oldCell = $scope.playerCell;
                 $scope.playerCell = x + '-' + y;
                 $scope.cells[$scope.cellNames.indexOf($scope.playerCell)].pViz = true;
                 $scope.intTarg = typeof $scope.cells[$scope.cellNames.indexOf($scope.playerCell)].has == 'object' && !$scope.cells[$scope.cellNames.indexOf($scope.playerCell)].has.inv ? $scope.cells[$scope.cellNames.indexOf($scope.playerCell)].has : false;
@@ -585,6 +600,24 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
                     console.log('cell cons (probly mons):', $scope.intTarg);
                     $scope.moveReady = false; //set to false since we're in combat!
                     $scope.inCombat = true;
+                    musFac.getMusic('battle');
+                    UIFac.saveGame({
+                        name: $scope.name,
+                        lvl: $scope.lvl,
+                        equip: $scope.playerItems,
+                        questDone: $scope.questList || [],
+                        inProf: $scope.doneQuest,
+                        maxHp: $scope.maxHp,
+                        currHp: $scope.currHp,
+                        maxEn: $scope.maxEn,
+                        currEn: $scope.currEn,
+                        isStunned: $scope.isStunned,
+                        currentLevel: {
+                            loc: $scope.playerCell,
+                            data: $scope.cells,
+                            names: $scope.cellNames
+                        }
+                    });//saving before each combat
                     combatFac.combatReady(); //set up the board
                 }
                 if (typeof $scope.cells[$scope.cellNames.indexOf($scope.playerCell)].has == 'object' && $scope.cells[$scope.cellNames.indexOf($scope.playerCell)].has.inv) {
@@ -1273,7 +1306,7 @@ app.factory('combatFac', function($http) {
     };
 });
 
-app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combatFac) {
+app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combatFac, musFac) {
     //this is only in the subfolder because it's a subcomponent of the main controller (main.js)
     $scope.comb = {};
     $scope.comb.playersTurn = false; //monster goes first!
@@ -1293,9 +1326,9 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
         //this is reset every time we 're-enter' the cell
         $('.pre-battle').hide(250);
         console.log('MONSTER ID:', $scope.$parent.intTarg);
-        combatFac.besties({id:$scope.$parent.intTarg._id,u:$scope.$parent.name}).then(function(b) {
+        combatFac.besties({ id: $scope.$parent.intTarg._id, u: $scope.$parent.name }).then(function(b) {
             $scope.beastLib = b;
-            console.log('BEASTLIB',$scope.beastLib)
+            console.log('BEASTLIB', $scope.beastLib)
             combatFac.getItems().then(function(r) {
                 $scope.comb.itemStats = r.data;
                 $scope.currPRegens = [];
@@ -1738,35 +1771,57 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                     iName = items.loot.pre.pre + ' ' + items.loot.base.name + ' ' + items.loot.post.post;
                     $scope.playerItems.inv.push(lootObj)
                 }
-                sandalchest.alert('After killing the ' + $scope.comb.lastDefeated + ', you gain ' + newXp + ' experience and recieve ' + iName + '!');
-
+                sandalchest.alert('After killing the ' + $scope.comb.lastDefeated + ', you gain ' + newXp + ' experience and recieve ' + iName + '!', function(r) {
+                    newXp = 50 * $scope.intTarg.lvl / $scope.playerLvl || 1;
+                    //clear cell
+                    angular.element('body').scope().cells[angular.element('body').scope().cellNames.indexOf(angular.element('body').scope().playerCell)].has = null;
+                    combatFac.addXp($scope.name, newXp, $scope.$parent.cells, $scope.$parent.playerCell).then(function(s) {
+                        $scope.inCombat = false;
+                        musFac.getMusic('general');
+                        console.log('RESULT FROM XP ROUTE', s)
+                        angular.element('body').scope().inCombat = false;
+                        angular.element('body').scope().intTarg = false;
+                        angular.element('body').scope().moveReady = true;
+                        angular.element('body').scope().currHp = angular.element('body').scope().maxHp;
+                        angular.element('body').scope().currEn = angular.element('body').scope().maxEn;
+                        if (typeof s.data == 'object') {
+                            //got new xp (most likely, user won a fight)
+                            $scope.currXp = parseInt(s.data.xp);
+                            $scope.playerLvl = parseInt(s.data.lvl);
+                            $scope.$parent.currXp = parseInt(s.data.xp);
+                            $scope.$parent.playerLvl = parseInt(s.data.lvl);
+                        }
+                        $scope.currHp = $scope.maxHp;
+                        $scope.currEn = $scope.maxEn;
+                        angular.element('body').scope().$apply();
+                    });
+                });
             });
-            newXp = 50 * $scope.intTarg.lvl / $scope.playerLvl || 1;
-            //clear cell
-            angular.element('body').scope().cells[angular.element('body').scope().cellNames.indexOf(angular.element('body').scope().playerCell)].has = '';
-        } else {
-            //defeat
-            angular.element('body').scope().playerCell = '0-0';
-            angular.element('body').scope().intTarg.currHp = angular.element('body').scope().hp;
-            $scope.$parent.intTarg.currHp = $scope.$parent.intTarg.hp;
-        }
-        combatFac.addXp($scope.name, newXp, $scope.$parent.cells, $scope.$parent.playerCell).then(function(s) {
-            $scope.inCombat = false;
-            console.log('RESULT FROM XP ROUTE', s)
+        } else if ($scope.comb.battleStatus.title=='Flee!'){
+            console.log('player fled')
+            musFac.getMusic('general');
+            angular.element('body').scope().playerCell = angular.element('body').scope().oldCell;//player always flees to previous cell
             angular.element('body').scope().inCombat = false;
             angular.element('body').scope().intTarg = false;
             angular.element('body').scope().moveReady = true;
-            angular.element('body').scope().currHp = angular.element('body').scope().maxHp;
+            angular.element('body').scope().intTarg.currHp = angular.element('body').scope().hp;
             angular.element('body').scope().currEn = angular.element('body').scope().maxEn;
-            if (typeof s.data == 'object') {
-                //got new xp (most likely, user won a fight)
-                $scope.currXp = parseInt(s.data.xp);
-                $scope.playerLvl = parseInt(s.data.lvl);
-            }
-            $scope.currHp = $scope.maxHp;
-            $scope.currEn = $scope.maxEn;
+            $scope.$parent.intTarg.currHp = $scope.$parent.intTarg.hp;
             angular.element('body').scope().$apply();
-        })
+        }else{
+            //defeat
+            console.log('defeat condition')
+            musFac.getMusic('general');
+            angular.element('body').scope().playerCell = '0-0';
+            angular.element('body').scope().inCombat = false;
+            angular.element('body').scope().intTarg = false;
+            angular.element('body').scope().moveReady = true;
+            angular.element('body').scope().intTarg.currHp = angular.element('body').scope().hp;
+            angular.element('body').scope().currEn = angular.element('body').scope().maxEn;
+            $scope.$parent.intTarg.currHp = $scope.$parent.intTarg.hp;
+            angular.element('body').scope().$apply();
+        }
+
     }
     $scope.comb.battleEndMsgs = {
         win: ['Onward!', 'To victory!', 'Forward'],
@@ -1774,6 +1829,7 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
         flee: ['I\'m not a coward!', 'I\'ll be back...', 'Another time then...', 'A close one!']
     }
     $scope.comb.dieP = function() {
+        musFac.getMusic('defeat');
         $scope.comb.battleStatus = {
             status: true,
             title: 'Defeat!',
@@ -1783,6 +1839,7 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
         };
     }
     $scope.comb.dieM = function() {
+        musFac.getMusic('victory');
         $scope.comb.battleStatus = {
             status: true,
             title: 'Victory!',
@@ -2285,6 +2342,56 @@ app.controller('merch-cont', function($scope, $http, $q, $timeout, $window, econ
     };
 });
 
+app.factory('musFac', function($http) {
+    var themes = {
+        battle: [],
+        defeat: [],
+        victory: [],
+        intro: [],
+        general: []
+    }
+    return {
+    	createMus:function(){
+    		//done once each page load to generate the audiocontext
+    		window.AudioContext = window.AudioContext || window.webkitAudioContext;
+            window.context = new AudioContext();
+            window.gain = context.createGain();
+            gain.gain.value = 0.5;
+    	},
+        getMusic: function(mode) {
+            //get a random musical selection from a particular category
+            if (window.context && window.source){
+            	window.source.stop();
+            }
+            function process(Data) {
+                window.source = window.context.createBufferSource(); // Create Sound Source
+                window.context.decodeAudioData(Data, function(buffer) {
+                    window.source.buffer = buffer;
+                    window.source.connect(gain);
+                    window.gain.connect(context.destination);
+                    window.source.start(context.currentTime);
+                })
+            }
+            var request = new XMLHttpRequest();
+            request.open("GET", "./other/mus/" + mode, true);
+            request.responseType = "arraybuffer";
+            request.onload = function() {
+                var Data = request.response;
+                process(Data);
+            };
+            request.send();
+        },
+        toggleMus: function(){
+        	if (window.gain && window.gain.gain.value && window.gain.gain.value>0 ){
+        		//mute
+        		window.gain.gain.value=0;
+        	}else if (window.gain && window.gain.gain.value==0 ){
+        		window.gain.gain.value=.5;
+        	}
+        }
+    }
+})
+
 var sandalchest = {};
 sandalchest.drawDiv = function(e, n, t) {
     var a = e.options && e.options.speed || 1e3,
@@ -2723,7 +2830,7 @@ app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
                 } else if (rel && res) {
                     $window.location.reload();
                 } else {
-                    sandalchest.alert('Saved!', 'Your game has been saved!')
+                    // sandalchest.alert('Saved!', 'Your game has been saved!')
                 }
             });
         },

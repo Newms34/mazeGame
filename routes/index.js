@@ -4,8 +4,7 @@ var router = express.Router(),
     models = require('../models/'),
     https = require('https'),
     async = require('async'),
-    mongoose = require('mongoose'),
-    session = require('client-sessions');
+    mongoose = require('mongoose');
 
 //instead of putting all our routes in one folder, we can use node's 'modules' to split up
 //our stuff. Modularization!
@@ -22,6 +21,7 @@ router.get('/', function(req, res, next) {
     next: allows us to continue to the next router in line. Since each router on this page is a separate 'path', the next router in this case is the error handler.
     In other words, if all routes fail (if the server still can't figure out wtf you're sayin), send it all to the error handler!
     */
+    console.log('trying to get main page!')
     res.sendFile('index.html', { root: './views' })
 });
 

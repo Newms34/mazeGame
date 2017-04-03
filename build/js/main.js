@@ -1,5 +1,5 @@
 var socket = io();
-app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $window, mazeFac, combatFac, UIFac, userFact, econFac) {
+app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $window, mazeFac, combatFac, UIFac, userFact, econFac, musFac) {
     $scope.width = 6;
     $scope.height = 6;
     $scope.path = []; //all the cells visited, in order.
@@ -20,6 +20,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
     $scope.doneQuest = [];
     $scope.maxHp = 0;
     $scope.currHp = 0;
+
     $scope.maxEn = 0;
     $scope.currEn = 0;
     $scope.isStunned = false;
@@ -30,6 +31,12 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
     // $scope.possRoomConts = ['loot', 'mons', 'npcs', 'jewl', ' ', 'exit', ' ', ' ', 'mons', 'mons']; //things that could be in a room!
     $scope.name = ''; //actual name. 
     $scope.currSkillNum = 0;
+    musFac.createMus();
+    $scope.toggleMus = function() {
+        musFac.toggleMus();
+        $scope.musOn = !$scope.musOn
+    };
+    musFac.getMusic('general');
     $scope.uName = ''; //if this is blank, accept no incoming socket events from phone(s). Otherwise, accept from specified phone only! This is NOT the username of the player!
     ($scope.checkPhone = function() {
         var isMobile = false; //initiate as false
@@ -41,7 +48,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
             //if we're NOT mobile, check to see if we're logged in
             userFact.checkLogin().then(function(resp) {
                 console.log('RESPONSE FROM CHECK LOGIN:', resp);
-                if (false && !resp) {
+                if (!resp) {
                     $window.location.href = './login';
                 }
             });
@@ -316,7 +323,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
                         m.imgUrl = '/img' + m.imgUrl;
                     })
                     $scope.currUIObjs = $scope.currUIObjs.filter(function(m) {
-                        return !m.quest && $scope.beastLib.indexOf(m._id)>-1;
+                        return !m.quest && $scope.beastLib.indexOf(m._id) > -1;
                     })
                     $scope.currMons = 0;
                     $scope.$apply();
@@ -458,6 +465,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
                 e.preventDefault();
             }
             if ((e.which == 87 || e.which == 38 || e.which == 83 || e.which == 40) && canMove && !$scope.moving) {
+                $scope.oldCell = $scope.playerCell;
                 $scope.playerCell = x + '-' + y;
                 $scope.cells[$scope.cellNames.indexOf($scope.playerCell)].pViz = true;
                 $scope.intTarg = typeof $scope.cells[$scope.cellNames.indexOf($scope.playerCell)].has == 'object' && !$scope.cells[$scope.cellNames.indexOf($scope.playerCell)].has.inv ? $scope.cells[$scope.cellNames.indexOf($scope.playerCell)].has : false;
@@ -465,6 +473,24 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
                     console.log('cell cons (probly mons):', $scope.intTarg);
                     $scope.moveReady = false; //set to false since we're in combat!
                     $scope.inCombat = true;
+                    musFac.getMusic('battle');
+                    UIFac.saveGame({
+                        name: $scope.name,
+                        lvl: $scope.lvl,
+                        equip: $scope.playerItems,
+                        questDone: $scope.questList || [],
+                        inProf: $scope.doneQuest,
+                        maxHp: $scope.maxHp,
+                        currHp: $scope.currHp,
+                        maxEn: $scope.maxEn,
+                        currEn: $scope.currEn,
+                        isStunned: $scope.isStunned,
+                        currentLevel: {
+                            loc: $scope.playerCell,
+                            data: $scope.cells,
+                            names: $scope.cellNames
+                        }
+                    });//saving before each combat
                     combatFac.combatReady(); //set up the board
                 }
                 if (typeof $scope.cells[$scope.cellNames.indexOf($scope.playerCell)].has == 'object' && $scope.cells[$scope.cellNames.indexOf($scope.playerCell)].has.inv) {

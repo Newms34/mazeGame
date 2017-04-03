@@ -19,6 +19,15 @@ router.get('/news', function(req, res, next) {
 })
 router.get('/oneNpc/:i', function(req, res, next) {
     mongoose.model('Npc').find({}, function(err, data) {
-        res.send({i:req.params.i,data:data[Math.floor(Math.random() * data.length)]});
+        res.send({ i: req.params.i, data: data[Math.floor(Math.random() * data.length)] });
+    })
+})
+router.get('/mus/:m', function(req, res, next) {
+    res.set({'Content-Type': 'audio/mpeg'});
+    fs.readdir('./public/music/' + req.params.m, function(err, musFiles) {
+        var randFile = musFiles[Math.floor(Math.random() * musFiles.length)];
+        console.log(randFile)
+        var readStream = fs.createReadStream('./public/music/' + req.params.m + '/' + randFile);
+        readStream.pipe(res);
     })
 })
