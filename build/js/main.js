@@ -20,7 +20,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
     $scope.doneQuest = [];
     $scope.maxHp = 0;
     $scope.currHp = 0;
-
+    $scope.foggy=true;
     $scope.maxEn = 0;
     $scope.currEn = 0;
     $scope.isStunned = false;
@@ -210,6 +210,13 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
     $scope.compareCell = function(id) {
         return id == $scope.playerCell;
     };
+    $scope.surroundCells = function(id,pos){
+        var actualId = id.split('-'),
+            actualPlayer = $scope.playerCell.split('-');
+        pos = parseInt(pos);
+        var isBorderShadow = (pos===0 && (actualId[0]-actualPlayer[0])==-1 && (actualId[1]-actualPlayer[1])==-1) || (pos===1 && (actualId[0]-actualPlayer[0])==0 && (actualId[1]-actualPlayer[1])==-1) || (pos===2 && (actualId[0]-actualPlayer[0])==1 && (actualId[1]-actualPlayer[1])==-1) || (pos===3 && (actualId[0]-actualPlayer[0])==-1 && (actualId[1]-actualPlayer[1])==0) || (pos===4 && (actualId[0]-actualPlayer[0])==1 && (actualId[1]-actualPlayer[1])==0) || (pos===5 && (actualId[0]-actualPlayer[0])==-1 && (actualId[1]-actualPlayer[1])==1) || (pos===6 && (actualId[0]-actualPlayer[0])==0 && (actualId[1]-actualPlayer[1])==1) || (pos===7 && (actualId[0]-actualPlayer[0])==1 && (actualId[1]-actualPlayer[1])==1)||(pos===8 && (Math.abs(actualId[0]-actualPlayer[0])>1 || Math.abs(actualId[1]-actualPlayer[1])>1));
+        return isBorderShadow;
+    }
     $scope.bodyBoxes = [{
         name: 'head',
         x: 81,

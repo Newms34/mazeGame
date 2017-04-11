@@ -51,6 +51,10 @@
     <div class='panel-body' ng-show='currUIPan=="Menu"'>
         <button class='btn btn-primary' title='connect to a phone!' ng-click='inpPhone()'>&#128241;</button>
         <div class="form-group cent">
+            <div class='menuGrp col-md-12 jumbotron'>
+                <div class='col-md-1'><input type="checkbox" ng-model='$parent.foggy'></div>
+                <div class='col-md-8'>Enable Fog-of-War</div>
+            </div>
             <div class='menuGrp'>
                 <button ng-click='goVote();' class='btn bigButt vote'>Go to Voting</button>
             </div>

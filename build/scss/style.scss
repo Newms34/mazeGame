@@ -110,12 +110,51 @@ body {
     transform: rotateY(90deg) translateZ(-25px) translateX(-25px) rotateZ(90deg);
 }
 
-.playerFig {
-    font-size: 26pt;
-    color: #000;
-    text-align: center;
+
+.maze-icon{
+    position:absolute;
+    left:0px;
+    top:0px;
+    font-size:26pt;
+    color:#000;
+    text-align:center;
+    width:100%;
+    height:100%;
 }
 
+.fog-icon{
+    position:absolute;
+    transform:translateZ(51px);
+    width:105%;
+    height:105%;
+    &#fog-FF{
+        background:#000;
+    }
+    &#fog-TL{
+        background:linear-gradient(to bottom right,#000 50%,transparent 80%);
+    }
+    &#fog-TC{
+        background:linear-gradient(to bottom,#000 10%,transparent 50%);
+    }
+    &#fog-TR{
+        background:linear-gradient(to bottom left,#000 50%,transparent 80%);
+    }
+    &#fog-CL{
+        background:linear-gradient(to right,#000 10%,transparent 50%);
+    }
+    &#fog-CR{
+        background:linear-gradient(to left,#000 10%,transparent 50%);
+    }
+    &#fog-BL{
+        background:linear-gradient(to top right,#000 50%,transparent 80%);
+    }
+    &#fog-BC{
+        background:linear-gradient(to top,#000 10%,transparent 50%);
+    }
+    &#fog-BR{
+        background:linear-gradient(to top left,#000 50%,transparent 80%);
+    }
+}
 
 /*room stuff*/
 
