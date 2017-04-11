@@ -127,31 +127,31 @@ body {
     transform:translateZ(51px);
     width:105%;
     height:105%;
-    &#fog-FF{
+    &.fog-FF{
         background:#000;
     }
-    &#fog-TL{
+    &.fog-TL{
         background:linear-gradient(to bottom right,#000 50%,transparent 80%);
     }
-    &#fog-TC{
+    &.fog-TC{
         background:linear-gradient(to bottom,#000 10%,transparent 50%);
     }
-    &#fog-TR{
+    &.fog-TR{
         background:linear-gradient(to bottom left,#000 50%,transparent 80%);
     }
-    &#fog-CL{
+    &.fog-CL{
         background:linear-gradient(to right,#000 10%,transparent 50%);
     }
-    &#fog-CR{
+    &.fog-CR{
         background:linear-gradient(to left,#000 10%,transparent 50%);
     }
-    &#fog-BL{
+    &.fog-BL{
         background:linear-gradient(to top right,#000 50%,transparent 80%);
     }
-    &#fog-BC{
+    &.fog-BC{
         background:linear-gradient(to top,#000 10%,transparent 50%);
     }
-    &#fog-BR{
+    &.fog-BR{
         background:linear-gradient(to top left,#000 50%,transparent 80%);
     }
 }

@@ -20,7 +20,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
     $scope.doneQuest = [];
     $scope.maxHp = 0;
     $scope.currHp = 0;
-    $scope.foggy=true;
+    $scope.foggy = true;
     $scope.maxEn = 0;
     $scope.currEn = 0;
     $scope.isStunned = false;
@@ -210,12 +210,33 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
     $scope.compareCell = function(id) {
         return id == $scope.playerCell;
     };
-    $scope.surroundCells = function(id,pos){
-        var actualId = id.split('-'),
-            actualPlayer = $scope.playerCell.split('-');
-        pos = parseInt(pos);
-        var isBorderShadow = (pos===0 && (actualId[0]-actualPlayer[0])==-1 && (actualId[1]-actualPlayer[1])==-1) || (pos===1 && (actualId[0]-actualPlayer[0])==0 && (actualId[1]-actualPlayer[1])==-1) || (pos===2 && (actualId[0]-actualPlayer[0])==1 && (actualId[1]-actualPlayer[1])==-1) || (pos===3 && (actualId[0]-actualPlayer[0])==-1 && (actualId[1]-actualPlayer[1])==0) || (pos===4 && (actualId[0]-actualPlayer[0])==1 && (actualId[1]-actualPlayer[1])==0) || (pos===5 && (actualId[0]-actualPlayer[0])==-1 && (actualId[1]-actualPlayer[1])==1) || (pos===6 && (actualId[0]-actualPlayer[0])==0 && (actualId[1]-actualPlayer[1])==1) || (pos===7 && (actualId[0]-actualPlayer[0])==1 && (actualId[1]-actualPlayer[1])==1)||(pos===8 && (Math.abs(actualId[0]-actualPlayer[0])>1 || Math.abs(actualId[1]-actualPlayer[1])>1));
-        return isBorderShadow;
+    $scope.surroundCells = function(cl) {
+        var actualId = cl.id.split('-'),
+            actualPlayer = $scope.playerCell.split('-'),
+            theBorderClass = '';
+        if ((actualId[0] - actualPlayer[0]) == -1 && (actualId[1] - actualPlayer[1]) == -1) {
+            theBorderClass = 'fog-TL';
+        } else if ((actualId[0] - actualPlayer[0]) == 0 && (actualId[1] - actualPlayer[1]) == -1) {
+            theBorderClass = 'fog-TC';
+        } else if ((actualId[0] - actualPlayer[0]) == 1 && (actualId[1] - actualPlayer[1]) == -1) {
+            theBorderClass = 'fog-TR';
+        } else if ((actualId[0] - actualPlayer[0]) == -1 && (actualId[1] - actualPlayer[1]) == 0) {
+            theBorderClass = 'fog-CL';
+        } else if ((actualId[0] - actualPlayer[0]) == 1 && (actualId[1] - actualPlayer[1]) == 0) {
+            theBorderClass = 'fog-CR';
+        } else if ((actualId[0] - actualPlayer[0]) == -1 && (actualId[1] - actualPlayer[1]) == 1) {
+            theBorderClass = 'fog-BL';
+        } else if ((actualId[0] - actualPlayer[0]) == 0 && (actualId[1] - actualPlayer[1]) == 1) {
+            theBorderClass = 'fog-BC';
+        } else if ((actualId[0] - actualPlayer[0]) == 1 && (actualId[1] - actualPlayer[1]) == 1) {
+            theBorderClass = 'fog-BR';
+        }
+
+        
+        if ((theBorderClass == '' && (Math.abs(actualId[0] - actualPlayer[0]) > 1 || Math.abs(actualId[1] - actualPlayer[1]) > 1)) || (theBorderClass == 'fog-TL' && (!!cl.south || !!cl.east)) || (theBorderClass == 'fog-TC' && !!cl.south) || (theBorderClass == 'fog-TR' && (!!cl.south || !!cl.west)) || (theBorderClass == 'fog-CL' && !!cl.east) || (theBorderClass == 'fog-CR' && !!cl.west) || (theBorderClass == 'fog-BL' && (!!cl.north || !!cl.east)) || (theBorderClass == 'fog-BC' && !!cl.north) || (theBorderClass == 'fog-BR' && (!!cl.north || !!cl.west))) {
+            theBorderClass = 'fog-FF';
+        }
+        return theBorderClass;
     }
     $scope.bodyBoxes = [{
         name: 'head',
@@ -497,7 +518,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
                             data: $scope.cells,
                             names: $scope.cellNames
                         }
-                    });//saving before each combat
+                    }); //saving before each combat
                     combatFac.combatReady(); //set up the board
                 }
                 if (typeof $scope.cells[$scope.cellNames.indexOf($scope.playerCell)].has == 'object' && $scope.cells[$scope.cellNames.indexOf($scope.playerCell)].has.inv) {

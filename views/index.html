@@ -33,15 +33,8 @@
             <div class='outWall wesWall' ng-if='cl.west'></div>
             <div class='maze-icon' ng-if='compareCell(cl.id)' style='transform:rotateZ({{360-roomRot}}deg)'>&uparrow;</div>
             <div class='maze-icon' ng-if='cells[cellNames.indexOf(cl.id)].has=="exit"'>&#128682;</div>
-            <div class='maze-icon fog-icon' ng-if='foggy && surroundCells(cl.id,0)' id='fog-TL'></div>
-            <div class='maze-icon fog-icon' ng-if='foggy && surroundCells(cl.id,1)' id='fog-TC'></div>
-            <div class='maze-icon fog-icon' ng-if='foggy && surroundCells(cl.id,2)' id='fog-TR'></div>
-            <div class='maze-icon fog-icon' ng-if='foggy && surroundCells(cl.id,3)' id='fog-CL'></div>
-            <div class='maze-icon fog-icon' ng-if='foggy && surroundCells(cl.id,4)' id='fog-CR'></div>
-            <div class='maze-icon fog-icon' ng-if='foggy && surroundCells(cl.id,5)' id='fog-BL'></div>
-            <div class='maze-icon fog-icon' ng-if='foggy && surroundCells(cl.id,6)' id='fog-BC'></div>
-            <div class='maze-icon fog-icon' ng-if='foggy && surroundCells(cl.id,7)' id='fog-BR'></div>
-            <div class='maze-icon fog-icon' ng-if='foggy && surroundCells(cl.id,8)' id='fog-FF'></div>
+            <div class='maze-icon fog-icon {{surroundCells(cl)}}' ng-if='foggy'></div>
+            {{surroundCells(cl)}}
         </div>
     </div>
     <div id='room' style='transform:rotateX({{vertRot}}deg) translateY(320px) translateX(250px) rotateZ({{roomRot}}deg) translateZ(-320px); background:url({{isExit()}});background-size:contain;'>
