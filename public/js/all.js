@@ -163,6 +163,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
         musFac.toggleMus();
         $scope.musOn = !$scope.musOn
     };
+    $scope.hCent = ($(window).width() - 1000)/2;//horizontal center;
     musFac.getMusic('general');
     $scope.uName = ''; //if this is blank, accept no incoming socket events from phone(s). Otherwise, accept from specified phone only! This is NOT the username of the player!
     ($scope.checkPhone = function() {
@@ -359,7 +360,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
             theBorderClass = 'fog-BR';
         }
 
-        
+
         if ((theBorderClass == '' && (Math.abs(actualId[0] - actualPlayer[0]) > 1 || Math.abs(actualId[1] - actualPlayer[1]) > 1)) || (theBorderClass == 'fog-TL' && (!!cl.south || !!cl.east)) || (theBorderClass == 'fog-TC' && !!cl.south) || (theBorderClass == 'fog-TR' && (!!cl.south || !!cl.west)) || (theBorderClass == 'fog-CL' && !!cl.east) || (theBorderClass == 'fog-CR' && !!cl.west) || (theBorderClass == 'fog-BL' && (!!cl.north || !!cl.east)) || (theBorderClass == 'fog-BC' && !!cl.north) || (theBorderClass == 'fog-BR' && (!!cl.north || !!cl.west))) {
             theBorderClass = 'fog-FF';
         }
@@ -720,6 +721,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
         $scope.roomRot += $scope.turnSpeed;
         $scope.playerFacing = $scope.roomRot % 360 > 0 ? $scope.roomRot % 360 : 360 + $scope.roomRot % 360;
     }, 50);
+    $scope.threedeerooms = ['north','south','east','west']
     $scope.bomb = function(dir) {
         //because of the imprecise nature of the mazegen algorith, occasionally walls are unsolvable. this fn allows us to destroy walls, preventing trapped players.
         var x = $scope.playerCell.split('-')[0];
@@ -748,22 +750,18 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
         $scope.bombOn = false;
     };
     $scope.rotOn = true;
-    $scope.vertRot = 85;
+    $scope.vertRot = 5;
     $scope.getWallStatus = function(dir) {
-        try {
-            var roomWall = $scope.cells[$scope.cellNames.indexOf($scope.playerCell)][dir] ? './img/wall.jpg' : './img/door.jpg';
-        } catch (e) {
-
-        }
-        return roomWall;
+        return !($scope.cells[$scope.cellNames.indexOf($scope.playerCell)] && $scope.cells[$scope.cellNames.indexOf($scope.playerCell)][dir])
     };
     $scope.isExit = function() {
-        try {
-            var tex = $scope.cells[$scope.cellNames.indexOf($scope.playerCell)].has == 'exit' ? './img/exit.png' : './img/ground.jpg';
-        } catch (e) {
+        return $scope.cells[$scope.cellNames.indexOf($scope.playerCell)].has == 'exit';
+        // try {
+        //     var tex = $scope.cells[$scope.cellNames.indexOf($scope.playerCell)].has == 'exit' ? './img/exit.png' : './img/ground.jpg';
+        // } catch (e) {
 
-        }
-        return tex;
+        // }
+        // return tex;
     };
     $scope.noMove = function($event) {
         $event.stopPropagation();

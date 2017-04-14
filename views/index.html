@@ -17,7 +17,6 @@
     <div id='uiloader' ng-show='invActive'>
         <div ng-include="'UI.html'" style='width:100%;height:100%;'></div>
     </div>
-
     <div id='combatloader' ng-show='inCombat'>
         <div ng-include="'combat.html'" style='width:100%;height:100%;'></div>
     </div>
@@ -36,8 +35,7 @@
             <div class='maze-icon fog-icon {{surroundCells(cl)}}' ng-if='foggy'></div>
         </div>
     </div>
-    <div id='room' style='transform:rotateX({{vertRot}}deg) translateY(320px) translateX(250px) rotateZ({{roomRot}}deg) translateZ(-320px); background:url({{isExit()}});background-size:contain;'>
-        <!-- the actual room in which we 'play' -->
+    <!--     <div id='room' style='transform:rotateX({{vertRot}}deg) translateY(320px) translateX(250px) rotateZ({{roomRot}}deg) translateZ(-320px); background:url({{isExit()}});background-size:contain;'>
         <div class='roomWall rwn' ng-style='{"background":"url("+getWallStatus("north")+")"}' ng-click='noMove($event)'></div>
         <div class='roomWall rwe' ng-style='{"background":"url("+getWallStatus("east")+")"}' ng-click='noMove($event)'></div>
         <div class='roomWall rws' ng-style='{"background":"url("+getWallStatus("south")+")"}' ng-click='noMove($event)'></div>
@@ -48,19 +46,39 @@
             <div id='rampRight' class='rampPiece'></div>
             <div id='ramp' class='rampPiece'></div>
         </div>
+    </div> -->
+    <div class='room-3d-cont' style='transform:translateX({{hCent}}px) rotateX({{vertRot}}deg) rotateY({{-roomRot}}deg)'>
+        <div class='main-room'>
+            <div class='wall wall-n' ng-class='{"door":getWallStatus("north")}'></div>
+            <div class='wall wall-e' ng-class='{"door":getWallStatus("east")}'></div>
+            <div class='wall wall-s' ng-class='{"door":getWallStatus("south")}'></div>
+            <div class='wall wall-w' ng-class='{"door":getWallStatus("west")}'></div>
+            <div class='floor' ng-class='{"open-floor":isExit()}'></div>
+            <div class='ceil'></div>
+            <div id='rampBase' ng-if="isExit()" ng-click='levelDown();'>
+                <div id='rampLeft' class='rampPiece'></div>
+                <div id='rampRight' class='rampPiece'></div>
+                <div id='ramp' class='rampPiece'></div>
+            </div>
+        </div>
+        <div class='{{rewm}}-room out-room' ng-repeat='rewm in threedeerooms'>
+            <div class='wall wall-n'></div>
+            <div class='wall wall-e'></div>
+            <div class='wall wall-w'></div>
+            <div class='floor'></div>
+            <div class='ceil'></div>
+        </div>
     </div>
-   
     <div id='bom' ng-show='bombOn'>
         <div id='fuse'><span>{{bombsLeft}}</span></div>
     </div>
     <div id='contexMen' ng-show='contMenOn' class='panel panel-info' style='left:{{contMenOn.x}}px;top:{{contMenOn.y}}px;'>
-            <li ng-click='equipItem(contMenOn.el,contMenOn.num)' ng-show = 'contMenOn.el.lootType!=2'>&#9876; Equip</li>
-            <li style='color:#aaa;' title='You cannot equip this item!' ng-show = 'contMenOn.el.lootType==2'>&#128176; Equip</li>
-            <li ng-click='trashItem(contMenOn.el,contMenOn.num)'>&#128465; Destroy</li>
-            <li ng-click='merchy.exchange(contMenOn.el,true,contMenOn.num)' ng-show = 'isNearMerch'>&#128176; Sell</li>
-            <li style='color:#aaa;' title='You have to be near a merchant to sell!' ng-show = 'isNearMerch==false'>&#128176; Sell</li>
+        <li ng-click='equipItem(contMenOn.el,contMenOn.num)' ng-show='contMenOn.el.lootType!=2'>&#9876; Equip</li>
+        <li style='color:#aaa;' title='You cannot equip this item!' ng-show='contMenOn.el.lootType==2'>&#128176; Equip</li>
+        <li ng-click='trashItem(contMenOn.el,contMenOn.num)'>&#128465; Destroy</li>
+        <li ng-click='merchy.exchange(contMenOn.el,true,contMenOn.num)' ng-show='isNearMerch'>&#128176; Sell</li>
+        <li style='color:#aaa;' title='You have to be near a merchant to sell!' ng-show='isNearMerch==false'>&#128176; Sell</li>
     </div>
-    
     <script src='/socket.io-client/dist/socket.io.min.js'></script>
     <script src="/jquery/dist/jquery.min.js"></script>
     <script src="/jquery-ui/jquery-ui.min.js"></script>

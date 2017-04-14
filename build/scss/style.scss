@@ -2,7 +2,7 @@ html,
 body {
     width: 100%;
     margin: 0;
-    perspective: 1200px;
+    perspective: 1500px;
     transform-style: preserve-3d;
     position: absolute;
     font-family: 'Bad Script', cursive;
@@ -110,113 +110,217 @@ body {
     transform: rotateY(90deg) translateZ(-25px) translateX(-25px) rotateZ(90deg);
 }
 
-
-.maze-icon{
-    position:absolute;
-    left:0px;
-    top:0px;
-    font-size:26pt;
-    color:#000;
-    text-align:center;
-    width:100%;
-    height:100%;
+.maze-icon {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    font-size: 26pt;
+    color: #000;
+    text-align: center;
+    width: 100%;
+    height: 100%;
 }
 
-.fog-icon{
-    position:absolute;
-    transform:translateZ(51px);
-    width:105%;
-    height:105%;
-    &.fog-FF{
-        background:#000;
+.fog-icon {
+    position: absolute;
+    transform: translateZ(51px);
+    width: 105%;
+    height: 105%;
+    &.fog-FF {
+        background: #000;
     }
-    &.fog-TL{
-        background:linear-gradient(to bottom right,#000 50%,transparent 80%);
+    &.fog-TL {
+        background: linear-gradient(to bottom right, #000 50%, transparent 80%);
     }
-    &.fog-TC{
-        background:linear-gradient(to bottom,#000 10%,transparent 50%);
+    &.fog-TC {
+        background: linear-gradient(to bottom, #000 10%, transparent 50%);
     }
-    &.fog-TR{
-        background:linear-gradient(to bottom left,#000 50%,transparent 80%);
+    &.fog-TR {
+        background: linear-gradient(to bottom left, #000 50%, transparent 80%);
     }
-    &.fog-CL{
-        background:linear-gradient(to right,#000 10%,transparent 50%);
+    &.fog-CL {
+        background: linear-gradient(to right, #000 10%, transparent 50%);
     }
-    &.fog-CR{
-        background:linear-gradient(to left,#000 10%,transparent 50%);
+    &.fog-CR {
+        background: linear-gradient(to left, #000 10%, transparent 50%);
     }
-    &.fog-BL{
-        background:linear-gradient(to top right,#000 50%,transparent 80%);
+    &.fog-BL {
+        background: linear-gradient(to top right, #000 50%, transparent 80%);
     }
-    &.fog-BC{
-        background:linear-gradient(to top,#000 10%,transparent 50%);
+    &.fog-BC {
+        background: linear-gradient(to top, #000 10%, transparent 50%);
     }
-    &.fog-BR{
-        background:linear-gradient(to top left,#000 50%,transparent 80%);
+    &.fog-BR {
+        background: linear-gradient(to top left, #000 50%, transparent 80%);
     }
 }
+
 
 /*room stuff*/
 
-#room {
-    background: url('.././img/ground.jpg');
+.room-3d-cont {
     width: 1000px;
-    height: 1000px;
+    height: 800px;
     transform-style: preserve-3d;
+    // The following is the ramp, which is ONLY visible in the exit room. It's the way we go down to the next level.
     #rampBase {
-        background: url('.././img/exitDoor.jpg');
+        background: linear-gradient(rgba(0,0,0,1),rgba(0,0,0,0.2)),url(../img/exitDoor.jpg);
         background-size: 100%;
         position: absolute;
-        width: 626.25px;
+        width: 500px;
         height: 400px;
-        transform: translateX(181.25px) rotateX(90deg) translateZ(1008px) translateY(-200px);
+        transform: translateX(250px) rotateX(180deg) rotateY(180deg) translateZ(500px) translateY(-800px);
         transform-style: preserve-3d;
     }
     #rampLeft {
-        background: url('.././img/wall.jpg');
-        width: 626.25px;
+        background: linear-gradient(rgba(0,0,0,1),rgba(0,0,0,0.2)),url(../img/wall.jpg);
+        width: 900px;
         height: 400px;
-        transform: rotateY(90deg) translateZ(-313.125px) translateX(313.125px);
+        transform: rotateY(90deg);
     }
     #rampRight {
-        background: url('.././img/wall.jpg');
-        width: 626.25px;
+        background: linear-gradient(rgba(0,0,0,1),rgba(0,0,0,0.2)),url(../img/wall.jpg);
+        width: 900px;
         height: 400px;
-        transform: rotateY(90deg) translateZ(313.125px) translateX(313.125px);
+        transform: rotateY(90deg) translateZ(500px);
     }
     .rampPiece {
-        background: url('.././img/ground.jpg');
+        transform-origin:0% 0%;
+        background: linear-gradient(rgba(0,0,0,1),rgba(0,0,0,0.2)),url(../img/ground.jpg);
         position: absolute;
     }
     #ramp {
-        height: 717px;
-        width: 626.25px;
+        height: 984.8857801796105px;
+        width: 500px;
         transform-origin: 50% 0%;
-        transform: rotateX(-56deg)
+        transform: rotateX(-66deg)
     }
-}
 
-.roomWall {
-    position: absolute;
-    width: 1000px;
-    height: 800px;
-    background: url('.././img/wall.jpg');
-}
-
-.rwn {
-    transform: rotateX(90deg) translateY(400px) translateZ(400px) rotateZ(180deg);
-}
-
-.rws {
-    transform: rotateX(90deg) translateY(400px) translateZ(-600px) rotateZ(180deg);
-}
-
-.rwe {
-    transform: rotateX(90deg) rotateY(90deg) translateY(400px) translateZ(500px) translateX(100px) rotateZ(180deg);
-}
-
-.rww {
-    transform: rotateX(90deg) rotateY(90deg) translateY(400px) translateZ(-500px) translateX(100px) rotateZ(180deg);
+    & .main-room,
+    & .north-room,
+    & .south-room,
+    & .east-room,
+    & .west-room {
+        transform-style: preserve-3d;
+        transform-origin: 500px 500px 0px;
+        position: absolute;
+        & .wall {
+            width: 1000px;
+            height: 800px;
+            // opacity:.7;
+            backface-visibility: hidden;
+            position: absolute;
+            background: url('.././img/wall.jpg');
+            &.wall-e {
+                transform: rotateY(-90deg) translateZ(-500px);
+            }
+            &.wall-w {
+                transform: rotateY(90deg) translateZ(-500px);
+            }
+            &.wall-s {
+                transform: rotateY(180deg) translateZ(-500px);
+            }
+            &.wall-n {
+                transform: rotateY(0deg) translateZ(-500px);
+            }
+            &.door {
+                clip-path: polygon(0% 0%, 0% 100%, 25% 100%, 25% 10%, 75% 10%, 75% 100%, 25% 100%, 25% 100%, 100% 100%, 100% 0%);
+            }
+        }
+        & .floor {
+            width: 1000px;
+            height: 1000px;
+            background: url('.././img/ground.jpg');
+            position: absolute;
+            transform: rotateX(90deg) translateZ(-300px);
+            &.open-floor{
+                clip-path: polygon(0% 0%, 0% 100%, 25% 100%, 25% 10%, 75% 10%, 75% 100%, 25% 100%, 25% 100%, 100% 100%, 100% 0%);
+            }
+        }
+        & .ceil {
+            width: 1000px;
+            height: 1000px;
+            background: url('.././img/ground.jpg');
+            position: absolute;
+            transform: rotateX(90deg) translateZ(500px);
+        }
+    }
+    & .main-room .wall::before {
+        content: '';
+        width: 0;
+        height: 0;
+        // background:rgba(0,0,0,.6);
+        border-top: 800px solid rgba(0, 0, 0, .6);
+        border-right: 450px solid transparent;
+        position: absolute;
+        filter: blur(10px);
+        left: 0;
+        top: 0;
+    }
+    & .main-room .wall::after {
+        content: '';
+        width: 0;
+        height: 0;
+        // background:rgba(0,0,0,.6);
+        border-top: 800px solid rgba(0, 0, 0, .6);
+        border-left: 450px solid transparent;
+        position: absolute;
+        filter: blur(10px);
+        right: 0;
+        top: 0;
+    }
+    & .floor::before {
+        content: '';
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        left: 0;
+        top: 0;
+        background: linear-gradient(rgba(0, 0, 0, .9) 70%, rgba(0, 0, 0, .2) 100%)
+    }
+    & .main-room .floor::before {
+        content: '';
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        left: 0;
+        top: 0;
+        background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, .5) 40%, rgba(0, 0, 0, .5) 90%)
+    }
+    & .main-room .ceil::before {
+        content: '';
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        left: 0;
+        top: 0;
+        background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, .5) 10%, rgba(0, 0, 0, .5) 40%)
+    }
+    & .north-room {
+        transform: rotateY(0deg) translateZ(-1000px);
+    }
+    & .east-room {
+        transform: rotateY(90deg) translateZ(-1000px);
+    }
+    & .south-room {
+        transform: rotateY(180deg) translateZ(-1000px);
+    }
+    & .west-room {
+        transform: rotateY(-90deg) translateZ(-1000px);
+    }
+    & .out-room {
+        & .wall {
+            background: #000;
+            width: 1004px;
+            height: 804px;
+            left: -2px;
+            top: -2px;
+        }
+        & .floor,
+        & .ceil {
+            background: radial-gradient(ellipse 60% 80% at 50% 100%, transparent 30%, #000 45%), url('.././img/ground.jpg');
+        }
+    }
 }
 
 .roomCont {
@@ -475,8 +579,8 @@ body {
     background: url('../img/assets/scribe.jpg');
     background-size: cover;
     background-attachment: fixed;
-    height:100%;
-    top:40px;
+    height: 100%;
+    top: 40px;
 }
 
 .vote-panel {
@@ -624,22 +728,21 @@ body {
         }
     }
     .vote-tab {
-        transition-duration:.5s;
-        padding:5px;
-        border-top-left-radius:5px;
-        border-top-right-radius:5px;
-        box-shadow:5px 0px 5px #000;
+        transition-duration: .5s;
+        padding: 5px;
+        border-top-left-radius: 5px;
+        border-top-right-radius: 5px;
+        box-shadow: 5px 0px 5px #000;
     }
 }
 
 #vote-page #sandalchest-modal-bg {
     position: fixed!important;
-    z-index:100;
-    transform:translateZ(0px);
-    height:100vh;
-    & .sandalchest-modal-main{
-        height:80%!important;
-
+    z-index: 100;
+    transform: translateZ(0px);
+    height: 100vh;
+    & .sandalchest-modal-main {
+        height: 80%!important;
     }
 }
 
@@ -647,51 +750,52 @@ body {
     background: linear-gradient(rgba(255, 255, 255, .7), rgba(255, 255, 255, .7)), url('../img/assets/Armor.jpg');
     background-attachment: fixed;
     background-size: cover;
-    box-shadow:none!important;
+    box-shadow: none!important;
 }
 
 .weap-vote {
     background: linear-gradient(rgba(255, 255, 255, .7), rgba(255, 255, 255, .7)), url('../img/assets/Weap.jpg');
     background-attachment: fixed;
     background-size: cover;
-    box-shadow:none!important;
+    box-shadow: none!important;
 }
 
 .skill-vote {
     background: linear-gradient(rgba(255, 255, 255, .7), rgba(255, 255, 255, .7)), url('../img/assets/Skill.jpg');
     background-attachment: fixed;
     background-size: cover;
-    box-shadow:none!important;
+    box-shadow: none!important;
 }
-.vote-nav{
-    top:0;
-    left:0;
-    z-index:1000;
-    transform:translateZ(0px);
-    width:100%;
-    height:40px;
-    position:absolute;
-    background:#333;
-    color:#fff;
-    & .vote-nav-btn{
-        cursor:pointer;
-        display:inline-block;
-        width:15%;
-        border-right:2px groove #333;
-        transition-duration:.2s;
-        font-size:larger;
-        line-height:40px;
-        text-align:center;
-        &:hover{
-            background:#666;
+
+.vote-nav {
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    transform: translateZ(0px);
+    width: 100%;
+    height: 40px;
+    position: absolute;
+    background: #333;
+    color: #fff;
+    & .vote-nav-btn {
+        cursor: pointer;
+        display: inline-block;
+        width: 15%;
+        border-right: 2px groove #333;
+        transition-duration: .2s;
+        font-size: larger;
+        line-height: 40px;
+        text-align: center;
+        &:hover {
+            background: #666;
         }
     }
 }
 
-.mus-but{
-    & .mus-main{
-        position:absolute;
-        bottom:3px;
+.mus-but {
+    & .mus-main {
+        position: absolute;
+        bottom: 3px;
     }
     position:fixed;
     left:3px;
@@ -706,8 +810,8 @@ body {
     box-shadow:3px 2px 4px #000;
     transition-duration:.2s;
     cursor:pointer;
-    &:hover{
-        background:#bbb;
-        box-shadow:1px 1px 2px #000;
+    &:hover {
+        background: #bbb;
+        box-shadow: 1px 1px 2px #000;
     }
 }
