@@ -629,12 +629,6 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
     };
     $scope.isExit = function() {
         return $scope.cells[$scope.cellNames.indexOf($scope.playerCell)].has == 'exit';
-        // try {
-        //     var tex = $scope.cells[$scope.cellNames.indexOf($scope.playerCell)].has == 'exit' ? './img/exit.png' : './img/ground.jpg';
-        // } catch (e) {
-
-        // }
-        // return tex;
     };
     $scope.noMove = function($event) {
         $event.stopPropagation();
