@@ -47,7 +47,7 @@
                         <div class="col-md-8 ">
                             <ul class='prof-list'>
                                 <li ng-repeat='p in profDescs' style='background:{{!p.hovering?"linear-gradient(rgba(255,255,255,.6),rgba(255,255,255,.6)),":""}}url({{p.img}});background-attachment:fixed;background-size:100%;' ng-click='user.prof=$index' ng-mouseenter='p.hovering=true' ng-mouseout='p.hovering=false'>
-                                    <div style='background:url({{p.ico}}); background-size: contain;'></div> {{p.name}}
+                                    <div style='background:url({{p.ico}}); background-size: contain;background-repeat:no-repeat;'></div> {{p.name}}
                                 </li>
                             </ul>
                         </div>

@@ -5,6 +5,8 @@ var monSchema = new mongoose.Schema({
     desc: String,
     min: Number,
     max: Number, 
+    en:{type:Number,default:0},//total energy this creature has
+    enPerAttack:{type:Number,default:0},//energy required each time this creature attacks. Note that this is not 'used' per turn, unlike the player. Instead, the attack AI checks each turn to see if the creature has enough energy to attack
     type: Number, //dmg type
     res:[Number],//resistance(s). creatures w/ resist to a particular dmg type take 30-50% less dmg from attacks of that dmg type
     hp:Number, //total (max) hp.

@@ -111,3 +111,14 @@ xp STILL isnt updating after mons kill
 FEAR condition? would need to add 1) weapon affix, 2) flee affect from 'successful' fear, 3) flee version that DOESNT say "successfully fled!", 4) fear effect to skills
 
 fog mode?
+
+
+NEW PROF: mesmer type thing (CANNOT be called mesmer!)
+ - name options: 
+ 	mentalist, dominator, seer, illusionist
+ 	aethero-: aetheromancer, aetherist,
+ 	mindbreaker? would prefer not to have two-part names
+ - will need new skill 'effect': 
+ 	 - energy manip 
+ 	 - dmg-specific effects (a la Mantra of Flame)
+ 	 - dmg reflect (conversion?)

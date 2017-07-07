@@ -34,6 +34,12 @@ var app = angular.module('mazeGame', ['ngTouch']).controller('log-con', function
         img: './img/assets/necro.jpg',
         ico: './img/assets/necroPick.png',
         skill: "Soul Siphon - Calling on some really dark stuff, you rend part of your enemy's life force. Chance to steal some health on attack. Based on level."
+    }, {
+        name: 'Aetherist',
+        txt: `Eschewing both raw martial attacks and the direct elemental attacks that they see as "simplistic", this offshoot of the original mage guilds turns their enemies' attacks against them, stealing their energy and reflecting attacks with frightening precision.`,
+        img: './img/assets/aether.jpg',
+        ico: './img/assets/aetherPick.png',
+        skill: "Energy tap - Using their knowledge of the mind, the Aetherist can steal the very stamina of their foes. Chance to steal some energy on attack."
     }]
     $scope.newUsr = function() {
         //eventually we need to CHECK to see if this user is already taken!

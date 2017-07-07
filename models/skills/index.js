@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 var skillSchema = new mongoose.Schema({
-    name: String, //name of the armor piece
+    name: String, //name of the skill
     desc: String, //Description of skill
     energy: Number,
     heal: Number, //burst heal amount (if any)
@@ -9,8 +9,11 @@ var skillSchema = new mongoose.Schema({
     degen: Number, //DoT damage (per turn)
     type: Number, //damage type.
     stuns: Boolean,
-    imgUrl: String,//this should either be a url or a dataurl
-    id: Number, //id number of skill
+    imgUrl: String, //this should either be a url or a dataurl
+    id: Number, //id number of skill,
+    reflect: { type: Number, default: 0 },
+    enSteal: { type: Number, default: 0 },
+    convert: [Number],
     prevSkill: { type: Number, default: 0 }, //for skill tree. If zero, this is a base skill (and thus has no required prev skill). Otherwise, id of prerequisite skill.
     nextSkills: [Number], //for skill tree. Array of possible next skills user may choose from this skill 
     skillPts: { type: Number, default: 0 }, //number of skill points required to purchase this skill
@@ -24,4 +27,4 @@ var skillSchema = new mongoose.Schema({
 
 mongoose.model('Skill', skillSchema);
 
-//prof based effects: protection, dmg vs stun, dmg vs degen, heal-on-hit (meh...), crit chance
+//prof based effects: protection, dmg vs stun, dmg vs degen, heal-on-hit (meh...), crit chance, en steal

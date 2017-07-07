@@ -1,5 +1,5 @@
 var startFns = {},
-    profs = ['general', 'warrior', 'sorcerer', 'necromancer', 'paladin'],
+    profs = ['general', 'warrior', 'sorcerer', 'necromancer', 'paladin','aetherist'],
     mongoose = require('mongoose');
 module.exports = startFns;
 
@@ -21,10 +21,13 @@ startFns.getSkills = function(prof) {
             //Paly
             retSkills = retSkills.concat([23, 24])
             break;
-        default:
+        case 4:
+            //necro
             retSkills = retSkills.concat([16])
-                //necro
-
+            break;
+        default:
+            //Aetherist
+            retSkills = retSkills.concat([31,32])
     }
     return retSkills;
     //return the initial list of skills (to be unlocked) for this profession. Since further skills are unlocked as 'branches' off of previous skills, this basically determines ALL of the skills this prof uses.
@@ -62,7 +65,7 @@ startFns.getEquip = function(prof, affLen) {
             eq.feet = [Math.floor(Math.random()*affLen), 39, Math.floor(Math.random()*affLen)];
         }
     } else {
-        //light: 0 head, 1/8 chest, 2 pants, 3/42 gloves, 4 boots
+        //light: 0 head, 1 or 8 chest, 2 pants, 3 or 42 gloves, 4 boots
         if (Math.random() > .33) {
             eq.head = [Math.floor(Math.random()*affLen), 0, Math.floor(Math.random()*affLen)];
         }

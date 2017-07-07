@@ -34,6 +34,12 @@ var app = angular.module('mazeGame', ['ngTouch']).controller('log-con', function
         img: './img/assets/necro.jpg',
         ico: './img/assets/necroPick.png',
         skill: "Soul Siphon - Calling on some really dark stuff, you rend part of your enemy's life force. Chance to steal some health on attack. Based on level."
+    }, {
+        name: 'Aetherist',
+        txt: `Eschewing both raw martial attacks and the direct elemental attacks that they see as "simplistic", this offshoot of the original mage guilds turns their enemies' attacks against them, stealing their energy and reflecting attacks with frightening precision.`,
+        img: './img/assets/aether.jpg',
+        ico: './img/assets/aetherPick.png',
+        skill: "Energy tap - Using their knowledge of the mind, the Aetherist can steal the very stamina of their foes. Chance to steal some energy on attack."
     }]
     $scope.newUsr = function() {
         //eventually we need to CHECK to see if this user is already taken!
@@ -1334,6 +1340,10 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
     $scope.comb.attackEffects = [];
     $scope.inCombat = true;
     $scope.comb.lastDefeated = null;
+    $scope.reflStatus = {
+        amt: 0,
+        types: []
+    }
     $scope.comb.prepComb = function() {
         $scope.comb.lastDefeated = $scope.intTarg.name
         $scope.comb.battleStatus = {
@@ -1425,9 +1435,27 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
     $scope.comb.attack = function() {
         //player taking turn!
         $scope.comb.attackEffects = [];
+        $scope.comb.xfx = [];
         var pDmg = parseInt($scope.comb.calcDmg(1));
         $scope.intTarg.currHp -= pDmg;
         $scope.comb.updateDoTs();
+        //check for aeth refls
+        if ($scope.$parent.fullSkills[$scope.currSkillNum].reflect && $scope.$parent.fullSkills[$scope.currSkillNum].reflect > 0) {
+            $scope.reflStatus.amt = $scope.$parent.fullSkills[$scope.currSkillNum].reflect;
+            $scope.reflStatus.types = $scope.$parent.fullSkills[$scope.currSkillNum].convert;
+            $scope.comb.xfx.push(`It created an ethereal shield around you, allowing you to reflect ${$scope.$parent.fullSkills[$scope.currSkillNum].reflect}% of your foe's dmg`)
+        }
+        if ($scope.$parent.fullSkills[$scope.currSkillNum].enSteal && $scope.$parent.fullSkills[$scope.currSkillNum].enSteal > 0 && $scope.$parent.intTarg.en) {
+            //skill steals energy
+            var amtToSteal = $scope.$parent.fullSkills[$scope.currSkillNum].enSteal;
+            if (amtToSteal > $scope.$parent.intTarg.en) {
+                amtToSteal = $scope.$parent.intTarg.en
+            }
+            $scope.currEn += amtToSteal;
+            $scope.$parent.currEn = $scope.currEn;
+            $scope.$parent.intTarg.en -= amtToSteal;
+
+        }
         var attackInfoStr = 'You attack for ' + pDmg + ' ' + combatFac.getDmgType($scope.$parent.fullSkills[$scope.currSkillNum].type) + ' damage, using ' + $scope.$parent.fullSkills[$scope.currSkillNum].name + '!';
         if ($scope.comb.attackEffects.length) {
             //add special effects!
@@ -1483,7 +1511,7 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
     }
     $scope.comb.calcDmg = function(d) {
         //first, get player items:
-        $scope.comb.xfx = [];
+        
         var allWeaps = $scope.comb.itemStats[1],
             allArm = $scope.comb.itemStats[0],
             allAff = $scope.comb.itemStats[2],
@@ -1592,6 +1620,7 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                 $scope.currEn -= $scope.$parent.fullSkills[$scope.currSkillNum].energy;
                 console.log('dmg components', skillDmg, weapDmg, novaDmg)
                 var totalDmg = skillDmg + weapDmg + novaDmg;
+                var aethEnSteal = $scope.$parent.prof == 5 && Math.random() > .5;
                 //extraFx stuff.
                 if ($scope.monsStunned && $scope.$parent.fullSkills[$scope.currSkillNum].extraFx && $scope.$parent.fullSkills[$scope.currSkillNum].extraFx.dmgVsStun) {
                     totalDmg *= (1 + Math.random() * .7);
@@ -1608,6 +1637,9 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                 if ($scope.$parent.fullSkills[$scope.currSkillNum].extraFx && $scope.$parent.fullSkills[$scope.currSkillNum].extraFx.protection) {
                     $scope.pProt = true;
                     $scope.comb.xfx.push('Using the skill applied protection for one turn!');
+                }
+                if (aethEnSteal){
+                    $scope.comb.xfx.push('It stole energy from your foe!')
                 }
                 //profession-specific effects:
                 //note that as the level difference between the player and target becomes more positive, the greater the chance of the effect firing
@@ -1649,9 +1681,16 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                         //paly
                         $scope.monsRetalled = true;
                     } else if ($scope.$parent.prof == 4) {
-                        //necro
+                        //necro: lifesteal (i.e., heal and increased dmg)
                         $scope.currHp += totalDmg * .15;
                         totalDmg *= 1.15;
+                    } else if (aethEnSteal) {
+                        //aeth: (steal energy)
+                        if ($scope.$parent.intTarg.en && $scope.$parent.intTarg.en > 3) {
+                            $scope.currEn += 3;
+                            $scope.$parent.currEn = $scope.currEn;
+                            $scope.$parent.intTarg.en -= 3;
+                        }
                     }
                 }
                 //and finally, return the damage!
@@ -1817,10 +1856,10 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                     });
                 });
             });
-        } else if ($scope.comb.battleStatus.title=='Flee!'){
+        } else if ($scope.comb.battleStatus.title == 'Flee!') {
             console.log('player fled')
             musFac.getMusic('general');
-            angular.element('body').scope().playerCell = angular.element('body').scope().oldCell;//player always flees to previous cell
+            angular.element('body').scope().playerCell = angular.element('body').scope().oldCell; //player always flees to previous cell
             angular.element('body').scope().inCombat = false;
             angular.element('body').scope().intTarg = false;
             angular.element('body').scope().moveReady = true;
@@ -1828,7 +1867,7 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
             angular.element('body').scope().currEn = angular.element('body').scope().maxEn;
             $scope.$parent.intTarg.currHp = $scope.$parent.intTarg.hp;
             angular.element('body').scope().$apply();
-        }else{
+        } else {
             //defeat
             console.log('defeat condition')
             musFac.getMusic('general');
@@ -1924,13 +1963,26 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
     $scope.comb.monsTurn = function() {
         //eventually, the monster should be able to do other stuff (heal, wait, etc)
         console.log('monster taking turn!')
-        if (!$scope.monsStunned) {
+        if (!$scope.monsStunned && $scope.intTarg.en >= $scope.intTarg.enPerAttack) {
             var monDmg = parseInt($scope.comb.calcDmg()); //mon dmg? Oui oui!
             var confSelfDmg = Math.random() < 0.5 && $scope.monsConf;
             if ($scope.monsRetalled) {
                 $scope.intTarg.currHp -= 0.15 * monDmg;
             }
             if (!confSelfDmg) {
+                //NOTE: monsters that are confused (confSelfDmg==true) are NOT affected by aetherist's reflect skills
+                if ($scope.reflStatus.amt) {
+                    //aetherist' reflect 
+                    if (!$scope.reflStatus.types.length) {
+                        //tier 1 or 2 reflects, not dependent on damage type. 
+                        $scope.intTarg.currHp -= $scope.reflStatus * monDmg / 100;
+                    } else if ($scope.reflStatus.types.indexOf($scope.$parent.intTarg.type) > -1) {
+                        $scope.intTarg.currHp -= $scope.reflStatus * monDmg / 100;
+                    }
+                }
+                //blank the reflect stats, in case we used it this turn.
+                $scope.reflStatus.amt = 0;
+                $scope.reflStatus.types = [];
                 if ($scope.intTarg.currHp / $scope.intTarg.hp > .5 && Math.random < $scope.intTarg.healCh) {
                     //monster heals. This is the chance that it heals ABOVE a 'low health' threshold
                     sandalchest.alert('The ' + $scope.intTarg.name + ' heals!', function() {
@@ -2005,6 +2057,11 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
                     }
                 })
             }
+        } else if ($scope.intTarg.en < $scope.intTarg.enPerAttack) {
+            sandalchest.alert($scope.$parent.intTarg.name + ' ran out of energy and cannot attack!', function() {
+                $scope.comb.playersTurn = true;
+                $scope.comb.fleeMult = 1;
+            });
         } else {
             sandalchest.alert($scope.$parent.intTarg.name + ' is stunned this turn!', function() {
                 $scope.comb.playersTurn = true;
