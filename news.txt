@@ -1,6 +1,7 @@
-New profession system: Pick a warrior, sorcerer, paladin, or necromancer!
+New profession: Aetherist! Use your foe's attacks against them or steal their energy, denying them attacks!
 Skill Trees: Buy skills! Level up!
+Music: Multiple musical tracks to make your adventures more epic! 
 Quests: For now, just random ones.
-Voting System: By logging in and going to /votes, you can submit your own skills, weapons, and armor for voting! You can also vote on ones others have submitted. 
-Fog of War: Who knows what lurks around the next corner?! Disable in the menu if desired
-NOTE: If your login info didn't work, chances are I wiped the server. I gotta do this whenever I make a change to the User model, so sorry!
+Voting System: By logging in and going to /votes, you can submit your own skills, weapons, and armor for voting! You can also vote on ones others have submitted. Please note that items must have a minimum of two votes and a score of greater than 60% to be included.
+Fog of War: Who knows what lurks around the next corner?! Disable in the menu if desired. 
+NOTE: If your login info didn't work, chances are I wiped the server. I gotta do this whenever I make certain changes to the app, so sorry!
