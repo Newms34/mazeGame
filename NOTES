@@ -18,12 +18,6 @@ best would be some sort of scroll interface to choose skills, a la TR4's inv rin
 https://jsfiddle.net/tvdvw9aq/58/
 
 
-TO DO:
-1) Add more monsters
-2) Stat check system should be fine.
-3) ADD MOAR LOOTS so we dont keep getting the freakin cook's ring!
-
-
 quest instantiation:
  - when user reaches a certain lvl. This'll need to be some percentage (or fixed range?) BEFORE the quest's designated level
  - from merchant. Again, when user reaches appropriate lvl
@@ -122,3 +116,14 @@ NEW PROF: mesmer type thing (CANNOT be called mesmer!)
  	 - energy manip 
  	 - dmg-specific effects (a la Mantra of Flame)
  	 - dmg reflect (conversion?)
+
+
+multiplayer? pvp? if pve, monster should be adjusted dynamically (health, dmg, etc) to fit MULTIPLE chars
+since this is turned based, we'd need to adjust what's now the player turn so that it'd allow all of the users to essentially 'pick' their skills.
+
+visual effects for next-monster-attack statuses?
+prot
+refl
+type refl
+stun
+degen? check to make sure it works

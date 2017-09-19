@@ -723,7 +723,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
             $scope.turnSpeed = 0;
         }
     };
-    $scope.mouseTurnTimer = $interval(function() {
+    $scope.mouseTurnTimer = $interval(()=>{
         $scope.roomRot += $scope.turnSpeed;
         $scope.playerFacing = $scope.roomRot % 360 > 0 ? $scope.roomRot % 360 : 360 + $scope.roomRot % 360;
     }, 50);
@@ -775,7 +775,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
         sandalchest.prompt("Enter a name (you get this by visiting the site on your phone)!", function(result) {
             if (result !== null && result != ' ') {
                 //as long as its not blank
-                socket.emit('chkName', { n: result });
+                socket.emit('chkName', { n: result,u:$scope.name });
             }
             $scope.moveReady = true;
         });
@@ -807,7 +807,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
                 ey.which = 87;
                 window.onkeydown(ey);
                 $scope.travelOkay = false;
-                $scope.phoneMovTimer = $timeout(function() {
+                $scope.phoneMovTimer = $timeout(()=>{
                     $scope.travelOkay = true;
                 }, 1000);
             } else if (mvOb.y == 'b' && $scope.travelOkay) {
@@ -815,7 +815,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
                 ey.which = 83;
                 window.onkeydown(ey);
                 $scope.travelOkay = false;
-                $scope.phoneMovTimer = $timeout(function() {
+                $scope.phoneMovTimer = $timeout(()=>{
                     $scope.travelOkay = true;
                 }, 1000);
             }
@@ -1073,50 +1073,141 @@ app.controller('mob-con', function($scope, $http, $q, $interval, $swipe, $window
     $scope.currRotY = 0;
     $scope.rotX = null;
     $scope.rotY = null;
-    $scope.uName = 'retrieving...'; //username!
+    $scope.uName = Math.floor(Math.random() * 99999999999).toString(32).replace(/0/g, 'O').toUpperCase(); //username!
     $scope.uiOpts = ['Inventory', 'Skills', 'Bestiary', 'Quests', 'Menu'];
-    $scope.prevUI = 'Quests';
     $scope.currUI = 'Menu';
-    $scope.nextUI = 'Inventory'
     $scope.uiObjs = []; //items in current ui menu
-    $scope.getUn = function() {
-        var nounStart = String.fromCharCode(65 + Math.floor(Math.random() * 25));
-        var adjStart = String.fromCharCode(65 + Math.floor(Math.random() * 25));
-        $.ajax({
-            dataType: 'jsonp',
-            url: 'https://simple.wiktionary.org/w/api.php?action=query&list=categorymembers&format=json&cmsort=sortkey&cmstartsortkeyprefix=' + nounStart + '&cmlimit=500&cmtitle=Category:Nouns',
-            success: function(nounRes) {
-                var noun = ' ';
-                while (noun.indexOf(' ') != -1) {
-                    noun = nounRes.query.categorymembers[Math.floor(Math.random() * nounRes.query.categorymembers.length)].title;
-                }
-                //got the noun. Now the adjective!
-                console.log('final noun:', noun);
-                $.ajax({
-                    dataType: 'jsonp',
-                    url: 'https://simple.wiktionary.org/w/api.php?action=query&list=categorymembers&format=json&cmsort=sortkey&cmstartsortkeyprefix=' + adjStart + '&cmlimit=500&cmtitle=Category:Adjectives',
-                    success: function(adjRes) {
-                        var adj = ' ';
-                        while (adj.indexOf(' ') != -1) {
-                            adj = adjRes.query.categorymembers[Math.floor(Math.random() * adjRes.query.categorymembers.length)].title;
-                        }
-                        $scope.uName = adj.toLowerCase() + ' ' + noun.toLowerCase();
-                        $scope.movObj.n = $scope.uName;
-                        //basically just to register name
-                        socket.emit('movData', $scope.movObj);
-                        $scope.$digest();
-                    }
-                });
-            }
-        });
-    };
-    $scope.getUn();
-    $scope.sendMove = $interval(function() {
-        if ($scope.uName != 'retrieving...' && $scope.isMoving) {
-            //if we've registered a username and there is a movement to be submitted
-            socket.emit('movData', $scope.movObj);
-        }
+    socket.emit('regName', { n: $scope.uName })
+    $scope.sendMove = $interval(() => {
+        socket.emit('movData', $scope.movObj);
     }, 75);
+    socket.on('userRegged', function(data) {
+        if (data.n != $scope.uName) {
+            return false;
+        }
+        console.log('getting user data!')
+        $http.get('/user/mobGetData/' + data.u).then((rn) => {
+            $scope.makeRings(rn.data)
+        })
+    });
+    $scope.rings = [];
+    $scope.makeRings = function(data) {
+        //make the rings!
+        //unfortunately, each ring has a slightly different format, so... yep.
+        //Inv first
+        var invRing = {
+            currRot: 0,
+            name: 'Inventory',
+            items: []
+        }
+        var armorBits = ['head', 'feet', 'legs', 'hands', 'chest', 'weap'];
+        armorBits.forEach((b) => {
+            if (data.equip[b][0]) {
+                invRing.items.push({
+                    name: `${data.equip[b][0].pre} ${data.equip[b][1].name} ${data.equip[b][2].post}`,
+                    bg: null,
+                    extra: null
+                })
+            } else {
+                invRing.items.push({
+                    name: `No ${b=='weap'?'weapon':'armor on '+b}!`,
+                    bg: null,
+                    extra: null
+                })
+            }
+        })
+        $scope.rings.push(invRing);
+        //skills
+        var skillRing = {
+            currRot: 0,
+            name: 'Skills',
+            items: []
+        }
+        data.skills.forEach((sk) => {
+            skillRing.items.push({
+                name: sk.name,
+                bg: sk.imgUrl,
+                extra: sk.desc
+            })
+        })
+        $scope.rings.push(skillRing);
+        //beasties
+        var beastRing = {
+            currRot: 0,
+            name: 'Bestiary',
+            items: data.beasts.map((b) => {
+                return {
+                    name: b.name,
+                    bg: b.imgUrl,
+                    extra: b.desc
+                }
+            })
+        }
+        if (!beastRing.items.length) {
+            beastRing.items.push({
+                name: 'None',
+                bg: null,
+                extra: `You haven't discovered any beasts yet!`
+            })
+        }
+        $scope.rings.push(beastRing)
+
+        $scope.currRing = 0;
+        $scope.ringDiam = $("#ring-cont").width() / 2;
+        console.log('rings:', $scope.rings)
+    }
+    $scope.getOp = function(n) {
+        var rotAmt = $scope.rings[$scope.currRing].currRot % 360,
+            itemRot = n * 360 / $scope.rings[$scope.currRing].items.length;
+        if (Math.abs(rotAmt - itemRot) < 15) {
+            return 1;
+        }
+        return .2;
+    }
+    $scope.itemDesc = function(ri) {
+        //do something! Aaaah
+        if(ri.extra && typeof ri.extra=='string'){
+            //item has an extra, and is most likely a description
+            bootbox.alert({
+                title:ri.name,
+                message:ri.desc,
+                callback:$scope.doThing()
+            })
+        }
+    }
+
+    window.onkeydown = function(e) {
+        //this is used when we're testing the mobile site on the desktop, since desktop doesn't have a reliable swipe.
+        console.log(e.which);
+        if (e.which == 83) {
+            console.log("BEFORE", $scope.currRing, $scope.rings);
+            if ($scope.currRing < $scope.rings.length - 1) {
+                $scope.currRing++;
+            } else {
+                $scope.currRing = 0;
+            }
+        } else if (e.which == 87) {
+            console.log("BEFORE", $scope.currRing, $scope.rings);
+            if ($scope.currRing && $scope.currRing != 0) {
+                $scope.currRing--;
+            } else {
+                $scope.currRing = $scope.rings.length - 1;
+            }
+        } else if (e.which == 65) {
+            $scope.rings[$scope.currRing].currRot -= 1;
+            if ($scope.rings[$scope.currRing].currRot < 0) {
+                $scope.rings[$scope.currRing].currRot = 360 + $scope.rings[$scope.currRing].currRot;
+            }
+        } else if (e.which == 68) {
+            $scope.rings[$scope.currRing].currRot += 1;
+            if ($scope.rings[$scope.currRing].currRot > 360) {
+                $scope.rings[$scope.currRing].currRot = $scope.rings[$scope.currRing].currRot % 360;
+            }
+        }
+        console.log("AFTER", $scope.currRing, $scope.rings, $scope.rings[$scope.currRing]);
+        $scope.$digest();
+    };
+
     $scope.isMoving = false;
     $scope.movObj = {
         x: $scope.rotX,
@@ -1154,105 +1245,101 @@ app.controller('mob-con', function($scope, $http, $q, $interval, $swipe, $window
             };
         }
     });
-    $scope.ringSize = 275;
-    $scope.currRingRot = 0;
-    $scope.rngChTimer;
-    $scope.rngChOkay=true;
-    $scope.ringChAni = function(newR, oldR) {
-        if(!$scope.rngChOkay){
-            return false;
-        }
-        if ([].slice.call($('.RingUIEl')).length) {
-            $('.RingUIEl').animate({ transform: "rotateY(0deg) translateZ(" + $scope.ringSize + "px);" }, {
-                duration: 500,
-                complete: function() {
+    // $scope.ringChAni = function(newR, oldR) {
+    //     if(!$scope.rngChOkay){
+    //         return false;
+    //     }
+    //     if ([].slice.call($('.RingUIEl')).length) {
+    //         $('.RingUIEl').animate({ transform: "rotateY(0deg) translateZ(" + $scope.ringSize + "px);" }, {
+    //             duration: 500,
+    //             complete: function() {
 
-                    $scope.currUI = $scope.uiOpts[newR];
-                    console.log('switched from', $scope.uiOpts[oldR], 'to', $scope.uiOpts[newR])
-                    if (newR < oldR) {
-                        //goin up!
-                        $scope.nextUI = $scope.uiOpts[oldR];
-                        if (oldR) {
-                            $scope.prevUI = $scope.uiOpts[oldR - 1];
-                        } else {
-                            $scope.prevUI = $scope.uiOpts[$scope.uiOpts.length - 1];
-                        }
-                    } else {
-                        //goin down!
-                        $scope.prevUI = $scope.uiOpts[oldR];
-                        if (newR < $scope.uiOpts.length - 2) {
-                            $scope.nextUI = $scope.uiOpts[newR + 1];
-                        } else {
-                            $scope.nextUI = $scope.uiOpts[0];
-                        }
-                    }
-                    console.log('NEW UI OBJECTS:', UIFac.getRingObjs(newR))
-                    console.log('num ui objs')
-                    $scope.currRingRot = 0;
-                    var rData = UIFac.getRingObjs(newR);
-                    console.log('DATA', rData)
-                    $scope.uiObjs = rData.objs;
-                    $scope.rotPer = rData.rot;
-                }
-            });
-        } else {
-            //no previous ring. First time loading
-            $scope.currUI = $scope.uiOpts[newR];
-            console.log('switched from', $scope.uiOpts[oldR], 'to', $scope.uiOpts[newR])
-            if (newR < oldR) {
-                //goin up!
-                $scope.nextUI = $scope.uiOpts[oldR];
-                if (oldR) {
-                    $scope.prevUI = $scope.uiOpts[oldR - 1];
-                } else {
-                    $scope.prevUI = $scope.uiOpts[$scope.uiOpts.length - 1];
-                }
-            } else {
-                //goin down!
-                $scope.prevUI = $scope.uiOpts[oldR];
-                if (newR < $scope.uiOpts.length - 2) {
-                    $scope.nextUI = $scope.uiOpts[newR + 1];
-                } else {
-                    $scope.nextUI = $scope.uiOpts[0];
-                }
-            }
+    //                 $scope.currUI = $scope.uiOpts[newR];
+    //                 console.log('switched from', $scope.uiOpts[oldR], 'to', $scope.uiOpts[newR])
+    //                 if (newR < oldR) {
+    //                     //goin up!
+    //                     $scope.nextUI = $scope.uiOpts[oldR];
+    //                     if (oldR) {
+    //                         $scope.prevUI = $scope.uiOpts[oldR - 1];
+    //                     } else {
+    //                         $scope.prevUI = $scope.uiOpts[$scope.uiOpts.length - 1];
+    //                     }
+    //                 } else {
+    //                     //goin down!
+    //                     $scope.prevUI = $scope.uiOpts[oldR];
+    //                     if (newR < $scope.uiOpts.length - 2) {
+    //                         $scope.nextUI = $scope.uiOpts[newR + 1];
+    //                     } else {
+    //                         $scope.nextUI = $scope.uiOpts[0];
+    //                     }
+    //                 }
+    //                 console.log('NEW UI OBJECTS:', UIFac.getRingObjs(newR))
+    //                 console.log('num ui objs')
+    //                 $scope.currRingRot = 0;
+    //                 var rData = UIFac.getRingObjs(newR);
+    //                 console.log('DATA', rData)
+    //                 $scope.uiObjs = rData.objs;
+    //                 $scope.rotPer = rData.rot;
+    //             }
+    //         });
+    //     } else {
+    //         //no previous ring. First time loading
+    //         $scope.currUI = $scope.uiOpts[newR];
+    //         console.log('switched from', $scope.uiOpts[oldR], 'to', $scope.uiOpts[newR])
+    //         if (newR < oldR) {
+    //             //goin up!
+    //             $scope.nextUI = $scope.uiOpts[oldR];
+    //             if (oldR) {
+    //                 $scope.prevUI = $scope.uiOpts[oldR - 1];
+    //             } else {
+    //                 $scope.prevUI = $scope.uiOpts[$scope.uiOpts.length - 1];
+    //             }
+    //         } else {
+    //             //goin down!
+    //             $scope.prevUI = $scope.uiOpts[oldR];
+    //             if (newR < $scope.uiOpts.length - 2) {
+    //                 $scope.nextUI = $scope.uiOpts[newR + 1];
+    //             } else {
+    //                 $scope.nextUI = $scope.uiOpts[0];
+    //             }
+    //         }
 
-            console.log('NEW UI OBJECTS:', UIFac.getRingObjs(newR))
-            console.log('num ui objs')
-            $scope.currRingRot = 0;
-            var rData = UIFac.getRingObjs(newR);
-            console.log('DATA', rData)
-            $scope.uiObjs = rData.objs;
-            $scope.rotPer = rData.rot;
-        }
-        $scope.rngChOkay=false;
-        $scope.rngChTimer = setTimeout(function(){
-            $scope.rngChOkay = true;
-        },1000)
-    }
-    $scope.uiObjs = UIFac.getRingObjs(0);
-    $scope.chMenRng = function(dir) {
-        //change the entire ring.
-        var currMenItem = $scope.uiOpts.indexOf($scope.currUI);
-        var oldRing = currMenItem;
-        if (dir && dir !== 0) {
-            if (currMenItem < $scope.uiOpts.length - 1) {
-                currMenItem++;
-            } else {
-                currMenItem = 0;
-            }
-        } else {
-            if (currMenItem && currMenItem !== 0) {
-                currMenItem--;
-            } else {
-                currMenItem = $scope.uiOpts.length - 1;
-            }
-        }
-        console.log('changing menu ring:', dir, currMenItem, oldRing)
-        $scope.ringChAni(currMenItem, oldRing); //send this to an animation function so we fade out and fade in the rings!
-    };
-    $scope.oldX;
-    $scope.oldY;
+    //         console.log('NEW UI OBJECTS:', UIFac.getRingObjs(newR))
+    //         console.log('num ui objs')
+    //         $scope.currRingRot = 0;
+    //         var rData = UIFac.getRingObjs(newR);
+    //         console.log('DATA', rData)
+    //         $scope.uiObjs = rData.objs;
+    //         $scope.rotPer = rData.rot;
+    //     }
+    //     $scope.rngChOkay=false;
+    //     $scope.rngChTimer = setTimeout(function(){
+    //         $scope.rngChOkay = true;
+    //     },1000)
+    // }
+    // $scope.uiObjs = UIFac.getRingObjs(0);
+    // $scope.chMenRng = function(dir) {
+    //     //change the entire ring.
+    //     var currMenItem = $scope.uiOpts.indexOf($scope.currUI);
+    //     var oldRing = currMenItem;
+    //     if (dir && dir !== 0) {
+    //         if (currMenItem < $scope.uiOpts.length - 1) {
+    //             currMenItem++;
+    //         } else {
+    //             currMenItem = 0;
+    //         }
+    //     } else {
+    //         if (currMenItem && currMenItem !== 0) {
+    //             currMenItem--;
+    //         } else {
+    //             currMenItem = $scope.uiOpts.length - 1;
+    //         }
+    //     }
+    //     console.log('changing menu ring:', dir, currMenItem, oldRing)
+    //     $scope.ringChAni(currMenItem, oldRing); //send this to an animation function so we fade out and fade in the rings!
+    // };
+    // $scope.oldX;
+    // $scope.oldY;
     $scope.noScroll = function(e) {
         if (e.stopPropagation) {
             e.stopPropagation();
@@ -1269,29 +1356,29 @@ app.controller('mob-con', function($scope, $http, $q, $interval, $swipe, $window
             $scope.oldX = e.x;
             $scope.oldY = e.y;
             return false; //no previous pos data, so just end
-            //a 'if unwanted condition: return false' construction like this is known as "Short-Circuiting"
         }
         var dx = e.x - $scope.oldX,
             dy = e.y - $scope.oldY;
         $scope.oldX = e.x;
         $scope.oldY = e.y;
-    
+
         if (Math.abs(dx) > Math.abs(dy)) {
-
-                //horizontal movement (spin rings)
-            $scope.currRingRot = UIFac.PlatinumSpinningRings($scope.currRingRot, dx);
-        } else if (Math.abs(dy) > 10) {
-
-            $scope.chMenRng(dy > 0 ? 0 : 1);
-        } else {
-            return false;
+            $scope.rings[$scope.currRing].currRot += dx;
+        } else if (Math.abs(dy) > 10 && dy>0) {
+            if($scope.currRing>0){
+                $scope.currRing--;
+            }else{
+                $scope.currRing = $scope.rings.length-1;
+            }
+        } else if(Math.abs(dy)>10){
+            if($scope.currRing<$scope.rings.length-1){
+                $scope.currRing++;
+            }else{
+                $scope.currRing = 0;
+            }
         }
     }
-    $scope.chMenRng(1); //we run this once by default to get our current ring's stuff
-    $scope.chMenRng(1);
     $swipe.bind($('body#mob'), { 'move': $scope.parseTouch });
-
-
 });
 
 app.factory('combatFac', function($http) {
