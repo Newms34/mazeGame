@@ -21,7 +21,7 @@ const ngAnnotate = require('gulp-ng-annotate');
 // Lint Task
 gulp.task('lint', function() {
     return gulp.src('js/*.js')
-        .pipe(jshint({esversion:6}))
+        .pipe(jshint({ esversion: 6 }))
         .pipe(jshint.reporter('default'));
 });
 
@@ -39,26 +39,37 @@ gulp.task('scripts', function() {
         .pipe(concat('all.js'))
         .pipe(gulp.dest('public/js'))
         .pipe(rename('all.min.js'))
-        .pipe(babel({presets: ['es2015']}))
+        .pipe(babel({ presets: ['es2015'] }))
         .pipe(ngAnnotate())
         .pipe(uglify().on('error', gutil.log))
         .pipe(gulp.dest('public/js'));
 });
 gulp.task('checkDB', function() {
-    if (process.platform == 'win32' && process.env.USERNAME == 'Newms') {
-        console.log('Checking to see if mongod already running!');
-        ps.lookup({ command: 'mongod' }, function(e, f) {
-            if (!f.length){
-                //database not already running, so start it up!
-                kid.exec('c: && cd c:\\mongodb\\bin && start mongod -dbpath "d:\\data\\mongo\\db" && pause',function(err,stdout,stderr){
-                    if (err) console.log('Uh oh! An error of "',err,'" prevented the DB from starting!');
-                })
-            }else{
-                console.log('mongod running!')
-            }
-        })
+    if (!process.env.NODE_ENV || process.env.NODE_ENV !== 'prod') {
+        if (process.platform == 'win32') {
+            console.log('Checking to see if mongod already running!');
+            ps.lookup({ command: 'mongod' }, function(e, f) {
+                if (!f.length) {
+                    //database not already running, so start it up!
+                    kid.exec('c: && cd c:\\mongodb\\bin && start mongod -dbpath "d:\\data\\mongo\\db" && pause', function(err, stdout, stderr) {
+                        if (err) console.log('Uh oh! An error of "', err, '" prevented the DB from starting!');
+                    })
+                } else {
+                    console.log('mongod running!')
+                }
+            })
+        } else {
+            //posix
+            console.log(process.env)
+            ps.lookup({ command: 'mongod' }, function(e, f) {
+                console.log('e', e, 'f', f)
+                if (!f || !f[0] || !f[0].pid) {
+                    throw new Error('cant start db')
+                }
+            });
+        }
     }
-})
+});
 
 // Watch Files For Changes
 gulp.task('watch', function() {

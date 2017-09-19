@@ -13,7 +13,7 @@ mongoose.model('Npc').find({}, function(err, npcs) {
     npcList = npcs;
     var makeMerch = false,
         live = false,
-        randName = 'John Smith';
+        randName = 'John Smith';//default name to john smith.
     for (var i = 0; i < process.argv.length; i++) {
         if (process.argv[i] == '-m' || process.argv[i] == '-merch' || process.argv[i] == '-merc') {
             makeMerch = true;
