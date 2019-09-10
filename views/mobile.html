@@ -10,16 +10,14 @@
 <body ng-app='mazeGame' ng-controller='mob-con' ng-cloak id='mob'>
     <div class='col-xs-3'></div>
     <div class='col-xs-6' id='mainMob'>
-        <div>Your name: </div>
-        <div id='uName'>{{uName}}</div>
-        <div id='menuContainer'>
-            <div id='prevMen'>{{prevUI}}</div>
-            <div id='ringCont' style='transform:rotateY({{currRingRot}}deg);'>
-                <div ng-repeat='rue in uiObjs' class='RingUIEl' style='background: #fff, url("{{rue.imgUrl}}");background-size:cover;transform:rotateY(-{{$index*rotPer}}deg) translateZ({{ringSize}}px)' ng-click='rue.fn'>
-                    {{rue.name}}
-                </div>
+        <div id='uName'>Your code: {{uName}}</div>
+        <div class='col-md-10 col-md-offset-1' id='ring-cont'>
+            <div class='row col-md-2 col-md-offset-5'>&uparrow;</div>
+            <div class='col-md-12 main-ring' style='transform:translateZ(-{{ringDiam/2}}px) rotateY(-{{rings[currRing].currRot}}deg);'>
+                <div ng-repeat='ri in rings[currRing].items' class='ring-item' style='left:{{ringDiam-50}}px;transform:rotateY({{($index*360/rings[currRing].items.length)}}deg) translateZ({{ringDiam}}px);opacity:{{getOp($index)}};' ng-click='itemDesc(ri)'>{{ri.name}}
+                    <img ng-if='ri.bg' src="{{ri.bg}}"></div>
             </div>
-            <div id='nextMen'>{{nextUI}}</div>
+            <div class='row col-md-2 col-md-offset-5'>&downarrow;</div>
         </div>
     </div>
     <script src='/socket.io-client/dist/socket.io.js'></script>
@@ -29,7 +27,6 @@
     <script src="/angular/angular.min.js"></script>
     <script src="/angular-touch/angular-touch.min.js"></script>
     <script src="/angular-bootstrap-context-menu/dist/bootstrapContextMenu-min.js"></script>
-
     <!-- Because of gulp, we can include just one, minified file!: -->
     <script src="/js/all.js"></script>
 </body>

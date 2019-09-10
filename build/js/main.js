@@ -590,7 +590,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
             $scope.turnSpeed = 0;
         }
     };
-    $scope.mouseTurnTimer = $interval(function() {
+    $scope.mouseTurnTimer = $interval(()=>{
         $scope.roomRot += $scope.turnSpeed;
         $scope.playerFacing = $scope.roomRot % 360 > 0 ? $scope.roomRot % 360 : 360 + $scope.roomRot % 360;
     }, 50);
@@ -642,7 +642,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
         sandalchest.prompt("Enter a name (you get this by visiting the site on your phone)!", function(result) {
             if (result !== null && result != ' ') {
                 //as long as its not blank
-                socket.emit('chkName', { n: result });
+                socket.emit('chkName', { n: result,u:$scope.name });
             }
             $scope.moveReady = true;
         });
@@ -674,7 +674,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
                 ey.which = 87;
                 window.onkeydown(ey);
                 $scope.travelOkay = false;
-                $scope.phoneMovTimer = $timeout(function() {
+                $scope.phoneMovTimer = $timeout(()=>{
                     $scope.travelOkay = true;
                 }, 1000);
             } else if (mvOb.y == 'b' && $scope.travelOkay) {
@@ -682,7 +682,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
                 ey.which = 83;
                 window.onkeydown(ey);
                 $scope.travelOkay = false;
-                $scope.phoneMovTimer = $timeout(function() {
+                $scope.phoneMovTimer = $timeout(()=>{
                     $scope.travelOkay = true;
                 }, 1000);
             }

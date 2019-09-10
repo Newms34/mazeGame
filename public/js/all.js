@@ -723,7 +723,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
             $scope.turnSpeed = 0;
         }
     };
-    $scope.mouseTurnTimer = $interval(function() {
+    $scope.mouseTurnTimer = $interval(()=>{
         $scope.roomRot += $scope.turnSpeed;
         $scope.playerFacing = $scope.roomRot % 360 > 0 ? $scope.roomRot % 360 : 360 + $scope.roomRot % 360;
     }, 50);
@@ -775,7 +775,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
         sandalchest.prompt("Enter a name (you get this by visiting the site on your phone)!", function(result) {
             if (result !== null && result != ' ') {
                 //as long as its not blank
-                socket.emit('chkName', { n: result });
+                socket.emit('chkName', { n: result,u:$scope.name });
             }
             $scope.moveReady = true;
         });
@@ -807,7 +807,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
                 ey.which = 87;
                 window.onkeydown(ey);
                 $scope.travelOkay = false;
-                $scope.phoneMovTimer = $timeout(function() {
+                $scope.phoneMovTimer = $timeout(()=>{
                     $scope.travelOkay = true;
                 }, 1000);
             } else if (mvOb.y == 'b' && $scope.travelOkay) {
@@ -815,7 +815,7 @@ app.controller('maze-con', function($scope, $http, $q, $interval, $timeout, $win
                 ey.which = 83;
                 window.onkeydown(ey);
                 $scope.travelOkay = false;
-                $scope.phoneMovTimer = $timeout(function() {
+                $scope.phoneMovTimer = $timeout(()=>{
                     $scope.travelOkay = true;
                 }, 1000);
             }
@@ -1073,50 +1073,141 @@ app.controller('mob-con', function($scope, $http, $q, $interval, $swipe, $window
     $scope.currRotY = 0;
     $scope.rotX = null;
     $scope.rotY = null;
-    $scope.uName = 'retrieving...'; //username!
+    $scope.uName = Math.floor(Math.random() * 99999999999).toString(32).replace(/0/g, 'O').toUpperCase(); //username!
     $scope.uiOpts = ['Inventory', 'Skills', 'Bestiary', 'Quests', 'Menu'];
-    $scope.prevUI = 'Quests';
     $scope.currUI = 'Menu';
-    $scope.nextUI = 'Inventory'
     $scope.uiObjs = []; //items in current ui menu
-    $scope.getUn = function() {
-        var nounStart = String.fromCharCode(65 + Math.floor(Math.random() * 25));
-        var adjStart = String.fromCharCode(65 + Math.floor(Math.random() * 25));
-        $.ajax({
-            dataType: 'jsonp',
-            url: 'https://simple.wiktionary.org/w/api.php?action=query&list=categorymembers&format=json&cmsort=sortkey&cmstartsortkeyprefix=' + nounStart + '&cmlimit=500&cmtitle=Category:Nouns',
-            success: function(nounRes) {
-                var noun = ' ';
-                while (noun.indexOf(' ') != -1) {
-                    noun = nounRes.query.categorymembers[Math.floor(Math.random() * nounRes.query.categorymembers.length)].title;
-                }
-                //got the noun. Now the adjective!
-                console.log('final noun:', noun);
-                $.ajax({
-                    dataType: 'jsonp',
-                    url: 'https://simple.wiktionary.org/w/api.php?action=query&list=categorymembers&format=json&cmsort=sortkey&cmstartsortkeyprefix=' + adjStart + '&cmlimit=500&cmtitle=Category:Adjectives',
-                    success: function(adjRes) {
-                        var adj = ' ';
-                        while (adj.indexOf(' ') != -1) {
-                            adj = adjRes.query.categorymembers[Math.floor(Math.random() * adjRes.query.categorymembers.length)].title;
-                        }
-                        $scope.uName = adj.toLowerCase() + ' ' + noun.toLowerCase();
-                        $scope.movObj.n = $scope.uName;
-                        //basically just to register name
-                        socket.emit('movData', $scope.movObj);
-                        $scope.$digest();
-                    }
-                });
-            }
-        });
-    };
-    $scope.getUn();
-    $scope.sendMove = $interval(function() {
-        if ($scope.uName != 'retrieving...' && $scope.isMoving) {
-            //if we've registered a username and there is a movement to be submitted
-            socket.emit('movData', $scope.movObj);
-        }
+    socket.emit('regName', { n: $scope.uName })
+    $scope.sendMove = $interval(() => {
+        socket.emit('movData', $scope.movObj);
     }, 75);
+    socket.on('userRegged', function(data) {
+        if (data.n != $scope.uName) {
+            return false;
+        }
+        console.log('getting user data!')
+        $http.get('/user/mobGetData/' + data.u).then((rn) => {
+            $scope.makeRings(rn.data)
+        })
+    });
+    $scope.rings = [];
+    $scope.makeRings = function(data) {
+        //make the rings!
+        //unfortunately, each ring has a slightly different format, so... yep.
+        //Inv first
+        var invRing = {
+            currRot: 0,
+            name: 'Inventory',
+            items: []
+        }
+        var armorBits = ['head', 'feet', 'legs', 'hands', 'chest', 'weap'];
+        armorBits.forEach((b) => {
+            if (data.equip[b][0]) {
+                invRing.items.push({
+                    name: `${data.equip[b][0].pre} ${data.equip[b][1].name} ${data.equip[b][2].post}`,
+                    bg: null,
+                    extra: null
+                })
+            } else {
+                invRing.items.push({
+                    name: `No ${b=='weap'?'weapon':'armor on '+b}!`,
+                    bg: null,
+                    extra: null
+                })
+            }
+        })
+        $scope.rings.push(invRing);
+        //skills
+        var skillRing = {
+            currRot: 0,
+            name: 'Skills',
+            items: []
+        }
+        data.skills.forEach((sk) => {
+            skillRing.items.push({
+                name: sk.name,
+                bg: sk.imgUrl,
+                extra: sk.desc
+            })
+        })
+        $scope.rings.push(skillRing);
+        //beasties
+        var beastRing = {
+            currRot: 0,
+            name: 'Bestiary',
+            items: data.beasts.map((b) => {
+                return {
+                    name: b.name,
+                    bg: b.imgUrl,
+                    extra: b.desc
+                }
+            })
+        }
+        if (!beastRing.items.length) {
+            beastRing.items.push({
+                name: 'None',
+                bg: null,
+                extra: `You haven't discovered any beasts yet!`
+            })
+        }
+        $scope.rings.push(beastRing)
+
+        $scope.currRing = 0;
+        $scope.ringDiam = $("#ring-cont").width() / 2;
+        console.log('rings:', $scope.rings)
+    }
+    $scope.getOp = function(n) {
+        var rotAmt = $scope.rings[$scope.currRing].currRot % 360,
+            itemRot = n * 360 / $scope.rings[$scope.currRing].items.length;
+        if (Math.abs(rotAmt - itemRot) < 15) {
+            return 1;
+        }
+        return .2;
+    }
+    $scope.itemDesc = function(ri) {
+        //do something! Aaaah
+        if(ri.extra && typeof ri.extra=='string'){
+            //item has an extra, and is most likely a description
+            bootbox.alert({
+                title:ri.name,
+                message:ri.desc,
+                callback:$scope.doThing()
+            })
+        }
+    }
+
+    window.onkeydown = function(e) {
+        //this is used when we're testing the mobile site on the desktop, since desktop doesn't have a reliable swipe.
+        console.log(e.which);
+        if (e.which == 83) {
+            console.log("BEFORE", $scope.currRing, $scope.rings);
+            if ($scope.currRing < $scope.rings.length - 1) {
+                $scope.currRing++;
+            } else {
+                $scope.currRing = 0;
+            }
+        } else if (e.which == 87) {
+            console.log("BEFORE", $scope.currRing, $scope.rings);
+            if ($scope.currRing && $scope.currRing != 0) {
+                $scope.currRing--;
+            } else {
+                $scope.currRing = $scope.rings.length - 1;
+            }
+        } else if (e.which == 65) {
+            $scope.rings[$scope.currRing].currRot -= 1;
+            if ($scope.rings[$scope.currRing].currRot < 0) {
+                $scope.rings[$scope.currRing].currRot = 360 + $scope.rings[$scope.currRing].currRot;
+            }
+        } else if (e.which == 68) {
+            $scope.rings[$scope.currRing].currRot += 1;
+            if ($scope.rings[$scope.currRing].currRot > 360) {
+                $scope.rings[$scope.currRing].currRot = $scope.rings[$scope.currRing].currRot % 360;
+            }
+        }
+        console.log("AFTER", $scope.currRing, $scope.rings, $scope.rings[$scope.currRing]);
+        $scope.$digest();
+    };
+
     $scope.isMoving = false;
     $scope.movObj = {
         x: $scope.rotX,
@@ -1154,105 +1245,101 @@ app.controller('mob-con', function($scope, $http, $q, $interval, $swipe, $window
             };
         }
     });
-    $scope.ringSize = 275;
-    $scope.currRingRot = 0;
-    $scope.rngChTimer;
-    $scope.rngChOkay=true;
-    $scope.ringChAni = function(newR, oldR) {
-        if(!$scope.rngChOkay){
-            return false;
-        }
-        if ([].slice.call($('.RingUIEl')).length) {
-            $('.RingUIEl').animate({ transform: "rotateY(0deg) translateZ(" + $scope.ringSize + "px);" }, {
-                duration: 500,
-                complete: function() {
+    // $scope.ringChAni = function(newR, oldR) {
+    //     if(!$scope.rngChOkay){
+    //         return false;
+    //     }
+    //     if ([].slice.call($('.RingUIEl')).length) {
+    //         $('.RingUIEl').animate({ transform: "rotateY(0deg) translateZ(" + $scope.ringSize + "px);" }, {
+    //             duration: 500,
+    //             complete: function() {
 
-                    $scope.currUI = $scope.uiOpts[newR];
-                    console.log('switched from', $scope.uiOpts[oldR], 'to', $scope.uiOpts[newR])
-                    if (newR < oldR) {
-                        //goin up!
-                        $scope.nextUI = $scope.uiOpts[oldR];
-                        if (oldR) {
-                            $scope.prevUI = $scope.uiOpts[oldR - 1];
-                        } else {
-                            $scope.prevUI = $scope.uiOpts[$scope.uiOpts.length - 1];
-                        }
-                    } else {
-                        //goin down!
-                        $scope.prevUI = $scope.uiOpts[oldR];
-                        if (newR < $scope.uiOpts.length - 2) {
-                            $scope.nextUI = $scope.uiOpts[newR + 1];
-                        } else {
-                            $scope.nextUI = $scope.uiOpts[0];
-                        }
-                    }
-                    console.log('NEW UI OBJECTS:', UIFac.getRingObjs(newR))
-                    console.log('num ui objs')
-                    $scope.currRingRot = 0;
-                    var rData = UIFac.getRingObjs(newR);
-                    console.log('DATA', rData)
-                    $scope.uiObjs = rData.objs;
-                    $scope.rotPer = rData.rot;
-                }
-            });
-        } else {
-            //no previous ring. First time loading
-            $scope.currUI = $scope.uiOpts[newR];
-            console.log('switched from', $scope.uiOpts[oldR], 'to', $scope.uiOpts[newR])
-            if (newR < oldR) {
-                //goin up!
-                $scope.nextUI = $scope.uiOpts[oldR];
-                if (oldR) {
-                    $scope.prevUI = $scope.uiOpts[oldR - 1];
-                } else {
-                    $scope.prevUI = $scope.uiOpts[$scope.uiOpts.length - 1];
-                }
-            } else {
-                //goin down!
-                $scope.prevUI = $scope.uiOpts[oldR];
-                if (newR < $scope.uiOpts.length - 2) {
-                    $scope.nextUI = $scope.uiOpts[newR + 1];
-                } else {
-                    $scope.nextUI = $scope.uiOpts[0];
-                }
-            }
+    //                 $scope.currUI = $scope.uiOpts[newR];
+    //                 console.log('switched from', $scope.uiOpts[oldR], 'to', $scope.uiOpts[newR])
+    //                 if (newR < oldR) {
+    //                     //goin up!
+    //                     $scope.nextUI = $scope.uiOpts[oldR];
+    //                     if (oldR) {
+    //                         $scope.prevUI = $scope.uiOpts[oldR - 1];
+    //                     } else {
+    //                         $scope.prevUI = $scope.uiOpts[$scope.uiOpts.length - 1];
+    //                     }
+    //                 } else {
+    //                     //goin down!
+    //                     $scope.prevUI = $scope.uiOpts[oldR];
+    //                     if (newR < $scope.uiOpts.length - 2) {
+    //                         $scope.nextUI = $scope.uiOpts[newR + 1];
+    //                     } else {
+    //                         $scope.nextUI = $scope.uiOpts[0];
+    //                     }
+    //                 }
+    //                 console.log('NEW UI OBJECTS:', UIFac.getRingObjs(newR))
+    //                 console.log('num ui objs')
+    //                 $scope.currRingRot = 0;
+    //                 var rData = UIFac.getRingObjs(newR);
+    //                 console.log('DATA', rData)
+    //                 $scope.uiObjs = rData.objs;
+    //                 $scope.rotPer = rData.rot;
+    //             }
+    //         });
+    //     } else {
+    //         //no previous ring. First time loading
+    //         $scope.currUI = $scope.uiOpts[newR];
+    //         console.log('switched from', $scope.uiOpts[oldR], 'to', $scope.uiOpts[newR])
+    //         if (newR < oldR) {
+    //             //goin up!
+    //             $scope.nextUI = $scope.uiOpts[oldR];
+    //             if (oldR) {
+    //                 $scope.prevUI = $scope.uiOpts[oldR - 1];
+    //             } else {
+    //                 $scope.prevUI = $scope.uiOpts[$scope.uiOpts.length - 1];
+    //             }
+    //         } else {
+    //             //goin down!
+    //             $scope.prevUI = $scope.uiOpts[oldR];
+    //             if (newR < $scope.uiOpts.length - 2) {
+    //                 $scope.nextUI = $scope.uiOpts[newR + 1];
+    //             } else {
+    //                 $scope.nextUI = $scope.uiOpts[0];
+    //             }
+    //         }
 
-            console.log('NEW UI OBJECTS:', UIFac.getRingObjs(newR))
-            console.log('num ui objs')
-            $scope.currRingRot = 0;
-            var rData = UIFac.getRingObjs(newR);
-            console.log('DATA', rData)
-            $scope.uiObjs = rData.objs;
-            $scope.rotPer = rData.rot;
-        }
-        $scope.rngChOkay=false;
-        $scope.rngChTimer = setTimeout(function(){
-            $scope.rngChOkay = true;
-        },1000)
-    }
-    $scope.uiObjs = UIFac.getRingObjs(0);
-    $scope.chMenRng = function(dir) {
-        //change the entire ring.
-        var currMenItem = $scope.uiOpts.indexOf($scope.currUI);
-        var oldRing = currMenItem;
-        if (dir && dir !== 0) {
-            if (currMenItem < $scope.uiOpts.length - 1) {
-                currMenItem++;
-            } else {
-                currMenItem = 0;
-            }
-        } else {
-            if (currMenItem && currMenItem !== 0) {
-                currMenItem--;
-            } else {
-                currMenItem = $scope.uiOpts.length - 1;
-            }
-        }
-        console.log('changing menu ring:', dir, currMenItem, oldRing)
-        $scope.ringChAni(currMenItem, oldRing); //send this to an animation function so we fade out and fade in the rings!
-    };
-    $scope.oldX;
-    $scope.oldY;
+    //         console.log('NEW UI OBJECTS:', UIFac.getRingObjs(newR))
+    //         console.log('num ui objs')
+    //         $scope.currRingRot = 0;
+    //         var rData = UIFac.getRingObjs(newR);
+    //         console.log('DATA', rData)
+    //         $scope.uiObjs = rData.objs;
+    //         $scope.rotPer = rData.rot;
+    //     }
+    //     $scope.rngChOkay=false;
+    //     $scope.rngChTimer = setTimeout(function(){
+    //         $scope.rngChOkay = true;
+    //     },1000)
+    // }
+    // $scope.uiObjs = UIFac.getRingObjs(0);
+    // $scope.chMenRng = function(dir) {
+    //     //change the entire ring.
+    //     var currMenItem = $scope.uiOpts.indexOf($scope.currUI);
+    //     var oldRing = currMenItem;
+    //     if (dir && dir !== 0) {
+    //         if (currMenItem < $scope.uiOpts.length - 1) {
+    //             currMenItem++;
+    //         } else {
+    //             currMenItem = 0;
+    //         }
+    //     } else {
+    //         if (currMenItem && currMenItem !== 0) {
+    //             currMenItem--;
+    //         } else {
+    //             currMenItem = $scope.uiOpts.length - 1;
+    //         }
+    //     }
+    //     console.log('changing menu ring:', dir, currMenItem, oldRing)
+    //     $scope.ringChAni(currMenItem, oldRing); //send this to an animation function so we fade out and fade in the rings!
+    // };
+    // $scope.oldX;
+    // $scope.oldY;
     $scope.noScroll = function(e) {
         if (e.stopPropagation) {
             e.stopPropagation();
@@ -1269,664 +1356,65 @@ app.controller('mob-con', function($scope, $http, $q, $interval, $swipe, $window
             $scope.oldX = e.x;
             $scope.oldY = e.y;
             return false; //no previous pos data, so just end
-            //a 'if unwanted condition: return false' construction like this is known as "Short-Circuiting"
         }
         var dx = e.x - $scope.oldX,
             dy = e.y - $scope.oldY;
         $scope.oldX = e.x;
         $scope.oldY = e.y;
-    
+
         if (Math.abs(dx) > Math.abs(dy)) {
-
-                //horizontal movement (spin rings)
-            $scope.currRingRot = UIFac.PlatinumSpinningRings($scope.currRingRot, dx);
-        } else if (Math.abs(dy) > 10) {
-
-            $scope.chMenRng(dy > 0 ? 0 : 1);
-        } else {
-            return false;
+            $scope.rings[$scope.currRing].currRot += dx;
+        } else if (Math.abs(dy) > 10 && dy>0) {
+            if($scope.currRing>0){
+                $scope.currRing--;
+            }else{
+                $scope.currRing = $scope.rings.length-1;
+            }
+        } else if(Math.abs(dy)>10){
+            if($scope.currRing<$scope.rings.length-1){
+                $scope.currRing++;
+            }else{
+                $scope.currRing = 0;
+            }
         }
     }
-    $scope.chMenRng(1); //we run this once by default to get our current ring's stuff
-    $scope.chMenRng(1);
     $swipe.bind($('body#mob'), { 'move': $scope.parseTouch });
-
-
 });
 
-app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
-    var findItem = function(arr, i) {
-        for (var j = 0; j < arr.length; j++) {
-            if (arr[j].num == i || arr[j].id == i) {
-                return arr[j];
-            }
-        }
-        return false;
-    };
-    var stSkill = function(p, data, owned) {
-        this.data = data;
-        this.p = p;
-        this.owned = owned;
-    }
+app.factory('combatFac', function($http) {
+    var dmgTypes = ['Physical', 'Fire', 'Ice', 'Poison', 'Dark', 'Holy'];
     return {
-        buySkill:function(data,usr){
-            return $http.post('/user/buySkill/',{usr:usr,skill:data.id},function(r){
+        getDmgType: function(typeNum) {
+            return dmgTypes[parseInt(typeNum)];
+        },
+        combatReady: function() {
+            //just set up the health/energy bars
+            $('#combat-box #enemy .health-bar .stat-bar-stat').css('width', '100%');
+            $('#combat-box #player .health-bar .stat-bar-stat').css('width', '100%');
+            $('#combat-box #player .energy-bar .stat-bar-stat').css('width', '100%');
+        },
+        getSkillInf: function(all, n) {
+            sandalchest.dialog( all[n].name,all[n].desc, { buttons: [{ text: 'Okay', close: true }] })
+        },
+        getItems: function() {
+            return $http.get('/item/allItems').then(function(s) {
+                return s;
+            })
+        },
+        rollLoot: function(mons) {
+            return $http.get('/item/byLvl/' + mons.lvl).then(function(i) {
+                return i.data;
+            })
+        },
+        addXp: function(u,x,c,l){
+            return $http.post('/user/addXp',{xp:x,user:u,cells:c,loc:l},function(r){
+                return r;
+            })
+        },
+        besties:function(data){
+            return $http.post('/user/addBeast',data).then(function(r){
                 return r.data;
             })
-        },
-        getUIObj: function(whichUI, UIStuff) {
-            //get all the data
-            var p = $http.get('/item/' + whichUI).then(function(res) {
-                return res;
-            });
-            return p;
-        },
-        getAllUIs: function(info) {
-            //function to get all of the items 
-            return $http.get('/item/allUI').then(function(els) {
-                //sort UI els
-                //inventory, quests, beastiary (all), skills 
-                var armor = null,
-                    weap = null,
-                    affix = null,
-                    junk = null,
-                    quest = null,
-                    skill = null,
-                    mon = null,
-                    allSkill = [],
-                    itemSlots = ['weap', 'feet', 'legs', 'head', 'hands', 'chest'];
-                console.log(els.data);
-                for (var i = 0; i < els.data.length; i++) {
-                    //we use a distinguishing, unique feature of each 'type' of list to separate them into the above lists.
-                    if (els.data[i][0].slot || els.data[i][0].slot === 0) {
-                        //armor
-                        armor = els.data[i];
-                    } else if (els.data[i][0].post) {
-                        //affixes
-                        affix = els.data[i];
-                    } else if (els.data[i][0].cost && els.data[i][0].min) {
-                        //weap
-                        weap = els.data[i];
-                    } else if (els.data[i][0].cost && els.data[i][0].desc) {
-                        //junk
-                        junk = els.data[i];
-                    } else if (els.data[i][0].stunCh || els.data[i][0].stunCh === 0) {
-                        //mons
-                        mon = els.data[i];
-                    } else if (els.data[i][0].burst || els.data[i][0].burst === 0) {
-                        //skill
-                        skill = els.data[i];
-                    } else {
-                        quest = els.data[i];
-                    }
-                }
-                console.log('armor:', armor[0], '\nAffix', affix[0], '\nJunk', junk[0], '\nWeap', weap[0], '\nMon', mon[0], '\nSkill', skill[0], '\nQuest', quest[0])
-                    //now should have all the data in their proper places. now we need to 'populate' the appropriate fields in the given userdata ('info')
-                info.inProg.forEach(function(qId) {
-                    for (i = 0; i < quest.length; i++) {
-                        if (qId == quest[i].id) {
-                            qId = angular.copy(quest[i]);
-                        }
-                    }
-                });
-                info.done.forEach(function(qId) {
-                    for (i = 0; i < quest.length; i++) {
-                        if (qId == quest[i].id) {
-                            qId = angular.copy(quest[i]);
-                        }
-                    }
-                });
-                //mon!
-                info.mon = mon;
-                console.log('RAW ITEMS DATA', info.items)
-                    //now items!
-                    //slots
-                itemSlots.forEach(function(lbl) {
-                    if ((info.items[lbl][1] || info.items[lbl][1] === 0) && info.items[lbl][1] != -1 && typeof info.items[lbl] == 'number') {
-                        //contains a valid item
-                        info.items[lbl][0] = findItem(affix, info.items[lbl][0])
-                        info.items[lbl][2] = findItem(affix, info.items[lbl][2])
-                        if (lbl != 'weap') {
-                            //armor
-                            info.items[lbl][1] = findItem(armor, info.items[lbl][1])
-                        } else {
-                            info.items[lbl][1] = findItem(weap, info.items[lbl][1])
-                        }
-                    }
-                });
-                //and inventory!
-                info.items.inv.forEach(function(it) {
-                    //first, we need to determine if this is a weapon, armor, or junk
-                    if (it.lootType == 2 && it.item.length && it.item.length == 1 && typeof it.item[0] == 'number') {
-                        //junk (array length of 1)
-                        it.item[0] = findItem(junk, it.item[0]);
-                    } else if ((it.lootType == 1 || it.lootType == 0) && it.item.length && it.item.length == 3 && typeof it.item[0] == 'number') {
-                        //weap or armor
-                        it.item[0] = findItem(affix, it.item[0]);
-                        it.item[2] = findItem(affix, it.item[2]);
-                        if (it.lootType == 0) {
-                            //armor
-                            it.item[1] = findItem(armor, it.item[1]);
-                        } else {
-                            //weap
-                            it.item[1] = findItem(weap, it.item[1]);
-                        }
-                    } else {
-                        //do nothing: invalid lootType or not defined
-                    }
-                });
-                console.log('FINAL ITEMS:', info.items)
-                    //now, skill chains
-                    //these are used for the skill purchasing system, by displaying the currently owned skills as well as ones we will be able to eventually buy
-
-                //example: 10 --> 15:
-                //[{fireball,immolate}]
-                var skillChains = [];
-                for (var i = 0; i < skill.length; i++) {
-                    console.log('looking at skill',skill[i].name,'to see if base')
-                    if ((skill[i].prevSkill == -1) && info.skills.indexOf(skill[i].id) > -1) {
-                        //base skill, owned
-                        var newSkillChain = {
-                            skills: [skill[i].id]
-                        };
-                        newSkillChain[skill[i].id] = new stSkill(0, skill[i], true)
-                        skillChains.push(newSkillChain);
-                    }
-                }
-                //we should now have the BASE of all chains. we need to construct the rest of the chains.
-                var skillsLeft = true;
-                while (skillsLeft) {
-                    skillsLeft = false;
-                    for (i = 0; i < skillChains.length; i++) {
-                        for (var j = 0; j < skill.length; j++) {
-                            //loop thru all skills
-                            if (skillChains[i].skills.indexOf(skill[j].id) < 0 && skillChains[i][skill[j].prevSkill]) {
-                                console.log('Found another skill!', skill[j])
-                                    //this has not yet been recorded in this skill chain, and is a following skill to one we already own.
-                                skillsLeft = true;
-                                skillChains[i].skills.push(skill[j].id);
-                                skillChains[i][skill[j].id] = new stSkill(skill[j].prevSkill, skill[j], info.skills.indexOf(skill[j].id) > -1);
-                            }
-                        }
-                    }
-                }
-                var skillChainsFin = []
-                for (var i = 0; i < skillChains.length; i++) {
-                    var newFinCh = { skills: skillChains[i].skills, lvls: [] }
-                    for (var j = 0; j < skillChains[i].skills.length; j++) {
-                        if (newFinCh.lvls.indexOf(skillChains[i][skillChains[i].skills[j]].data.skillPts) < 0) {
-                            //lvl not yet recorded
-                            console.log('new lvl!', skillChains[i][skillChains[i].skills[j]].data.skillPts, 'skill num', skillChains[i].skills[j], 'chain', skillChains[i])
-                            newFinCh.lvls.push(skillChains[i][skillChains[i].skills[j]].data.skillPts);
-                            newFinCh[skillChains[i][skillChains[i].skills[j]].data.skillPts] = [skillChains[i][skillChains[i].skills[j]]]
-                        } else {
-                            newFinCh[skillChains[i][skillChains[i].skills[j]].data.skillPts].push(skillChains[i][skillChains[i].skills[j]])
-                        }
-                    }
-                    skillChainsFin.push(newFinCh);
-                }
-                info.chains = skillChainsFin;
-                console.log('finalChains', skillChainsFin)
-                    //replace skills in playersSkills with the actual skill objs (instead of just the number)
-                info.skillsReal = info.skills.map(function(sk) {
-                    console.log('skill id', sk, findItem(skill, sk))
-                    return findItem(skill, sk);
-                })
-                return (info);
-            })
-        },
-        getUIBg: function(which) {
-            var UIBgs = {
-                Inventory: '../img/UI/inv.jpg',
-                Skills: '',
-                Bestiary: '',
-                Quests: ''
-            };
-            return UIBgs[which];
-        },
-        moreInfo: function(el) {
-            var dmgTypes = ['Physical', 'Fire', 'Ice', 'Poison', 'Dark', 'Holy'];
-            var addStuff = '<ul class="moreInfList">';
-            var hasPic = false;
-            //first, determine which type of item it is. Each inv el type has certain fields unique to that type
-            console.log(el, !!el.item, el.item);
-            if (el.item && (el.item[1].slot || el.item[1].slot == 0)) {
-                //armor
-                var arType;
-                switch (el.item[1].slot) {
-                    case 0:
-                        arType = 'head';
-                        break;
-                    case 1:
-                        arType = 'torso';
-                        break;
-                    case 2:
-                        arType = 'pants';
-                        break;
-                    case 3:
-                        arType = 'hands';
-                        break;
-                    case 4:
-                        arType = 'feet';
-                        break;
-                    default:
-                        arType = 'accessory';
-                }
-                addStuff += '<li>Type:' + arType + '</li>';
-                addStuff += '<li>Defense:' + el.item[1].def || 'None' + '</li>';
-                addStuff += '<li>Cost:' + el.item[1].cost + ' coins</li>';
-                addStuff += '<li>Level:' + el.item[1].itemLvl + '</li>';
-                addStuff += '<li>Resistance:';
-                var resists = [];
-                var vulns = [];
-                //base item resists
-                for (var i = 0; i < el.item[1].res.length; i++) {
-                    if (resists.indexOf(dmgTypes[el.item[1].res[i]]) == -1) resists.push(dmgTypes[el.item[1].res[i]]);
-                }
-                //prefix resists
-                for (var n in el.item[0].defChanges) {
-                    if (el.item[0].defChanges[n] == 1 && resists.indexOf(el.item[0].defChanges[n]) == -1) {
-                        resists.push(el.item[0].defChanges[n]);
-                    } else if (el.item[0].defChanges[n] == -1 && vuln.indexOf(el.item[0].defChanges[n]) == -1) {
-                        vuln.push(el.item[0].defChanges[n]);
-                    }
-                }
-                for (var n in el.item[2].defChanges) {
-                    if (el.item[2].defChanges[n] == 1 && resists.indexOf(el.item[2].defChanges[n]) == -1) {
-                        resists.push(el.item[2].defChanges[n]);
-                    } else if (el.item[2].defChanges[n] == -1 && vuln.indexOf(el.item[2].defChanges[n]) == -1) {
-                        vuln.push(el.item[2].defChanges[n]);
-                    }
-                }
-                addStuff += (resists.length ? resists.join(', ') : 'none') + '</li>';
-                addStuff += '<li>Vulnerabilities:' + (vulns.length ? vulns.join(', ') : 'none') + '</li>';;
-            } else if (el.giver || el.giver === 0) {
-                //quest
-                $http.get('/item/getGiver/' + el.giver).then(function(res) {
-                    console.log('results from quest-giver search', res.data[0]);
-                    addStuff += '<li>Level:' + el.lvl + '</li>';
-                    addStuff += '<li>Given by:' + res.data[0].Name + '</li>';
-                    addStuff += '</ul>';
-                    $('#moreInf').html(addStuff);
-                    $('#moreInf').show(200);
-                    $('div.modal-footer > button.btn.btn-info').html('Less info');
-                })
-            } else if (el.energy || el.energy === 0) {
-                //skill
-                hasPic=true;
-                if ((el.burst && el.burst > 0)||(el.degen && el.degen>0)) {
-                    addStuff += '<li>Damage Type:' + combatFac.getDmgType(el.type) + '</li>';
-                }
-                addStuff += '<li>Energy:' + el.energy + '</li>';
-                addStuff += el.heal ? '<li>Heal (burst):' + el.heal + ' hp</li>' : '';
-                addStuff += el.regen ? '<li>Heal (regeneration):' + el.regen + ' hp/turn</li>' : '';
-                addStuff += el.burst ? '<li>Damage:' + el.burst + ' hp</li>' : '';
-                addStuff += el.degen ? '<li>Degeneration:' + el.degen + ' hp/turn</li>' : '';
-                addStuff += el.stuns ? '<li>Stuns</li>' : '';
-            } else if (el.maxHp) {
-                //user. Shouldn't be this one!
-                addStuff += 'What are you doing? You broke the game!';
-            } else if (el.item && !el.item[1].slot) {
-                //weapon
-                addStuff += el.item[1].max ? '<li>Damage:' + el.item[1].min + '-' + el.item[1].max + ' hp</li>' : '';
-                addStuff += el.item[1].def ? '<li>Defense:' + el.item[1].def + '</li>' : '';
-                addStuff += '<li>Level:' + el.item[1].itemLvl + '</li>';
-                addStuff += '<li>Cost:' + el.item[1].cost + ' coins</li>';
-            } else {
-                //monster
-                hasPic = true;
-                addStuff += '<li>Level:' + el.lvl + '</li>';
-                addStuff += '<li>Hp:' + el.hp + ' hp</li>';
-                addStuff += '<li>Dmg:' + el.min + '-' + el.max + ' hp</li>';
-                addStuff += '<li>Damage Type:' + combatFac.getDmgType(el.type) + '</li>';
-                addStuff += '<li>Resistance:';
-                if (el.res && el.res.length) {
-                    addStuff += '<ul>';
-                    for (var i = 0; i < el.res.length; i++) {
-                        addStuff += '<li> ' + combatFac.getDmgType(el.res[i]) + ' </li>';
-                    }
-                    addStuff += '</ul>';
-                } else {
-                    addStuff += '<span> none </span></li>';
-                }
-            }
-            if (!el.giver && el.giver != 0) {
-                addStuff += '</ul>';
-                $('#moreInf').html(addStuff);
-                if (hasPic) {
-                    $('#moreInf').css({
-                        'background': 'linear-gradient(rgba(241,241,212,.4),rgba(241,241,212,.4)),url(' + el.imgUrl + ')',
-                        'background-size': 'contain',
-                        'background-repeat': 'no-repeat',
-                        'background-position': 'right'
-                    })
-                }
-                $('#moreInf').show(200);
-                $('div.modal-footer > button.btn.btn-info').html('Less info');
-            }
-
-        },
-        lessInf: function() {
-            $('#moreInf').hide(200);
-            $('div.modal-footer > button.btn.btn-info').html('More info');
-        },
-        saveGame: function(data, lo, rel) {
-            //save game, w/ optional logout
-            //first, we need to reset user data to ONLY have the item ids:
-            for (var i = 0; i < data.equip.inv.length; i++) {
-                console.log('ITEM:', data.equip.inv[i])
-                if (!(data.equip.inv[i].item instanceof Array) && typeof data.equip.inv[i].item == 'object') {
-                    //item is just a regular object (not array of objs), so
-                    //probly a junk item:
-                    data.equip.inv[i].item = [data.equip.inv[i].item.num];
-                } else {
-                    for (var j = 0; j < data.equip.inv[i].item.length; j++) {
-                        data.equip.inv[i].item[j] = data.equip.inv[i].item[j].num;
-                    }
-                }
-                console.log('Inventory reducified!:', JSON.stringify(data.equip.inv))
-            }
-            console.log('data to save:', data)
-            $http.post('/user/save', data).then(function(res) {
-                if (lo && res) {
-                    $http.get('/user/logout').then(function(r) {
-                        window.location.href = './login';
-                    });
-                } else if (rel && res) {
-                    $window.location.reload();
-                } else {
-                    // sandalchest.alert('Saved!', 'Your game has been saved!')
-                }
-            });
-        },
-        logout: function(usr) {
-            //log out, but dont save game (this effectively wipes all progress from last save)
-            sandalchest.confirm("Logout", "<span id='resetWarn'>WARNING:</span> You will lose all progress since your last save! Are you sure you wanna stop playing and log out?", function(r) {
-                if (r && r !== null) {
-                    $http.get('/user/logout').then(function(lo) {
-                        window.location.href = './login';
-                    });
-                }
-            });
-        },
-        reset: function() {
-            //this fn is gonna be somewhat dangerous, so let's make absolutely sure
-            var addendOne = Math.floor(Math.random() * 50),
-                addendTwo = Math.floor(Math.random() * 50);
-            sandalchest.dialog("Reset Account", "<div id='resetWarn'>WARNING:</div> Resetting your account is a <i>permanent</i> move. <br/>If you still wish to reset your game account, enter your username and password below, and solve the math question below and click the appropriate button. Be aware that this decision <i>cannot</i> be reversed!<hr/>Username:<input type='text' id='rmun'><br/>Password:<input type='password' id='rmpw'><hr/>Math Check:<br/>" + addendOne + " + " + addendTwo + " = <input type='number' id='mathChk'> ", {
-                buttons: [{
-                    text: 'YES, reset.',
-                    close: false,
-                    click: function() {
-
-                        if (parseInt($('#mathChk').val()) == (addendOne + addendTwo)) {
-                            //math check is okay, so let's check the creds
-                            credObj = {
-                                name: $('#rmun').val(),
-                                pass: $('#rmpw').val()
-                            };
-                            $http.post('/user/reset', credObj).then(function(resp) {
-                                if (resp) {
-                                    window.location.replace('./login');
-                                    return true;
-                                } else {
-                                    return false;
-                                }
-                            });
-                        } else {
-                            return false;
-                        }
-                    }
-                }, {
-                    text: 'NO, don\'t.',
-                    close: true
-
-                }]
-            });
-
-        },
-        resetLevel: function() {
-            sandalchest.confirm('Are you sure you wanna reset this level?', function(r) {
-                if (r) {
-                    $http.get('/resetLevel').then(function(r) {
-                        $window.location.reload();
-                    })
-                }
-            })
-        },
-        getRingObjs: function(rNum) {
-            var objs;
-            switch (rNum) {
-                case 0:
-                    //Inventory
-                    objs = [{
-                        name: 'head',
-                        imgUrl: '',
-                        fn: function() {
-                            console.log('clicked this!');
-                        }
-                    }, {
-                        name: 'chest',
-                        imgUrl: '',
-                        fn: function() {
-                            console.log('clicked this!');
-                        }
-                    }, {
-                        name: 'hands',
-                        imgUrl: '',
-                        fn: function() {
-                            console.log('clicked this!');
-                        }
-                    }, {
-                        name: 'legs',
-                        imgUrl: '',
-                        fn: function() {
-                            console.log('clicked this!');
-                        }
-                    }, {
-                        name: 'feet',
-                        imgUrl: '',
-                        fn: function() {
-                            console.log('clicked this!');
-                        }
-                    }, {
-                        name: 'ring',
-                        imgUrl: '',
-                        fn: function() {
-                            console.log('clicked this!');
-                        }
-                    }];
-                    break;
-                case 1:
-                    //Skills (& combat?)
-                    objs = [{
-                        name: 'Change Skill',
-                        imgUrl: '',
-                        fn: function() {
-                            console.log('clicked this!');
-                        }
-                    }, {
-                        name: 'Skill Info',
-                        imgUrl: '',
-                        fn: function() {
-                            console.log('clicked this!');
-                        }
-                    }, {
-                        name: 'Attack',
-                        imgUrl: '',
-                        fn: function() {
-                            console.log('clicked this!');
-                        }
-                    }, {
-                        name: 'Retreat',
-                        imgUrl: '',
-                        fn: function() {
-                            console.log('clicked this!');
-                        }
-                    }, {
-                        name: 'Wait',
-                        imgUrl: '',
-                        fn: function() {
-                            console.log('clicked this!');
-                        }
-                    }, {
-                        name: 'Player Status',
-                        imgUrl: '',
-                        fn: function() {
-                            console.log('clicked this!');
-                        }
-                    }];
-                    break;
-                case 2:
-                    //Bestiary
-                    objs = [{
-                        name: 'Current Creature Info',
-                        imgUrl: '',
-                        fn: function() {
-                            console.log('clicked this!');
-                        }
-                    }, {
-                        name: 'All Creatures Info',
-                        imgUrl: '',
-                        fn: function() {
-                            console.log('clicked this!');
-                        }
-                    }, {
-                        name: 'Search Creatures',
-                        imgUrl: '',
-                        fn: function() {
-                            console.log('clicked this!');
-                        }
-                    }, {
-                        name: 'Vanquished Creatures',
-                        imgUrl: '',
-                        fn: function() {
-                            console.log('clicked this!');
-                        }
-                    }, {
-                        name: 'Quest Creatures',
-                        imgUrl: '',
-                        fn: function() {
-                            console.log('clicked this!');
-                        }
-                    }];
-                    break;
-                case 3:
-                    //Quests
-                    objs = [{
-                        name: 'Current Side Quests',
-                        imgUrl: '',
-                        fn: function() {
-                            console.log('clicked this!');
-                        }
-                    }, {
-                        name: 'Legendary Quests',
-                        imgUrl: '',
-                        fn: function() {
-                            console.log('clicked this!');
-                        }
-                    }, {
-                        name: 'Old Quests',
-                        imgUrl: '',
-                        fn: function() {
-                            console.log('clicked this!');
-                        }
-                    }, {
-                        name: 'Main Quests',
-                        imgUrl: '',
-                        fn: function() {
-                            console.log('clicked this!');
-                        }
-                    }, {
-                        name: 'Quest Stats',
-                        imgUrl: '',
-                        fn: function() {
-                            console.log('clicked this!');
-                        }
-                    }];
-                    break;
-                default:
-                    //Main Menu
-                    objs = [{
-                        name: 'Save',
-                        imgUrl: '',
-                        fn: function() {
-                            console.log('clicked this!');
-                        }
-                    }, {
-                        name: 'Save and Logout',
-                        imgUrl: '',
-                        fn: function() {
-                            console.log('clicked this!');
-                        }
-                    }, {
-                        name: 'Logout without saving',
-                        imgUrl: '',
-                        fn: function() {
-                            console.log('clicked this!');
-                        }
-                    }, {
-                        name: 'Reset Account',
-                        imgUrl: '',
-                        fn: function() {
-                            console.log('clicked this!');
-                        }
-                    }, {
-                        name: 'Stats',
-                        imgUrl: '',
-                        fn: function() {
-                            console.log('clicked this!');
-                        }
-                    }, {
-                        name: 'About',
-                        imgUrl: '',
-                        fn: function() {
-                            console.log('clicked this!');
-                        }
-                    }]
-
-            }
-            var ringData = {
-                objs: objs,
-                rot: 360 / objs.length
-            }
-            console.log('ring data', ringData)
-            return ringData;
-        },
-        PlatinumSpinningRings: function(curr, inc) {
-            return curr + inc;
-        },
-        doPlayerInv: function(stuff, boxes) {
-            return $http.get('/item/allItems').then(function(itArr) {
-                for (var itm in stuff) {
-                    if (itm != 'gold' && itm != 'inv') {
-                        var fnd = -1;
-                        //find which box this belongs to
-                        for (var i = 0; i < boxes.length; i++) {
-                            if (boxes[i].name == itm) {
-                                fnd = i;
-                                break;
-                            }
-                        }
-                        if (stuff[itm].indexOf(-1) == -1) {
-                            console.log('item isnt undefined!', stuff[itm]);
-                            boxes[fnd].itName = itArr.data[2][stuff[itm][0]].pre + ' ' + (itm == 'weap' ? itArr.data[1][stuff[itm][1]].name : itArr.data[0][stuff[itm][1]].name) + ' ' + itArr.data[2][stuff[itm][2]].post;
-                            boxes[fnd].itFullInfo = [itArr.data[2][stuff[itm][0]], itm == 'weap' ? itArr.data[1][stuff[itm][1]] : itArr.data[0][stuff[itm][1]], itArr.data[2][stuff[itm][2]]]
-                        } else {
-                            boxes[fnd].itName = 'none';
-                        }
-                    }
-                }
-                return boxes;
-            })
-        },
-        getContMen: function(scp, x, y) {
-            return {
-                x: x,
-                y: y,
-                el: scp.UIEl,
-                num: scp.$index
-            }
         }
     };
 });
@@ -2670,44 +2158,6 @@ app.controller('comb-con', function($scope, $http, $q, $timeout, $window, combat
     }
 });
 
-app.factory('combatFac', function($http) {
-    var dmgTypes = ['Physical', 'Fire', 'Ice', 'Poison', 'Dark', 'Holy'];
-    return {
-        getDmgType: function(typeNum) {
-            return dmgTypes[parseInt(typeNum)];
-        },
-        combatReady: function() {
-            //just set up the health/energy bars
-            $('#combat-box #enemy .health-bar .stat-bar-stat').css('width', '100%');
-            $('#combat-box #player .health-bar .stat-bar-stat').css('width', '100%');
-            $('#combat-box #player .energy-bar .stat-bar-stat').css('width', '100%');
-        },
-        getSkillInf: function(all, n) {
-            sandalchest.dialog( all[n].name,all[n].desc, { buttons: [{ text: 'Okay', close: true }] })
-        },
-        getItems: function() {
-            return $http.get('/item/allItems').then(function(s) {
-                return s;
-            })
-        },
-        rollLoot: function(mons) {
-            return $http.get('/item/byLvl/' + mons.lvl).then(function(i) {
-                return i.data;
-            })
-        },
-        addXp: function(u,x,c,l){
-            return $http.post('/user/addXp',{xp:x,user:u,cells:c,loc:l},function(r){
-                return r;
-            })
-        },
-        besties:function(data){
-            return $http.post('/user/addBeast',data).then(function(r){
-                return r.data;
-            })
-        }
-    };
-});
-
 app.factory('econFac', function($http, $q) {
     var npcTypes = ['merch', 'ambient', 'quest']
     return {
@@ -3203,6 +2653,643 @@ app.factory('socketFac', function ($rootScope) {
     }
   };
 });
+app.factory('UIFac', function($http, $q, $location, $window, combatFac) {
+    var findItem = function(arr, i) {
+        for (var j = 0; j < arr.length; j++) {
+            if (arr[j].num == i || arr[j].id == i) {
+                return arr[j];
+            }
+        }
+        return false;
+    };
+    var stSkill = function(p, data, owned) {
+        this.data = data;
+        this.p = p;
+        this.owned = owned;
+    }
+    return {
+        buySkill:function(data,usr){
+            return $http.post('/user/buySkill/',{usr:usr,skill:data.id},function(r){
+                return r.data;
+            })
+        },
+        getUIObj: function(whichUI, UIStuff) {
+            //get all the data
+            var p = $http.get('/item/' + whichUI).then(function(res) {
+                return res;
+            });
+            return p;
+        },
+        getAllUIs: function(info) {
+            //function to get all of the items 
+            return $http.get('/item/allUI').then(function(els) {
+                //sort UI els
+                //inventory, quests, beastiary (all), skills 
+                var armor = null,
+                    weap = null,
+                    affix = null,
+                    junk = null,
+                    quest = null,
+                    skill = null,
+                    mon = null,
+                    allSkill = [],
+                    itemSlots = ['weap', 'feet', 'legs', 'head', 'hands', 'chest'];
+                console.log(els.data);
+                for (var i = 0; i < els.data.length; i++) {
+                    //we use a distinguishing, unique feature of each 'type' of list to separate them into the above lists.
+                    if (els.data[i][0].slot || els.data[i][0].slot === 0) {
+                        //armor
+                        armor = els.data[i];
+                    } else if (els.data[i][0].post) {
+                        //affixes
+                        affix = els.data[i];
+                    } else if (els.data[i][0].cost && els.data[i][0].min) {
+                        //weap
+                        weap = els.data[i];
+                    } else if (els.data[i][0].cost && els.data[i][0].desc) {
+                        //junk
+                        junk = els.data[i];
+                    } else if (els.data[i][0].stunCh || els.data[i][0].stunCh === 0) {
+                        //mons
+                        mon = els.data[i];
+                    } else if (els.data[i][0].burst || els.data[i][0].burst === 0) {
+                        //skill
+                        skill = els.data[i];
+                    } else {
+                        quest = els.data[i];
+                    }
+                }
+                console.log('armor:', armor[0], '\nAffix', affix[0], '\nJunk', junk[0], '\nWeap', weap[0], '\nMon', mon[0], '\nSkill', skill[0], '\nQuest', quest[0])
+                    //now should have all the data in their proper places. now we need to 'populate' the appropriate fields in the given userdata ('info')
+                info.inProg.forEach(function(qId) {
+                    for (i = 0; i < quest.length; i++) {
+                        if (qId == quest[i].id) {
+                            qId = angular.copy(quest[i]);
+                        }
+                    }
+                });
+                info.done.forEach(function(qId) {
+                    for (i = 0; i < quest.length; i++) {
+                        if (qId == quest[i].id) {
+                            qId = angular.copy(quest[i]);
+                        }
+                    }
+                });
+                //mon!
+                info.mon = mon;
+                console.log('RAW ITEMS DATA', info.items)
+                    //now items!
+                    //slots
+                itemSlots.forEach(function(lbl) {
+                    if ((info.items[lbl][1] || info.items[lbl][1] === 0) && info.items[lbl][1] != -1 && typeof info.items[lbl] == 'number') {
+                        //contains a valid item
+                        info.items[lbl][0] = findItem(affix, info.items[lbl][0])
+                        info.items[lbl][2] = findItem(affix, info.items[lbl][2])
+                        if (lbl != 'weap') {
+                            //armor
+                            info.items[lbl][1] = findItem(armor, info.items[lbl][1])
+                        } else {
+                            info.items[lbl][1] = findItem(weap, info.items[lbl][1])
+                        }
+                    }
+                });
+                //and inventory!
+                info.items.inv.forEach(function(it) {
+                    //first, we need to determine if this is a weapon, armor, or junk
+                    if (it.lootType == 2 && it.item.length && it.item.length == 1 && typeof it.item[0] == 'number') {
+                        //junk (array length of 1)
+                        it.item[0] = findItem(junk, it.item[0]);
+                    } else if ((it.lootType == 1 || it.lootType == 0) && it.item.length && it.item.length == 3 && typeof it.item[0] == 'number') {
+                        //weap or armor
+                        it.item[0] = findItem(affix, it.item[0]);
+                        it.item[2] = findItem(affix, it.item[2]);
+                        if (it.lootType == 0) {
+                            //armor
+                            it.item[1] = findItem(armor, it.item[1]);
+                        } else {
+                            //weap
+                            it.item[1] = findItem(weap, it.item[1]);
+                        }
+                    } else {
+                        //do nothing: invalid lootType or not defined
+                    }
+                });
+                console.log('FINAL ITEMS:', info.items)
+                    //now, skill chains
+                    //these are used for the skill purchasing system, by displaying the currently owned skills as well as ones we will be able to eventually buy
+
+                //example: 10 --> 15:
+                //[{fireball,immolate}]
+                var skillChains = [];
+                for (var i = 0; i < skill.length; i++) {
+                    console.log('looking at skill',skill[i].name,'to see if base')
+                    if ((skill[i].prevSkill == -1) && info.skills.indexOf(skill[i].id) > -1) {
+                        //base skill, owned
+                        var newSkillChain = {
+                            skills: [skill[i].id]
+                        };
+                        newSkillChain[skill[i].id] = new stSkill(0, skill[i], true)
+                        skillChains.push(newSkillChain);
+                    }
+                }
+                //we should now have the BASE of all chains. we need to construct the rest of the chains.
+                var skillsLeft = true;
+                while (skillsLeft) {
+                    skillsLeft = false;
+                    for (i = 0; i < skillChains.length; i++) {
+                        for (var j = 0; j < skill.length; j++) {
+                            //loop thru all skills
+                            if (skillChains[i].skills.indexOf(skill[j].id) < 0 && skillChains[i][skill[j].prevSkill]) {
+                                console.log('Found another skill!', skill[j])
+                                    //this has not yet been recorded in this skill chain, and is a following skill to one we already own.
+                                skillsLeft = true;
+                                skillChains[i].skills.push(skill[j].id);
+                                skillChains[i][skill[j].id] = new stSkill(skill[j].prevSkill, skill[j], info.skills.indexOf(skill[j].id) > -1);
+                            }
+                        }
+                    }
+                }
+                var skillChainsFin = []
+                for (var i = 0; i < skillChains.length; i++) {
+                    var newFinCh = { skills: skillChains[i].skills, lvls: [] }
+                    for (var j = 0; j < skillChains[i].skills.length; j++) {
+                        if (newFinCh.lvls.indexOf(skillChains[i][skillChains[i].skills[j]].data.skillPts) < 0) {
+                            //lvl not yet recorded
+                            console.log('new lvl!', skillChains[i][skillChains[i].skills[j]].data.skillPts, 'skill num', skillChains[i].skills[j], 'chain', skillChains[i])
+                            newFinCh.lvls.push(skillChains[i][skillChains[i].skills[j]].data.skillPts);
+                            newFinCh[skillChains[i][skillChains[i].skills[j]].data.skillPts] = [skillChains[i][skillChains[i].skills[j]]]
+                        } else {
+                            newFinCh[skillChains[i][skillChains[i].skills[j]].data.skillPts].push(skillChains[i][skillChains[i].skills[j]])
+                        }
+                    }
+                    skillChainsFin.push(newFinCh);
+                }
+                info.chains = skillChainsFin;
+                console.log('finalChains', skillChainsFin)
+                    //replace skills in playersSkills with the actual skill objs (instead of just the number)
+                info.skillsReal = info.skills.map(function(sk) {
+                    console.log('skill id', sk, findItem(skill, sk))
+                    return findItem(skill, sk);
+                })
+                return (info);
+            })
+        },
+        getUIBg: function(which) {
+            var UIBgs = {
+                Inventory: '../img/UI/inv.jpg',
+                Skills: '',
+                Bestiary: '',
+                Quests: ''
+            };
+            return UIBgs[which];
+        },
+        moreInfo: function(el) {
+            var dmgTypes = ['Physical', 'Fire', 'Ice', 'Poison', 'Dark', 'Holy'];
+            var addStuff = '<ul class="moreInfList">';
+            var hasPic = false;
+            //first, determine which type of item it is. Each inv el type has certain fields unique to that type
+            console.log(el, !!el.item, el.item);
+            if (el.item && (el.item[1].slot || el.item[1].slot == 0)) {
+                //armor
+                var arType;
+                switch (el.item[1].slot) {
+                    case 0:
+                        arType = 'head';
+                        break;
+                    case 1:
+                        arType = 'torso';
+                        break;
+                    case 2:
+                        arType = 'pants';
+                        break;
+                    case 3:
+                        arType = 'hands';
+                        break;
+                    case 4:
+                        arType = 'feet';
+                        break;
+                    default:
+                        arType = 'accessory';
+                }
+                addStuff += '<li>Type:' + arType + '</li>';
+                addStuff += '<li>Defense:' + el.item[1].def || 'None' + '</li>';
+                addStuff += '<li>Cost:' + el.item[1].cost + ' coins</li>';
+                addStuff += '<li>Level:' + el.item[1].itemLvl + '</li>';
+                addStuff += '<li>Resistance:';
+                var resists = [];
+                var vulns = [];
+                //base item resists
+                for (var i = 0; i < el.item[1].res.length; i++) {
+                    if (resists.indexOf(dmgTypes[el.item[1].res[i]]) == -1) resists.push(dmgTypes[el.item[1].res[i]]);
+                }
+                //prefix resists
+                for (var n in el.item[0].defChanges) {
+                    if (el.item[0].defChanges[n] == 1 && resists.indexOf(el.item[0].defChanges[n]) == -1) {
+                        resists.push(el.item[0].defChanges[n]);
+                    } else if (el.item[0].defChanges[n] == -1 && vuln.indexOf(el.item[0].defChanges[n]) == -1) {
+                        vuln.push(el.item[0].defChanges[n]);
+                    }
+                }
+                for (var n in el.item[2].defChanges) {
+                    if (el.item[2].defChanges[n] == 1 && resists.indexOf(el.item[2].defChanges[n]) == -1) {
+                        resists.push(el.item[2].defChanges[n]);
+                    } else if (el.item[2].defChanges[n] == -1 && vuln.indexOf(el.item[2].defChanges[n]) == -1) {
+                        vuln.push(el.item[2].defChanges[n]);
+                    }
+                }
+                addStuff += (resists.length ? resists.join(', ') : 'none') + '</li>';
+                addStuff += '<li>Vulnerabilities:' + (vulns.length ? vulns.join(', ') : 'none') + '</li>';;
+            } else if (el.giver || el.giver === 0) {
+                //quest
+                $http.get('/item/getGiver/' + el.giver).then(function(res) {
+                    console.log('results from quest-giver search', res.data[0]);
+                    addStuff += '<li>Level:' + el.lvl + '</li>';
+                    addStuff += '<li>Given by:' + res.data[0].Name + '</li>';
+                    addStuff += '</ul>';
+                    $('#moreInf').html(addStuff);
+                    $('#moreInf').show(200);
+                    $('div.modal-footer > button.btn.btn-info').html('Less info');
+                })
+            } else if (el.energy || el.energy === 0) {
+                //skill
+                hasPic=true;
+                if ((el.burst && el.burst > 0)||(el.degen && el.degen>0)) {
+                    addStuff += '<li>Damage Type:' + combatFac.getDmgType(el.type) + '</li>';
+                }
+                addStuff += '<li>Energy:' + el.energy + '</li>';
+                addStuff += el.heal ? '<li>Heal (burst):' + el.heal + ' hp</li>' : '';
+                addStuff += el.regen ? '<li>Heal (regeneration):' + el.regen + ' hp/turn</li>' : '';
+                addStuff += el.burst ? '<li>Damage:' + el.burst + ' hp</li>' : '';
+                addStuff += el.degen ? '<li>Degeneration:' + el.degen + ' hp/turn</li>' : '';
+                addStuff += el.stuns ? '<li>Stuns</li>' : '';
+            } else if (el.maxHp) {
+                //user. Shouldn't be this one!
+                addStuff += 'What are you doing? You broke the game!';
+            } else if (el.item && !el.item[1].slot) {
+                //weapon
+                addStuff += el.item[1].max ? '<li>Damage:' + el.item[1].min + '-' + el.item[1].max + ' hp</li>' : '';
+                addStuff += el.item[1].def ? '<li>Defense:' + el.item[1].def + '</li>' : '';
+                addStuff += '<li>Level:' + el.item[1].itemLvl + '</li>';
+                addStuff += '<li>Cost:' + el.item[1].cost + ' coins</li>';
+            } else {
+                //monster
+                hasPic = true;
+                addStuff += '<li>Level:' + el.lvl + '</li>';
+                addStuff += '<li>Hp:' + el.hp + ' hp</li>';
+                addStuff += '<li>Dmg:' + el.min + '-' + el.max + ' hp</li>';
+                addStuff += '<li>Damage Type:' + combatFac.getDmgType(el.type) + '</li>';
+                addStuff += '<li>Resistance:';
+                if (el.res && el.res.length) {
+                    addStuff += '<ul>';
+                    for (var i = 0; i < el.res.length; i++) {
+                        addStuff += '<li> ' + combatFac.getDmgType(el.res[i]) + ' </li>';
+                    }
+                    addStuff += '</ul>';
+                } else {
+                    addStuff += '<span> none </span></li>';
+                }
+            }
+            if (!el.giver && el.giver != 0) {
+                addStuff += '</ul>';
+                $('#moreInf').html(addStuff);
+                if (hasPic) {
+                    $('#moreInf').css({
+                        'background': 'linear-gradient(rgba(241,241,212,.4),rgba(241,241,212,.4)),url(' + el.imgUrl + ')',
+                        'background-size': 'contain',
+                        'background-repeat': 'no-repeat',
+                        'background-position': 'right'
+                    })
+                }
+                $('#moreInf').show(200);
+                $('div.modal-footer > button.btn.btn-info').html('Less info');
+            }
+
+        },
+        lessInf: function() {
+            $('#moreInf').hide(200);
+            $('div.modal-footer > button.btn.btn-info').html('More info');
+        },
+        saveGame: function(data, lo, rel) {
+            //save game, w/ optional logout
+            //first, we need to reset user data to ONLY have the item ids:
+            for (var i = 0; i < data.equip.inv.length; i++) {
+                console.log('ITEM:', data.equip.inv[i])
+                if (!(data.equip.inv[i].item instanceof Array) && typeof data.equip.inv[i].item == 'object') {
+                    //item is just a regular object (not array of objs), so
+                    //probly a junk item:
+                    data.equip.inv[i].item = [data.equip.inv[i].item.num];
+                } else {
+                    for (var j = 0; j < data.equip.inv[i].item.length; j++) {
+                        data.equip.inv[i].item[j] = data.equip.inv[i].item[j].num;
+                    }
+                }
+                console.log('Inventory reducified!:', JSON.stringify(data.equip.inv))
+            }
+            console.log('data to save:', data)
+            $http.post('/user/save', data).then(function(res) {
+                if (lo && res) {
+                    $http.get('/user/logout').then(function(r) {
+                        window.location.href = './login';
+                    });
+                } else if (rel && res) {
+                    $window.location.reload();
+                } else {
+                    // sandalchest.alert('Saved!', 'Your game has been saved!')
+                }
+            });
+        },
+        logout: function(usr) {
+            //log out, but dont save game (this effectively wipes all progress from last save)
+            sandalchest.confirm("Logout", "<span id='resetWarn'>WARNING:</span> You will lose all progress since your last save! Are you sure you wanna stop playing and log out?", function(r) {
+                if (r && r !== null) {
+                    $http.get('/user/logout').then(function(lo) {
+                        window.location.href = './login';
+                    });
+                }
+            });
+        },
+        reset: function() {
+            //this fn is gonna be somewhat dangerous, so let's make absolutely sure
+            var addendOne = Math.floor(Math.random() * 50),
+                addendTwo = Math.floor(Math.random() * 50);
+            sandalchest.dialog("Reset Account", "<div id='resetWarn'>WARNING:</div> Resetting your account is a <i>permanent</i> move. <br/>If you still wish to reset your game account, enter your username and password below, and solve the math question below and click the appropriate button. Be aware that this decision <i>cannot</i> be reversed!<hr/>Username:<input type='text' id='rmun'><br/>Password:<input type='password' id='rmpw'><hr/>Math Check:<br/>" + addendOne + " + " + addendTwo + " = <input type='number' id='mathChk'> ", {
+                buttons: [{
+                    text: 'YES, reset.',
+                    close: false,
+                    click: function() {
+
+                        if (parseInt($('#mathChk').val()) == (addendOne + addendTwo)) {
+                            //math check is okay, so let's check the creds
+                            credObj = {
+                                name: $('#rmun').val(),
+                                pass: $('#rmpw').val()
+                            };
+                            $http.post('/user/reset', credObj).then(function(resp) {
+                                if (resp) {
+                                    window.location.replace('./login');
+                                    return true;
+                                } else {
+                                    return false;
+                                }
+                            });
+                        } else {
+                            return false;
+                        }
+                    }
+                }, {
+                    text: 'NO, don\'t.',
+                    close: true
+
+                }]
+            });
+
+        },
+        resetLevel: function() {
+            sandalchest.confirm('Are you sure you wanna reset this level?', function(r) {
+                if (r) {
+                    $http.get('/resetLevel').then(function(r) {
+                        $window.location.reload();
+                    })
+                }
+            })
+        },
+        getRingObjs: function(rNum) {
+            var objs;
+            switch (rNum) {
+                case 0:
+                    //Inventory
+                    objs = [{
+                        name: 'head',
+                        imgUrl: '',
+                        fn: function() {
+                            console.log('clicked this!');
+                        }
+                    }, {
+                        name: 'chest',
+                        imgUrl: '',
+                        fn: function() {
+                            console.log('clicked this!');
+                        }
+                    }, {
+                        name: 'hands',
+                        imgUrl: '',
+                        fn: function() {
+                            console.log('clicked this!');
+                        }
+                    }, {
+                        name: 'legs',
+                        imgUrl: '',
+                        fn: function() {
+                            console.log('clicked this!');
+                        }
+                    }, {
+                        name: 'feet',
+                        imgUrl: '',
+                        fn: function() {
+                            console.log('clicked this!');
+                        }
+                    }, {
+                        name: 'ring',
+                        imgUrl: '',
+                        fn: function() {
+                            console.log('clicked this!');
+                        }
+                    }];
+                    break;
+                case 1:
+                    //Skills (& combat?)
+                    objs = [{
+                        name: 'Change Skill',
+                        imgUrl: '',
+                        fn: function() {
+                            console.log('clicked this!');
+                        }
+                    }, {
+                        name: 'Skill Info',
+                        imgUrl: '',
+                        fn: function() {
+                            console.log('clicked this!');
+                        }
+                    }, {
+                        name: 'Attack',
+                        imgUrl: '',
+                        fn: function() {
+                            console.log('clicked this!');
+                        }
+                    }, {
+                        name: 'Retreat',
+                        imgUrl: '',
+                        fn: function() {
+                            console.log('clicked this!');
+                        }
+                    }, {
+                        name: 'Wait',
+                        imgUrl: '',
+                        fn: function() {
+                            console.log('clicked this!');
+                        }
+                    }, {
+                        name: 'Player Status',
+                        imgUrl: '',
+                        fn: function() {
+                            console.log('clicked this!');
+                        }
+                    }];
+                    break;
+                case 2:
+                    //Bestiary
+                    objs = [{
+                        name: 'Current Creature Info',
+                        imgUrl: '',
+                        fn: function() {
+                            console.log('clicked this!');
+                        }
+                    }, {
+                        name: 'All Creatures Info',
+                        imgUrl: '',
+                        fn: function() {
+                            console.log('clicked this!');
+                        }
+                    }, {
+                        name: 'Search Creatures',
+                        imgUrl: '',
+                        fn: function() {
+                            console.log('clicked this!');
+                        }
+                    }, {
+                        name: 'Vanquished Creatures',
+                        imgUrl: '',
+                        fn: function() {
+                            console.log('clicked this!');
+                        }
+                    }, {
+                        name: 'Quest Creatures',
+                        imgUrl: '',
+                        fn: function() {
+                            console.log('clicked this!');
+                        }
+                    }];
+                    break;
+                case 3:
+                    //Quests
+                    objs = [{
+                        name: 'Current Side Quests',
+                        imgUrl: '',
+                        fn: function() {
+                            console.log('clicked this!');
+                        }
+                    }, {
+                        name: 'Legendary Quests',
+                        imgUrl: '',
+                        fn: function() {
+                            console.log('clicked this!');
+                        }
+                    }, {
+                        name: 'Old Quests',
+                        imgUrl: '',
+                        fn: function() {
+                            console.log('clicked this!');
+                        }
+                    }, {
+                        name: 'Main Quests',
+                        imgUrl: '',
+                        fn: function() {
+                            console.log('clicked this!');
+                        }
+                    }, {
+                        name: 'Quest Stats',
+                        imgUrl: '',
+                        fn: function() {
+                            console.log('clicked this!');
+                        }
+                    }];
+                    break;
+                default:
+                    //Main Menu
+                    objs = [{
+                        name: 'Save',
+                        imgUrl: '',
+                        fn: function() {
+                            console.log('clicked this!');
+                        }
+                    }, {
+                        name: 'Save and Logout',
+                        imgUrl: '',
+                        fn: function() {
+                            console.log('clicked this!');
+                        }
+                    }, {
+                        name: 'Logout without saving',
+                        imgUrl: '',
+                        fn: function() {
+                            console.log('clicked this!');
+                        }
+                    }, {
+                        name: 'Reset Account',
+                        imgUrl: '',
+                        fn: function() {
+                            console.log('clicked this!');
+                        }
+                    }, {
+                        name: 'Stats',
+                        imgUrl: '',
+                        fn: function() {
+                            console.log('clicked this!');
+                        }
+                    }, {
+                        name: 'About',
+                        imgUrl: '',
+                        fn: function() {
+                            console.log('clicked this!');
+                        }
+                    }]
+
+            }
+            var ringData = {
+                objs: objs,
+                rot: 360 / objs.length
+            }
+            console.log('ring data', ringData)
+            return ringData;
+        },
+        PlatinumSpinningRings: function(curr, inc) {
+            return curr + inc;
+        },
+        doPlayerInv: function(stuff, boxes) {
+            return $http.get('/item/allItems').then(function(itArr) {
+                for (var itm in stuff) {
+                    if (itm != 'gold' && itm != 'inv') {
+                        var fnd = -1;
+                        //find which box this belongs to
+                        for (var i = 0; i < boxes.length; i++) {
+                            if (boxes[i].name == itm) {
+                                fnd = i;
+                                break;
+                            }
+                        }
+                        if (stuff[itm].indexOf(-1) == -1) {
+                            console.log('item isnt undefined!', stuff[itm]);
+                            boxes[fnd].itName = itArr.data[2][stuff[itm][0]].pre + ' ' + (itm == 'weap' ? itArr.data[1][stuff[itm][1]].name : itArr.data[0][stuff[itm][1]].name) + ' ' + itArr.data[2][stuff[itm][2]].post;
+                            boxes[fnd].itFullInfo = [itArr.data[2][stuff[itm][0]], itm == 'weap' ? itArr.data[1][stuff[itm][1]] : itArr.data[0][stuff[itm][1]], itArr.data[2][stuff[itm][2]]]
+                        } else {
+                            boxes[fnd].itName = 'none';
+                        }
+                    }
+                }
+                return boxes;
+            })
+        },
+        getContMen: function(scp, x, y) {
+            return {
+                x: x,
+                y: y,
+                el: scp.UIEl,
+                num: scp.$index
+            }
+        }
+    };
+});
+
 app.factory('userFact', function($http) {
     return {
         checkPwdStr: function(pwd) {

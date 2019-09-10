@@ -71,11 +71,77 @@ router.post('/save', function(req, res, next) {
 });
 router.get('/currUsrData', function(req, res, next) {
     //get current user data so we can update the front-end fields
-    console.log('SESSION FOR USR DATA',req.session);
+    console.log('SESSION FOR USR DATA', req.session);
     mongoose.model('User').findOne({ 'name': req.session.user.name }, function(err, usr) {
         res.send(usr);
     });
 });
+
+var findItem = (n, arr) => {
+    for (var i = 0; i < arr.length; i++) {
+        console.log('inspecting', n, arr[i], typeof arr[i]._id)
+        if (arr[i].id == n || arr[i].num == n || arr[i]._id == n) {
+            return arr[i];
+        }
+    }
+}
+router.get('/mobGetData/:name', function(req, res, next) {
+    //data for mobile
+    var data = {
+        skills: [],
+        equip: {
+            head: [],
+            weap: [],
+            feet: [],
+            legs: [],
+            hands: [],
+            chest: []
+        },
+        beasts: [],
+        quests:[]
+    }
+    mongoose.model('User').findOne({ 'name': req.params.name }, function(err, usr) {
+        mongoose.model('Skill').find({}, function(err, skills) {
+            data.skills = usr.skills.map(function(n) {
+                return findItem(n, skills)
+                    // return 'fireball';
+            });
+            //skills done. Now inventory
+            mongoose.model('Affix').find({}, function(err, affs) {
+                mongoose.model('Weap').find({}, function(err, weps) {
+                    mongoose.model('Armor').find({}, function(err, arms) {
+                        data.equip.weap = [findItem(usr.equip.weap[0], affs), findItem(usr.equip.weap[1], weps), findItem(usr.equip.weap[2], affs)]
+                        var armorBits = ['head', 'feet', 'legs', 'hands', 'chest'];
+                        armorBits.forEach((p) => {
+                            data.equip[p] = [findItem(usr.equip[p][0], affs), findItem(usr.equip[p][1], arms), findItem(usr.equip[p][2], affs)]
+                        });
+                        //equiped inv done. Now beasts
+                        mongoose.model('Mon').find({}, function(err, monsts) {
+                            usr.mons.forEach((m) => {
+                                var newBeast = findItem(m, monsts);
+                                if (newBeast) {
+                                    data.beasts.push(newBeast)
+                                }
+                            })
+                            //quests!
+                            mongoose.model('Quest').find({}, function(err, qs) {
+                                usr.inProg.forEach((m) => {
+                                    var newQ = findItem(m, qs);
+                                    if (newQ) {
+                                        data.quests.push(newQ)
+                                    }
+                                })
+                                res.send(data);
+                            })
+                        })
+                    });
+                });
+            });
+        })
+    });
+});
+
+
 router.post('/new', function(req, res, next) {
     //record new user
     console.log('NEW USER DATA-----:', req.body)
@@ -132,6 +198,7 @@ router.get('/nameOkay/:name', function(req, res, next) {
 });
 router.post('/login', function(req, res, next) {
     //notice how there are TWO routes that go to /login. This is OKAY, as long as they're different request types (the other one's GET, this is POST)
+    console.log('login triggered with',req.body)
     mongoose.model('User').findOne({ 'name': req.body.name }, function(err, usr) {
         console.log('USER FROM LOGIN:', usr);
         if (err || !usr || usr === null) {
@@ -178,7 +245,7 @@ router.post('/addXp', function(req, res, next) {
                 usr.currLvlXp += req.body.xp;
                 var didLevel = false;
                 usr.currentLevel.data = req.body.cells;
-                while (usr.currLvlXp>500){
+                while (usr.currLvlXp > 500) {
                     //note that using a while loop allows us to account for instances in which the user has MORE than 1 skillpt's worth of xp
                     usr.currLvlXp -= 500
                     playerLvl++;
@@ -232,18 +299,18 @@ router.post('/buySkill', function(req, res, next) {
     });
 });
 
-router.post('/addBeast',function(req,res,next){
+router.post('/addBeast', function(req, res, next) {
     if (!req.session || !req.session.user || req.body.u !== req.session.user.name) {
         res.send('autherr'); //user trying to 'spoof' a request
-    }else{
-        mongoose.model('User').findOne({name:req.body.u},function(err,usr){
-            console.log('adding',req.body.id,'to',usr.name)
-            if(!usr.mons){
+    } else {
+        mongoose.model('User').findOne({ name: req.body.u }, function(err, usr) {
+            console.log('adding', req.body.id, 'to', usr.name)
+            if (!usr.mons) {
                 usr.mons = [req.body.id];
-            }else if(!usr.mons.length || usr.mons.indexOf(req.body.id)<0){
+            } else if (!usr.mons.length || usr.mons.indexOf(req.body.id) < 0) {
                 usr.mons.push(req.body.id);
             }
-            usr.save(function(s){
+            usr.save(function(s) {
                 res.send(usr.mons);
             })
         })

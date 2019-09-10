@@ -27,12 +27,13 @@ var server = http.Server(app);
 var io = require('socket.io')(server);
 var names = [];
 io.on('connection', function(socket) {
-    socket.on('movData', function(movObj) {
-        //first, if we dont have this name already, reg it
-        if (names.indexOf(movObj.n) == -1) {
-            names.push(movObj.n);
+    socket.on('regName',function(nameObj){
+        if (names.indexOf(nameObj.n) == -1) {
+            names.push(nameObj.n);
         }
-        console.log('movement!', movObj); //update time
+        console.log('names now',names)
+    })
+    socket.on('movData', function(movObj) {
         io.emit('movOut', movObj);
     });
     socket.on('chkName', function(name) {
@@ -41,6 +42,7 @@ io.on('connection', function(socket) {
         console.log('name', name.n, names)
         if (names.indexOf(name.n) != -1) {
             io.emit('chkNameRes', { n: name.n })
+            io.emit('userRegged',{n:name.n,u:name.u});
         } else {
             io.emit('chkNameRes', { n: false })
         }
